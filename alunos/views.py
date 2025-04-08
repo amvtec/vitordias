@@ -550,7 +550,6 @@ def gerar_declaracao_matricula(request, aluno_id):
     response['Content-Disposition'] = f'attachment; filename=declaracao_matricula_{aluno.nome}.pdf'
 
     doc = SimpleDocTemplate(response, pagesize=letter)
-
     styles = getSampleStyleSheet()
     normal = ParagraphStyle(name="Normal", fontSize=10, leading=12, alignment=4)
     title_style = ParagraphStyle(name="Title", fontSize=14, alignment=1)
@@ -609,53 +608,33 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", normal))
     elements.append(Spacer(1, 30))
 
-    # Buscar o funcionário logado e o diretor
+    # Buscar o funcionário logado
     funcionario = Funcionario.objects.filter(user=request.user).first()
-    diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
 
-    # Assinaturas lado a lado
+    # Assinatura única (usuário logado)
     assinaturas = [
-        [
-            Paragraph("____________________________________", center_style),
-            Paragraph("____________________________________", center_style)
-        ],
-        [
-            Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style),
-            Paragraph(f"{diretor.nome if diretor else 'Diretor'}", center_style)
-        ],
-        [
-            Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
-            Paragraph(f"{diretor.funcao if diretor else ''}", center_style)
-        ],
-        [
-            Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
-            Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style)
-        ],
-        [
-            Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
-            Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style)
-        ],
+        [Paragraph("____________________________________", center_style)],
+        [Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style)],
+        [Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style)],
+        [Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style)],
+        [Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style)],
     ]
 
-    tabela_assinaturas = Table(assinaturas, colWidths=[260, 260])
-    elements.append(tabela_assinaturas)
-
+    tabela_assinaturas = Table(assinaturas, colWidths=[520])
     tabela_assinaturas.setStyle(TableStyle([
-    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ('TOPPADDING', (0, 0), (-1, -1), 0),     # Espaçamento acima do conteúdo
-    ('BOTTOMPADDING', (0, 0), (-1, -1), 0),  # Espaçamento abaixo do conteúdo
-    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-]))
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ]))
 
-
+    elements.append(tabela_assinaturas)
     elements.append(Spacer(1, 30))
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
 
     doc.build(elements)
     return response
-
-
 
 
 def distribuir_alunos_turmas():
