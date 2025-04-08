@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import cadastrar_funcionario
+from .views import cadastrar_funcionario_views
 from .views import logout_view
 from .views import gerar_relatorio_por_turma
 from .views import relatorio_rematricula
@@ -31,7 +31,7 @@ urlpatterns = [
     path('importar-alunos/', views.import_alunos, name='importar_alunos'),
     path('declaracao_matricula/<int:aluno_id>/', views.gerar_declaracao_matricula, name='gerar_declaracao_matricula'),
     path('aluno/<int:aluno_id>/editar/', views.editar_aluno, name='editar_aluno'),
-    path('cadastrar-funcionario/', views.cadastrar_funcionario, name='cadastrar_funcionario'),
+    path('novo-funcionario/', cadastrar_funcionario_views, name='novo_funcionario'),
     path('pesquisar-funcionario/', views.pesquisar_funcionario, name='pesquisar_funcionario'),
     path('listar-funcionarios/', views.listar_funcionarios, name='listar_funcionarios'),
     path('funcionario/<int:funcionario_id>/editar/', views.editar_funcionario, name='editar_funcionario'),
@@ -52,19 +52,5 @@ urlpatterns = [
 
  
 
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
 ]
 

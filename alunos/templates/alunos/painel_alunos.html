@@ -209,15 +209,17 @@
 <div id="sidebar" class="sidebar">
     <h2>🎓 Menu</h2>
     <a href="{% url 'pesquisar_aluno_sidebar' %}">🔍 Pesquisar Aluno</a>
+    
 
-    {% if request.user.funcionario.funcao == "Agente Administrativo" %}
-        <a href="{% url 'pesquisar_funcionario' %}">👨‍🏫 Pesquisar Funcionário</a>
+
+    {% if request.user.funcionario.funcao in "Administrador Agente Administrativo" %}
+        
     {% endif %}
 
-    {% if request.user.funcionario.funcao in "Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
+    {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
         <a href="javascript:void(0);" class="desabilitado">📋 Relatório por Turma</a>
         <a href="{% url 'relatorio_rematricula' %}">📑 Relatório de Rematrícula</a>
-        <a href="{% url 'alocar_alunos' %}">👥Alunos</a>
+        <a href="{% url 'alocar_alunos' %}">👥 Alunos</a>
         <a href="{% url 'aniversariantes_view' %}">🎂 Aniversariantes</a>
         <a href="{% url 'pagina_inicial' %}">💼 Folha de Pagamento</a>
     {% endif %}

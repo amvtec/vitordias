@@ -711,7 +711,7 @@ def distribuir_alunos_turmas():
 
             turma.save()
 
-def cadastrar_funcionario(request):
+def cadastrar_funcionario_views(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
         if form.is_valid():
@@ -736,14 +736,20 @@ def listar_funcionarios(request):
 
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+
     if request.method == 'POST':
         form = FuncionarioForm(request.POST, instance=funcionario)
         if form.is_valid():
             form.save()
-            return redirect('listar_funcionarios')
+            return redirect('listar_funcionarios')  # redireciona para a lista após salvar
     else:
         form = FuncionarioForm(instance=funcionario)
-    return render(request, 'alunos/editar_funcionario.html', {'form': form, 'funcionario': funcionario})
+
+    context = {
+        'form': form,
+        'funcionario': funcionario
+    }
+    return render(request, 'alunos/editar_funcionario.html', context)
 
 
 def excluir_funcionario(request, funcionario_id):
