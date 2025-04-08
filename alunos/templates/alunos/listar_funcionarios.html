@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #dce4f7;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #f2f2f2;
+            padding: 30px 40px;
+            border-radius: 6px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            color: #003366;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 22px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ffffff;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .actions a {
+            text-decoration: none;
+            margin-left: 10px;
+            padding: 6px 12px;
+            border-radius: 2px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #999;
+            display: inline-block;
+        }
+
+        .editar {
+            background-color: #81d4fa;
+            color: #004d40;
+        }
+
+        .excluir {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .actions a:hover {
+            opacity: 0.9;
+        }
+
+        .voltar {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            background-color: #4d90fe;
+            padding: 10px 26px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #357ae8;
+        }
+
+        .voltar:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>📋 Funcionários Cadastrados</h2>
+
+    <ul>
+        {% for funcionario in funcionarios %}
+            <li>
+                {{ funcionario.nome }} - {{ funcionario.get_funcao_display }}
+                <span class="actions">
+                    <a href="{% url 'editar_funcionario' funcionario.id %}" class="editar">✏️ Editar</a>
+                    <a href="{% url 'excluir_funcionario' funcionario.id %}" class="excluir" onclick="return confirm('Deseja realmente excluir este funcionário?');">🗑️ Excluir</a>
+                </span>
+            </li>
+        {% empty %}
+            <li>Nenhum funcionário cadastrado.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'painel_alunos' %}" class="voltar">🔙 Voltar ao Painel</a>
+</div>
+</body>
+</html>

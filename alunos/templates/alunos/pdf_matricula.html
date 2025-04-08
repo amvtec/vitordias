@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de Matrícula</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            margin: 30px;
+            color: #000;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+        }
+        .school-info {
+            text-align: center;
+            flex: 1;
+        }
+        .school-info h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+        .school-info p {
+            margin: 2px 0;
+        }
+        .section {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .section h2 {
+            font-size: 13px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #000;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .col {
+            width: 50%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .assinaturas {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        .assinatura {
+            width: 30%;
+        }
+        .assinatura hr {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <img src="/caminho/para/logo.png" class="logo" alt="Logo">
+    <div class="school-info">
+        <h1>Escola Municipal Vitor Dias</h1>
+        <p>Município de Darcinópolis - TO</p>
+        <p>Rua Principal, Centro - CEP 77910-000</p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Dados do Aluno</h2>
+    <div class="row">
+        <div class="col"><span class="label">Nome:</span> {{ aluno.nome|default:"---" }}</div>
+        <div class="col"><span class="label">Nascimento:</span> {{ aluno.data_nascimento|date:"d/m/Y"|default:"---" }}</div>
+        <div class="col"><span class="label">Sexo:</span> {{ aluno.get_sexo_display|default:"---" }}</div>
+        <div class="col"><span class="label">Cor/Raça:</span> {{ aluno.get_cor_raca_display|default:"---" }}</div>
+        <div class="col"><span class="label">CPF:</span> {{ aluno.cpf|default:"---" }}</div>
+        <div class="col"><span class="label">RG:</span> {{ aluno.rg|default:"---" }}</div>
+        <div class="col"><span class="label">NIS:</span> {{ aluno.nis|default:"---" }}</div>
+        <div class="col"><span class="label">ID Aluno:</span> {{ aluno.aluno_id|default:"---" }}</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Endereço</h2>
+    <div class="row">
+        <div class="col"><span class="label">Endereço:</span> {{ aluno.endereco|default:"---" }}</div>
+        <div class="col"><span class="label">Bairro:</span> {{ aluno.bairro|default:"---" }}</div>
+        <div class="col"><span class="label">Cidade:</span> {{ aluno.cidade|default:"---" }}</div>
+        <div class="col"><span class="label">UF:</span> {{ aluno.uf|default:"---" }}</div>
+        <div class="col"><span class="label">CEP:</span> {{ aluno.cep|default:"---" }}</div>
+        <div class="col"><span class="label">Zona:</span> {{ aluno.get_zona_display|default:"---" }}</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Responsáveis</h2>
+    <div class="row">
+        <div class="col"><span class="label">Pai:</span> {{ aluno.nome_pai|default:"---" }}</div>
+        <div class="col"><span class="label">Mãe:</span> {{ aluno.nome_mae|default:"---" }}</div>
+        <div class="col"><span class="label">Telefone Pai:</span> {{ aluno.telefone_pai|default:"---" }}</div>
+        <div class="col"><span class="label">Telefone Mãe:</span> {{ aluno.telefone_mae|default:"---" }}</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Procedência Escolar</h2>
+    <div class="row">
+        <div class="col"><span class="label">Escola Anterior:</span> {{ aluno.escola_anterior|default:"---" }}</div>
+        <div class="col"><span class="label">Rede:</span> {{ aluno.get_rede_anterior_display|default:"---" }}</div>
+        <div class="col"><span class="label">Aprovado:</span> {{ aluno.aprovado_ano|default:"---" }}</div>
+        <div class="col"><span class="label">Reprovado:</span> {{ aluno.reprovado_ano|default:"---" }}</div>
+        <div class="col"><span class="label">Em Curso:</span> {{ aluno.em_curso_ano|default:"---" }}</div>
+        <div class="col"><span class="label">Classificado:</span> {{ aluno.classificado|yesno:"Sim, Não" }}</div>
+        <div class="col"><span class="label">Reclassificado:</span> {{ aluno.reclassificado|yesno:"Sim, Não" }}</div>
+    </div>
+</div>
+
+<div class="assinaturas">
+    <div class="assinatura">
+        <hr>
+        <p>Responsável</p>
+    </div>
+    <div class="assinatura">
+        <hr>
+        <p>Diretor(a)</p>
+    </div>
+    <div class="assinatura">
+        <hr>
+        <p>Secretaria Escolar</p>
+    </div>
+</div>
+
+</body>
+</html>

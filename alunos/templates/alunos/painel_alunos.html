@@ -1,0 +1,299 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Alunos</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #dce4f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-btn {
+            font-size: 20px;
+            background: #003366;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -260px;
+            width: 240px;
+            height: 100%;
+            background-color: #f2f2f2;
+            color: #222;
+            padding: 30px 20px;
+            transition: left 0.3s ease;
+            z-index: 999;
+            border-right: 1px solid #999;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #003366;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #222;
+            text-decoration: none;
+            background: #e0e0e0;
+            padding: 10px 16px;
+            border-radius: 4px;
+            margin: 10px 0;
+            transition: background 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #bbb;
+        }
+
+        .sidebar a:hover {
+            background-color: #d0d0d0;
+        }
+
+        .sidebar a.logout {
+            background-color: #c62828;
+            color: white;
+        }
+
+        .sidebar a.desabilitado {
+            pointer-events: none;
+            background-color: #ccc;
+            color: #666;
+            opacity: 0.6;
+            border-color: #aaa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 80px auto;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            border: 2px solid #999;
+            text-align: center;
+        }
+
+        h1 {
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .btn-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            width: 110px;
+            height: 110px;
+            background-color: #e0e0e0;
+            color: #000;
+            text-decoration: none;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 13px;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid #aaa;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background-color: #d5d5d5;
+            transform: scale(1.03);
+        }
+
+        .btn span {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .chart-section {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .chart-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            width: 200px;
+        }
+
+        .chart-box img {
+            width: 100%;
+        }
+
+        .chart-box p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .age-box {
+            margin-top: 40px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .age-box h3 {
+            color: #003366;
+        }
+
+        .age-box ul {
+            list-style: none;
+            padding-left: 0;
+            font-size: 14px;
+        }
+
+        .age-box ul li {
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .btn {
+                width: 90px;
+                height: 90px;
+                font-size: 12px;
+            }
+            .btn span {
+                font-size: 20px;
+            }
+            .chart-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<div id="sidebar" class="sidebar">
+    <h2>🎓 Menu</h2>
+    <a href="{% url 'pesquisar_aluno_sidebar' %}">🔍 Pesquisar Aluno</a>
+
+    {% if request.user.funcionario.funcao == "Agente Administrativo" %}
+        <a href="{% url 'pesquisar_funcionario' %}">👨‍🏫 Pesquisar Funcionário</a>
+    {% endif %}
+
+    {% if request.user.funcionario.funcao in "Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
+        <a href="javascript:void(0);" class="desabilitado">📋 Relatório por Turma</a>
+        <a href="{% url 'relatorio_rematricula' %}">📑 Relatório de Rematrícula</a>
+        <a href="{% url 'alocar_alunos' %}">👥Alunos</a>
+        <a href="{% url 'aniversariantes_view' %}">🎂 Aniversariantes</a>
+        <a href="{% url 'pagina_inicial' %}">💼 Folha de Pagamento</a>
+    {% endif %}
+
+    <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
+</div>
+
+<div class="container">
+    <h1>Painel Administrativo</h1>
+    <p style="font-size: 16px; color: #003366; margin-top: -15px; margin-bottom: 30px;">
+        Bem-vindo(a), <strong>{{ request.user.first_name|default:request.user.username }}</strong>!
+    </p>
+
+    <div class="btn-grid">
+        <a href="{% url 'pagina_matricula' %}" class="btn"><span>📄</span>Matrícula</a>
+        <a href="{% url 'buscar_aluno_rematricula' %}" class="btn"><span>🔄</span>Rematrícula</a>
+
+        {% if request.user.funcionario.funcao == "Agente Administrativo" %}
+            <a href="{% url 'importar_alunos' %}" class="btn"><span>📥</span>Importar<br>Alunos</a>
+            <a href="{% url 'cadastrar_funcionario' %}" class="btn"><span>👨‍💼</span>Cadastrar<br>Funcionário</a>
+        {% endif %}
+    </div>
+
+    <div class="chart-section">
+        <div class="chart-box">
+            <h3>📊 Alunos por Sexo</h3>
+            <img src="data:image/png;base64,{{ graphic_sexo }}" alt="Gráfico de Pizza">
+            <p><strong>Total:</strong> {{ total }}</p>
+            <p>👦 {{ total_m }} | 👧 {{ total_f }} | 🧑 {{ total_o }}</p>
+        </div>
+        <div class="chart-box">
+            <h3>📊 Alunos por Idade (5 a 15)</h3>
+            <img src="data:image/png;base64,{{ graphic_idades }}" alt="Gráfico de Idade">
+        </div>
+        <div class="chart-box">
+            <h3>📈 Total de Alunos</h3>
+            <img src="data:image/png;base64,{{ graphic_total }}" alt="Gráfico de Barras">
+        </div>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <h3>📋 Quantidade de Alunos por Idade (5 a 15 anos)</h3>
+        <table style="margin: 0 auto; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    {% for idade in 5|to:15 %}
+                        <th style="border: 1px solid #ccc; padding: 8px;">{{ idade }} anos</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for idade in 5|to:15 %}
+                        <td style="border: 1px solid #ccc; padding: 8px;">
+                            {{ contagem_idades|get_item:idade|default:"0" }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="age-box">
+        <h3>📅 Alunos por Faixa Etária (5 a 15 anos)</h3>
+        <ul>
+            {% for idade, qtd in distribuicao_idade.items %}
+                <li>{{ idade }} anos: {{ qtd }} aluno(s)</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+</script>
+</body>
+</html>

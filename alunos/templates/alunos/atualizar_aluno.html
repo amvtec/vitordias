@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Aluno</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            font-size: 20px;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+            color: #3498db;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checkbox-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            min-width: 300px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .required {
+            color: red;
+            font-size: 13px;
+            display: none;
+        }
+
+        button {
+            align-self: center;
+            padding: 12px 32px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Cadastro de Aluno</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <h2>1. Dados do Aluno</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.nome.label_tag }}{{ form.nome }}</div>
+            <div class="form-field">{{ form.status.label_tag }}{{ form.status }}</div>
+            <div class="form-field">{{ form.sexo.label_tag }}{{ form.sexo }}</div>
+            <div class="form-field">{{ form.cor_raca.label_tag }}{{ form.cor_raca }}</div>
+            <div class="form-field">{{ form.data_nascimento.label_tag }}{{ form.data_nascimento }}</div>
+            <div class="form-field">{{ form.profissao.label_tag }}{{ form.profissao }}</div>
+            <div class="form-field">{{ form.aluno_id.label_tag }}{{ form.aluno_id }}</div>
+            <div class="form-field">{{ form.nis.label_tag }}{{ form.nis }}</div>
+        </div>
+
+        <h2>2. Documentos</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.certidao_numero.label_tag }}{{ form.certidao_numero }}</div>
+            <div class="form-field">{{ form.certidao_folha.label_tag }}{{ form.certidao_folha }}</div>
+            <div class="form-field">{{ form.certidao_livro.label_tag }}{{ form.certidao_livro }}</div>
+            <div class="form-field">{{ form.numero_matricula.label_tag }}{{ form.numero_matricula }}</div>
+            <div class="form-field">{{ form.cartorio_nome.label_tag }}{{ form.cartorio_nome }}</div>
+            <div class="form-field">{{ form.cartorio_uf.label_tag }}{{ form.cartorio_uf }}</div>
+            <div class="form-field">{{ form.cartorio_cidade.label_tag }}{{ form.cartorio_cidade }}</div>
+            <div class="form-field">{{ form.cpf.label_tag }}{{ form.cpf }}</div>
+            <div class="form-field">{{ form.rg.label_tag }}{{ form.rg }}</div>
+        </div>
+
+        <h2>3. Endereço</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.endereco.label_tag }}{{ form.endereco }}</div>
+            <div class="form-field">{{ form.bairro.label_tag }}{{ form.bairro }}</div>
+            <div class="form-field">{{ form.cidade.label_tag }}{{ form.cidade }}</div>
+            <div class="form-field">{{ form.uf.label_tag }}{{ form.uf }}</div>
+            <div class="form-field">{{ form.cep.label_tag }}{{ form.cep }}</div>
+            <div class="form-field">{{ form.zona.label_tag }}{{ form.zona }}</div>
+            <div class="checkbox-inline">
+                <label for="id_transporte_escolar">Transporte Escolar:</label>
+                {{ form.transporte_escolar }}
+            </div>
+            <div class="form-field">{{ form.rota.label_tag }}{{ form.rota }}</div>
+            <div class="form-field">{{ form.distancia.label_tag }}{{ form.distancia }}</div>
+        </div>
+
+        <h2>4. Nascimento</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.cidade_nascimento.label_tag }}{{ form.cidade_nascimento }}</div>
+            <div class="form-field">{{ form.uf_nascimento.label_tag }}{{ form.uf_nascimento }}</div>
+            <div class="form-field">{{ form.nacionalidade.label_tag }}{{ form.nacionalidade }}</div>
+        </div>
+
+        <h2>5. Escolaridade</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.unidade_escolar.label_tag }}{{ form.unidade_escolar }}</div>
+            <div class="form-field">{{ form.municipio.label_tag }}{{ form.municipio }}</div>
+            <div class="form-field">{{ form.dre.label_tag }}{{ form.dre }}</div>
+            <div class="form-field">{{ form.modalidade.label_tag }}{{ form.modalidade }}</div>
+            <div class="form-field">{{ form.outra_modalidade.label_tag }}{{ form.outra_modalidade }}</div>
+            <div class="form-field">{{ form.etapa.label_tag }}{{ form.etapa }}</div>
+            <div class="form-field">{{ form.ano_serie.label_tag }}{{ form.ano_serie }}</div>
+        </div>
+
+        <h2>6. Responsáveis</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.nome_pai.label_tag }}{{ form.nome_pai }}</div>
+            <div class="form-field">{{ form.nascimento_pai.label_tag }}{{ form.nascimento_pai }}</div>
+            <div class="form-field">{{ form.escolaridade_pai.label_tag }}{{ form.escolaridade_pai }}</div>
+            <div class="form-field">{{ form.profissao_pai.label_tag }}{{ form.profissao_pai }}</div>
+            <div class="form-field">{{ form.telefone_pai.label_tag }}{{ form.telefone_pai }}</div>
+            <div class="form-field">{{ form.nome_mae.label_tag }}{{ form.nome_mae }}</div>
+            <div class="form-field">{{ form.nascimento_mae.label_tag }}{{ form.nascimento_mae }}</div>
+            <div class="form-field">{{ form.escolaridade_mae.label_tag }}{{ form.escolaridade_mae }}</div>
+            <div class="form-field">{{ form.profissao_mae.label_tag }}{{ form.profissao_mae }}</div>
+            <div class="form-field">{{ form.telefone_mae.label_tag }}{{ form.telefone_mae }}</div>
+        </div>
+
+        <h2>7. Saúde</h2>
+        <div class="form-group">
+            <div class="checkbox-inline"><label for="id_reacoes_alergicas">Reações Alérgicas:</label>{{ form.reacoes_alergicas }}</div>
+            <div class="form-field">{{ form.descricao_alergia.label_tag }}{{ form.descricao_alergia }}</div>
+            <div class="checkbox-inline"><label for="id_necessidade_especial">Necessidade Especial:</label>{{ form.necessidade_especial }}</div>
+            <div class="form-field">{{ form.descricao_necessidade.label_tag }}{{ form.descricao_necessidade }}</div>
+            <div class="checkbox-inline"><label for="id_possui_laudo">Laudo Médico:</label>{{ form.possui_laudo }}</div>
+            <div class="checkbox-inline"><label for="id_sala_recursos">Sala de Recursos:</label>{{ form.sala_recursos }}</div>
+            <div class="form-field">{{ form.ue_atendimento.label_tag }}{{ form.ue_atendimento }}</div>
+            <div class="checkbox-inline"><label for="id_medicamento_controlado">Medicamento Controlado:</label>{{ form.medicamento_controlado }}</div>
+            <div class="form-field" id="campo_medicamento">
+                {{ form.nome_medicamento.label_tag }}{{ form.nome_medicamento }}
+                <span class="required" id="alerta_medicamento">Obrigatório se tomar medicamento</span>
+            </div>
+        </div>
+
+        <h2>8. Programas Sociais e Religião</h2>
+        <div class="form-group">
+            <div class="checkbox-inline"><label for="id_bolsa_familia">Bolsa Família:</label>{{ form.bolsa_familia }}</div>
+            <div class="checkbox-inline"><label for="id_bpc">BPC:</label>{{ form.bpc }}</div>
+            <div class="form-field">{{ form.outro_programa.label_tag }}{{ form.outro_programa }}</div>
+            <div class="checkbox-inline"><label for="id_ensino_religioso">Ensino Religioso:</label>{{ form.ensino_religioso }}</div>
+        </div>
+
+        <h2>9. Procedência Escolar</h2>
+        <div class="form-group">
+            <div class="form-field">{{ form.escola_anterior.label_tag }}{{ form.escola_anterior }}</div>
+            <div class="form-field">{{ form.rede_anterior.label_tag }}{{ form.rede_anterior }}</div>
+            <div class="form-field">{{ form.aprovado_ano.label_tag }}{{ form.aprovado_ano }}</div>
+            <div class="form-field">{{ form.reprovado_ano.label_tag }}{{ form.reprovado_ano }}</div>
+            <div class="form-field">{{ form.em_curso_ano.label_tag }}{{ form.em_curso_ano }}</div>
+            <div class="checkbox-inline"><label for="id_classificado">Classificado:</label>{{ form.classificado }}</div>
+            <div class="checkbox-inline"><label for="id_reclassificado">Reclassificado:</label>{{ form.reclassificado }}</div>
+        </div>
+
+        <button type="submit">
+    {% if editar %}Salvar Alterações{% else %}Salvar Matrícula{% endif %}
+</button>
+
+    </form>
+</div>
+
+<script>
+    const medicamentoCheckbox = document.getElementById("id_medicamento_controlado");
+    const alerta = document.getElementById("alerta_medicamento");
+
+    function verificarMedicamento() {
+        alerta.style.display = medicamentoCheckbox.checked ? "inline" : "none";
+    }
+
+    if (medicamentoCheckbox) {
+        medicamentoCheckbox.addEventListener("change", verificarMedicamento);
+        verificarMedicamento();
+    }
+</script>
+</body>
+</html>

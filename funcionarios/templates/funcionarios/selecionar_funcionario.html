@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecionar Funcionário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background: #f3f3f3;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form.busca {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form.busca input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form.busca button {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #aaa;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        a.btn {
+            background: #2196F3;
+            color: white;
+            padding: 6px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .voltar {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Selecionar Funcionário</h2>
+
+<form method="get" class="busca">
+    <input type="text" name="q" placeholder="Digite o nome do funcionário..." value="{{ request.GET.q }}">
+    <button type="submit">🔍 Buscar</button>
+</form>
+
+{% if funcionarios %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Função</th>
+                <th>Carga Horária</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for funcionario in funcionarios %}
+                <tr>
+                    <td>{{ funcionario.nome }}</td>
+                    <td>{{ funcionario.funcao }}</td>
+                    <td>{{ funcionario.carga_horaria_mensal }}h/mês</td>
+                    <td><a href="{% url 'lancar_folha_funcionario' funcionario.id %}" class="btn">Lançar Folha</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p style="text-align: center;"><strong>Nenhum funcionário encontrado.</strong></p>
+{% endif %}
+
+<div class="voltar">
+    <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
+</div>
+
+</body>
+</html>

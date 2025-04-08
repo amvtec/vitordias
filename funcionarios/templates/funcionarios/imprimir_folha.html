@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Imprimir Folha de Pagamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            padding: 30px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 6px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .cabecalho h2, .cabecalho h3, .cabecalho p {
+            margin: 2px;
+        }
+
+        .verde {
+            background-color: #c8e6c9 !important;
+        }
+
+        .azul {
+            background-color: #bbdefb !important;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            font-size: 10px;
+        }
+
+        th, td {
+            border: 1px solid #aaa;
+            padding: 4px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        td.servidor {
+            text-align: left;
+        }
+
+        .botoes {
+            margin-bottom: 20px;
+        }
+
+        .btn-acoes {
+            margin: 0 2px;
+            padding: 3px 6px;
+            font-size: 10px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .editar {
+            background-color: #1976d2;
+            color: white;
+        }
+
+        .excluir {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        .voltar {
+            margin-top: 10px;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+
+        .rodape {
+            margin-top: 50px;
+            font-size: 12px;
+        }
+
+        .assinatura {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .assinatura p {
+            margin: 6px 0;
+        }
+
+        .legenda-cores {
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .legenda-cores span {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .verde-box {
+            background-color: #c8e6c9;
+        }
+
+        .azul-box {
+            background-color: #bbdefb;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            @page {
+                size: landscape;
+                margin: 1cm;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            th, td {
+                white-space: nowrap !important;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cabecalho">
+    <h2>SECRETARIA MUNICIPAL DE EDUCAÇÃO</h2>
+    <h3>PREFEITURA MUNICIPAL DE DARCINÓPOLIS</h3>
+    <h3>ESCOLA MUNICIPAL VITOR DIAS</h3>
+    <p>Rua 7 de setembro, 669 – Centro – Município de Darcinópolis-TO.</p>
+    <p>E-mail: escvitordias@gmail.com</p>
+</div>
+
+<div class="no-print">
+    <h2>Imprimir Folha de Pagamento</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="mes">Mês</label>
+        <select name="mes" required>
+            <option value="">Selecione</option>
+            {% for m in meses %}
+                <option value="{{ m }}" {% if m == mes_selecionado %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="ano">Ano</label>
+        <input type="number" name="ano" required value="{{ ano_selecionado|default:'' }}">
+
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div class="botoes">
+        <button onclick="window.print()">🖨️ Imprimir Folha</button>
+    </div>
+
+    <div class="voltar">
+        <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
+    </div>
+</div>
+
+{% if folhas %}
+    <h3>Folha de Pagamento - {{ mes_selecionado }}/{{ ano_selecionado }}</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nº</th>
+                <th>Servidor</th>
+                <th>Função</th>
+                <th>CH Semanal</th>
+                <th>CH Mensal</th>
+                <th>Faltas</th>
+                <th>Diárias (Qtd)</th>
+                <th>Diárias (Horas)</th>
+                <th>Substituto</th>
+                <th>Aluno Especial</th>
+                <th>Planejamento</th>
+                <th>Observações</th>
+                <th class="no-print">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for folha in folhas %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="servidor">{{ folha.funcionario.nome }}</td>
+                <td>{{ folha.funcionario.funcao }}</td>
+                <td>{{ folha.funcionario.carga_horaria_semanal }}</td>
+                <td>{{ folha.funcionario.carga_horaria_mensal }}</td>
+                <td>{{ folha.faltas }}</td>
+                <td>{{ folha.diarias_qtd }}</td>
+                <td>{{ folha.diarias_horas }}</td>
+                <td>
+                    {% if folha.servidor_substituto %}
+                        {{ folha.servidor_substituto.nome }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="{% if folha.funcionario.aluno_especial %}verde{% endif %}">
+                    {{ folha.funcionario.aluno_especial|yesno:"Sim,Não" }}
+                </td>
+                <td class="{% if folha.funcionario.planejamento %}azul{% endif %}">
+                    {{ folha.funcionario.planejamento|yesno:"Sim,Não" }}
+                </td>
+                <td>{{ folha.observacoes }}</td>
+                <td class="no-print">
+                    <a href="{% url 'editar_folha' folha.id %}" class="btn-acoes editar">Editar</a>
+                    <a href="{% url 'excluir_folha' folha.id %}" class="btn-acoes excluir" onclick="return confirm('Tem certeza que deseja excluir este lançamento?')">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="rodape">
+        <div class="assinatura">
+            <p>Darcinópolis - TO, {{ now|date:"d/m/Y H:i" }}</p>
+            <p style="margin-top: 60px;">_______________________________________</p>
+            <p>Diretor(a) da Escola Municipal Vitor Dias</p>
+        </div>
+
+        <div class="legenda-cores">
+            <strong>Legenda:</strong><br>
+            <span class="verde-box">Aluno Especial</span>
+            <span class="azul-box">Planejamento</span>
+        </div>
+    </div>
+{% elif mes_selecionado and ano_selecionado %}
+    <p><strong>Nenhum lançamento encontrado para {{ mes_selecionado }}/{{ ano_selecionado }}.</strong></p>
+{% endif %}
+
+</body>
+</html>

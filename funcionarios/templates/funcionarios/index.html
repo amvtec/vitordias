@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Folha de Pagamento - Início</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            margin-bottom: 40px;
+        }
+        .botao {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 20px;
+            font-size: 18px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+        }
+        .botao:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestão de Folha de Pagamento</h1>
+
+    <a href="{% url 'selecionar_funcionario' %}" class="botao">Lançar Folha de Pagamento</a>
+    <a href="{% url 'imprimir_folha' %}" class="botao">Imprimir Folha</a>
+    <a href="{% url 'cadastrar_funcionario' %}" class="botao">Cadastrar Funcionário</a>
+    <a href="{% url 'listar_funcionarios' %}" class="botao">Ver Funcionários</a>
+    <a href="{% url 'painel_alunos' %}" class="botao">⬅ Voltar para o Painel de Alunos</a>
+
+</body>
+</html>

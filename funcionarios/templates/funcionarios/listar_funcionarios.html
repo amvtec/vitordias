@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários Cadastrados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .acoes a {
+            margin-right: 6px;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .editar {
+            background: #1976D2;
+            color: white;
+        }
+
+        .excluir {
+            background: #D32F2F;
+            color: white;
+        }
+
+        .voltar {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Funcionários Cadastrados</h2>
+
+    {% if funcionarios %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Função</th>
+                    <th>C.H. Semanal</th>
+                    <th>C.H. Mensal</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for funcionario in funcionarios %}
+                    <tr>
+                        <td>{{ funcionario.nome }}</td>
+                        <td>{{ funcionario.funcao }}</td>
+                        <td>{{ funcionario.carga_horaria_semanal }}</td>
+                        <td>{{ funcionario.carga_horaria_mensal }}</td>
+                        <td class="acoes">
+                            <a href="{% url 'editar_funcionario' funcionario.id %}" class="editar">Editar</a>
+                            <a href="{% url 'excluir_funcionario' funcionario.id %}" class="excluir"
+                               onclick="return confirm('Deseja realmente excluir este funcionário?')">Excluir</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align:center;"><strong>Nenhum funcionário encontrado.</strong></p>
+    {% endif %}
+
+    <div class="voltar">
+        <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
+    </div>
+
+</body>
+</html>

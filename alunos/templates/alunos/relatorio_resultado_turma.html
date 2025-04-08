@@ -1,0 +1,152 @@
+{% load static %}
+{% load custom_filters %} {# Para usar calcular_idade #}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório da Turma</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #eef3fb;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px 40px;
+            border: 2px solid #999;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+
+        .escola {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .escola img {
+            height: 80px;
+        }
+
+        .info {
+            background-color: #f2f2f2;
+            padding: 12px;
+            border: 1px solid #ccc;
+            margin-bottom: 30px;
+            border-radius: 6px;
+        }
+
+        .info strong {
+            color: #003366;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #003366;
+            color: white;
+        }
+
+        .voltar {
+            margin-top: 30px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #003366;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .voltar:hover {
+            background-color: #002244;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="escola">
+        {% if escola.logo %}
+            <img src="{{ escola.logo.url }}" alt="Logo da Escola">
+        {% endif %}
+        <h2>{{ escola.nome_escola }}</h2>
+        <p>{{ escola.endereco }}, {{ escola.numero }} - {{ escola.bairro }} - {{ escola.cidade }}/{{ escola.uf }}</p>
+    </div>
+
+    <h1>📊 Relatório da Turma</h1>
+
+    <div class="info">
+        <p><strong>Série:</strong> {{ serie }}</p>
+        <p><strong>Turma:</strong> {{ turma }}</p>
+        <p><strong>Total de Alunos:</strong> {{ total_alunos }}</p>
+        <p><strong>👦 Meninos:</strong> {{ total_m }} | 👧 Meninas: {{ total_f }} | 🧑 Outros: {{ total_o }}</p>
+    </div>
+
+    {% if distribuicao_idade %}
+        <h3>📈 Distribuição por Idade:</h3>
+        <table>
+            <thead>
+                <tr>
+                    {% for idade, _ in distribuicao_idade.items %}
+                        <th>{{ idade }} anos</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for _, quantidade in distribuicao_idade.items %}
+                        <td>{{ quantidade }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+
+    <h3 style="margin-top: 30px;">🧾 Lista de Alunos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Sexo</th>
+                <th>Idade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aluno in alunos %}
+                <tr>
+                    <td>{{ aluno.nome }}</td>
+                    <td>{{ aluno.get_sexo_display }}</td>
+                    <td>{{ aluno.data_nascimento|calcular_idade }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">Nenhum aluno encontrado para esta turma.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'relatorio_por_turma_view' %}" class="voltar">🔙 Escolher outra turma</a>
+</div>
+</body>
+</html>
