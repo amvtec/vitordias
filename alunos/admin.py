@@ -25,3 +25,8 @@ class FuncionarioAdmin(admin.ModelAdmin):
     search_fields = ('nome', 'numero_matricula')
     list_filter = ('funcao',)
 
+@admin.register(Escola)
+class EscolaAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'cnpj', 'cidade', 'uf')
+    search_fields = ('nome', 'cnpj')
+    list_filter = ('uf',)
