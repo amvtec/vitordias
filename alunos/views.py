@@ -515,13 +515,28 @@ def import_alunos(request):
 
             for index, row in df.iterrows():
                 try:
-                    nome = str(row['Nome']).strip()
+                    nome = str(row.get('Nome', '')).strip()
+                    if not nome:
+                        continue
 
                     aluno = Aluno.objects.filter(nome__iexact=nome).first()
 
                     if aluno:
+                        aluno.data_nascimento = row.get('Data de Nascimento', aluno.data_nascimento)
                         aluno.aluno_id = row.get('ID', aluno.aluno_id)
+                        aluno.sexo = row.get('Sexo', aluno.sexo)
+                        aluno.cpf = row.get('CPF', aluno.cpf)
+                        aluno.rg = row.get('RG', aluno.rg)
+                        aluno.nome_pai = row.get('Nome do Pai', aluno.nome_pai)
+                        aluno.nome_mae = row.get('Nome da Mãe', aluno.nome_mae)
                         aluno.endereco = row.get('Endereço', aluno.endereco)
+                        aluno.telefone_pai = row.get('Telefone Pai', aluno.telefone_pai)
+                        aluno.telefone_mae = row.get('Telefone Mãe', aluno.telefone_mae)
+                        aluno.cidade = row.get('Cidade', aluno.cidade)
+                        aluno.uf = row.get('UF', aluno.uf)
+                        aluno.nacionalidade = row.get('Nacionalidade', aluno.nacionalidade)
+                        aluno.ano_serie = row.get('Ano/Série', aluno.ano_serie)
+                        aluno.turno = row.get('Turno', aluno.turno)
                         aluno.save()
                         atualizados += 1
                     else:
