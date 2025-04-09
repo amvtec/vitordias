@@ -6,12 +6,11 @@ import dj_database_url
 import cloudinary
 import cloudinary_storage
 
-# Caminho base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Segurança
-SECRET_KEY = os.getenv('SECRET_KEY', 'chave-insegura-para-dev')
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+SECRET_KEY = 'chave-insegura-para-dev'
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Aplicações
@@ -60,10 +59,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-# Banco de Dados
+# Banco de Dados (ajuste conforme seu banco real)
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://user:senha@host:5432/dbname',
+        default='postgresql://vitordias_9z7b_user:fIL9uO7kRAWJWpPrreeEnTCes2Gatn0M@dpg-cvqpcrfdiees739naid0-a/vitordias_9z7b',
         conn_max_age=600
     )
 }
@@ -88,14 +87,13 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Arquivos de mídia via Cloudinary
+# Cloudinary direto
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'djxezavtr'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '475138434129133'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'T9Cymt-w0xPSvbaygHqjk_d7DwE'),
+    'CLOUD_NAME': 'djxezavtr',
+    'API_KEY': '475138434129133',
+    'API_SECRET': 'T9Cymt-w0xPSvbaygHqjk_d7DwE',
 }
 
-# Auto campo padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
