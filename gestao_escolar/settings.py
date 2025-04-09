@@ -2,7 +2,11 @@ from pathlib import Path
 import os
 import dj_database_url
 
-# Caminho base do projeto
+# Cloudinary
+import cloudinary
+import cloudinary_storage
+
+# Caminho base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Segurança
@@ -20,12 +24,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'alunos',
     'funcionarios',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
-# Middlewares (WhiteNoise incluso)
+# Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <- WhiteNoise para servir arquivos estáticos
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -36,7 +42,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'gestao_escolar.urls'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -55,7 +60,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-# Banco de Dados via variável de ambiente
+# Banco de Dados
 DATABASES = {
     'default': dj_database_url.config(
         default='postgres://user:senha@host:5432/dbname',
@@ -63,20 +68,12 @@ DATABASES = {
     )
 }
 
-# Validação de Senhas
+# Validação de senha
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # Internacionalização
@@ -85,13 +82,20 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-# Arquivos estáticos (produção)
+# Arquivos estáticos
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Garante compressão de arquivos estáticos com WhiteNoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Arquivos de mídia via Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'djxezavtr'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '475138434129133'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'T9Cymt-w0xPSvbaygHqjk_d7DwE'),
+}
 
 # Auto campo padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
