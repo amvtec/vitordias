@@ -503,6 +503,25 @@ def parse_data(data_str):
     except:
         return None
 
+import datetime
+
+def formatar_data(valor):
+    """Tenta converter a data em formatos comuns: dd/mm/yyyy, dd.mm.yyyy, yyyy-mm-dd"""
+    try:
+        if pd.isnull(valor):
+            return None
+        if isinstance(valor, datetime.date):
+            return valor
+        valor_str = str(valor).strip()
+        for fmt in ("%d/%m/%Y", "%d.%m.%Y", "%Y-%m-%d"):
+            try:
+                return datetime.datetime.strptime(valor_str, fmt).date()
+            except ValueError:
+                continue
+        raise ValueError(f'O valor "{valor}" tem um formato de data inválido. Use dd/mm/aaaa, dd.mm.aaaa ou yyyy-mm-dd.')
+    except Exception as e:
+        raise e
+
 def import_alunos(request):
     if request.method == "POST" and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
@@ -519,15 +538,13 @@ def import_alunos(request):
                     if not nome:
                         continue
 
-                    # Verifica se o aluno já existe (nome exato, ignorando maiúsculas)
                     if Aluno.objects.filter(nome__iexact=nome).exists():
                         ja_existentes += 1
-                        continue  # não importa se já existe
+                        continue
 
-                    # Cria novo aluno
                     aluno = Aluno.objects.create(
                         nome=nome,
-                        data_nascimento=row.get('Data de Nascimento'),
+                        data_nascimento=formatar_data(row.get('Data de Nascimento')),
                         aluno_id=row.get('ID'),
                         sexo=row.get('Sexo'),
                         cpf=row.get('CPF'),
@@ -552,7 +569,7 @@ def import_alunos(request):
             if erros:
                 messages.warning(
                     request,
-                    f'⚠️ Importados: {importados}. Ignorados (já existentes): {ja_existentes}. Erros:\n' + "\n".join(erros)
+                    f'⚠️ Importados: {importados}. Ignorados (já existentes): {ja_existentes}. Erros:\n' + "\n".join(erros[:10])
                 )
             else:
                 messages.success(
@@ -564,6 +581,7 @@ def import_alunos(request):
             messages.error(request, f'❌ Erro ao processar o arquivo: {e}')
 
     return render(request, 'alunos/importar_alunos.html')
+
 
 
 
