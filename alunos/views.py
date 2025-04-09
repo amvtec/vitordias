@@ -503,12 +503,12 @@ def parse_data(data_str):
     except:
         return None
 
-def import_alunos(request): 
+def import_alunos(request):
     if request.method == "POST" and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
         erros = []
-        atualizados = 0
-        nao_encontrados = 0
+        importados = 0
+        ja_existentes = 0
 
         try:
             df = pd.read_excel(excel_file)
@@ -519,42 +519,52 @@ def import_alunos(request):
                     if not nome:
                         continue
 
-                    aluno = Aluno.objects.filter(nome__iexact=nome).first()
+                    # Verifica se o aluno já existe (nome exato, ignorando maiúsculas)
+                    if Aluno.objects.filter(nome__iexact=nome).exists():
+                        ja_existentes += 1
+                        continue  # não importa se já existe
 
-                    if aluno:
-                        aluno.data_nascimento = row.get('Data de Nascimento', aluno.data_nascimento)
-                        aluno.aluno_id = row.get('ID', aluno.aluno_id)
-                        aluno.sexo = row.get('Sexo', aluno.sexo)
-                        aluno.cpf = row.get('CPF', aluno.cpf)
-                        aluno.rg = row.get('RG', aluno.rg)
-                        aluno.nome_pai = row.get('Nome do Pai', aluno.nome_pai)
-                        aluno.nome_mae = row.get('Nome da Mãe', aluno.nome_mae)
-                        aluno.endereco = row.get('Endereço', aluno.endereco)
-                        aluno.bairro = row.get('Bairro', aluno.bairro)  # <- campo novo
-                        aluno.telefone_pai = row.get('Telefone Pai', aluno.telefone_pai)
-                        aluno.telefone_mae = row.get('Telefone Mãe', aluno.telefone_mae)
-                        aluno.cidade = row.get('Cidade', aluno.cidade)
-                        aluno.uf = row.get('UF', aluno.uf)
-                        aluno.nacionalidade = row.get('Nacionalidade', aluno.nacionalidade)
-                        aluno.ano_serie = row.get('Ano/Série', aluno.ano_serie)
-                        aluno.turno = row.get('Turno', aluno.turno)
-                        aluno.save()
-                        atualizados += 1
-                    else:
-                        nao_encontrados += 1
+                    # Cria novo aluno
+                    aluno = Aluno.objects.create(
+                        nome=nome,
+                        data_nascimento=row.get('Data de Nascimento'),
+                        aluno_id=row.get('ID'),
+                        sexo=row.get('Sexo'),
+                        cpf=row.get('CPF'),
+                        rg=row.get('RG'),
+                        nome_pai=row.get('Nome do Pai'),
+                        nome_mae=row.get('Nome da Mãe'),
+                        endereco=row.get('Endereço'),
+                        bairro=row.get('Bairro'),
+                        telefone_pai=row.get('Telefone Pai'),
+                        telefone_mae=row.get('Telefone Mãe'),
+                        cidade=row.get('Cidade'),
+                        uf=row.get('UF'),
+                        nacionalidade=row.get('Nacionalidade'),
+                        ano_serie=row.get('Ano/Série'),
+                        turno=row.get('Turno'),
+                    )
+                    importados += 1
 
                 except Exception as erro:
                     erros.append(f"Linha {index + 2}: {erro}")
 
             if erros:
-                messages.warning(request, f'⚠ Atualizados: {atualizados}. Não encontrados: {nao_encontrados}. Alguns erros:\n' + "\n".join(erros))
+                messages.warning(
+                    request,
+                    f'⚠️ Importados: {importados}. Ignorados (já existentes): {ja_existentes}. Erros:\n' + "\n".join(erros)
+                )
             else:
-                messages.success(request, f'✅ {atualizados} alunos atualizados. {nao_encontrados} não encontrados.')
+                messages.success(
+                    request,
+                    f'✅ {importados} alunos importados com sucesso. {ja_existentes} já existiam e foram ignorados.'
+                )
 
         except Exception as e:
             messages.error(request, f'❌ Erro ao processar o arquivo: {e}')
 
     return render(request, 'alunos/importar_alunos.html')
+
 
 
 
