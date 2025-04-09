@@ -50,6 +50,8 @@ from .models import Turma
 from datetime import date
 from calendar import monthrange
 from django.utils import timezone
+from datetime import date
+
 
 
 
