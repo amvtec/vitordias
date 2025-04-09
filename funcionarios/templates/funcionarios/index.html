@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,38 +7,64 @@
     <title>Folha de Pagamento - Início</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
             text-align: center;
-            padding: 50px;
         }
+
         h1 {
-            margin-bottom: 40px;
+            color: #003366;
+            font-size: 24px;
+            margin-bottom: 30px;
         }
+
+        .botoes {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .botao {
-            display: inline-block;
-            padding: 15px 30px;
-            margin: 20px;
-            font-size: 18px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
             text-decoration: none;
-            background-color: #4CAF50;
+            background-color: #003366;
             color: white;
-            border-radius: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
         }
+
         .botao:hover {
-            background-color: #45a049;
+            background-color: #002244;
         }
     </style>
 </head>
 <body>
 
-    <h1>Gestão de Folha de Pagamento</h1>
+<div class="container">
+    <h1>📄 Gestão de Folha de Pagamento</h1>
 
-    <a href="{% url 'selecionar_funcionario' %}" class="botao">Lançar Folha de Pagamento</a>
-    <a href="{% url 'imprimir_folha' %}" class="botao">Imprimir Folha</a>
-    <a href="{% url 'cadastrar_funcionario' %}" class="botao">Cadastrar Funcionário</a>
-    <a href="{% url 'listar_funcionarios' %}" class="botao">Ver Funcionários</a>
-    <a href="{% url 'painel_alunos' %}" class="botao">⬅ Voltar para o Painel de Alunos</a>
+    <div class="botoes">
+        <a href="{% url 'selecionar_funcionario' %}" class="botao">📝 Lançar Folha de Pagamento</a>
+        <a href="{% url 'imprimir_folha' %}" class="botao">🖨️ Imprimir Folha</a>
+        <a href="{% url 'cadastrar_funcionario' %}" class="botao">👤 Cadastrar Funcionário</a>
+        <a href="{% url 'listar_funcionarios' %}" class="botao">📋 Ver Funcionários</a>
+        <a href="{% url 'painel_alunos' %}" class="botao">⬅ Voltar para o Painel de Alunos</a>
+    </div>
+</div>
 
 </body>
 </html>

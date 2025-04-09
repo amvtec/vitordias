@@ -5,120 +5,146 @@
     <title>Selecionar Funcionário</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-            background: #f3f3f3;
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 25px;
         }
 
         form.busca {
             display: flex;
-            justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
         form.busca input[type="text"] {
             flex: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 14px;
+            max-width: 400px;
         }
 
         form.busca button {
-            padding: 8px 16px;
-            background: #4CAF50;
+            padding: 10px 20px;
+            background-color: #003366;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 14px;
             cursor: pointer;
+        }
+
+        form.busca button:hover {
+            background-color: #002244;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
             margin-top: 20px;
+            font-size: 14px;
         }
 
         th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-            text-align: left;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
         }
 
         th {
-            background: #eee;
+            background-color: #f0f0f0;
+            color: #003366;
         }
 
         a.btn {
-            background: #2196F3;
+            background: #1976d2;
             color: white;
-            padding: 6px 10px;
+            padding: 6px 12px;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        a.btn:hover {
+            background-color: #0d47a1;
         }
 
         .voltar {
-            margin-top: 30px;
             text-align: center;
+            margin-top: 30px;
         }
 
         .voltar a {
             text-decoration: none;
             background: #555;
             color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<h2>Selecionar Funcionário</h2>
+<div class="container">
+    <h2>👤 Selecionar Funcionário</h2>
 
-<form method="get" class="busca">
-    <input type="text" name="q" placeholder="Digite o nome do funcionário..." value="{{ request.GET.q }}">
-    <button type="submit">🔍 Buscar</button>
-</form>
+    <form method="get" class="busca">
+        <input type="text" name="q" placeholder="Digite o nome do funcionário..." value="{{ request.GET.q }}">
+        <button type="submit">🔍 Buscar</button>
+    </form>
 
-{% if funcionarios %}
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Função</th>
-                <th>Carga Horária</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for funcionario in funcionarios %}
+    {% if funcionarios %}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ funcionario.nome }}</td>
-                    <td>{{ funcionario.funcao }}</td>
-                    <td>{{ funcionario.carga_horaria_mensal }}h/mês</td>
-                    <td><a href="{% url 'lancar_folha_funcionario' funcionario.id %}" class="btn">Lançar Folha</a></td>
+                    <th>Nome</th>
+                    <th>Função</th>
+                    <th>CH Semanal</th>
+                    <th>CH Mensal</th>
+                    <th>Ação</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p style="text-align: center;"><strong>Nenhum funcionário encontrado.</strong></p>
-{% endif %}
+            </thead>
+            <tbody>
+                {% for funcionario in funcionarios %}
+                    <tr>
+                        <td>{{ funcionario.nome }}</td>
+                        <td>{{ funcionario.funcao }}</td>
+                        <td>{{ funcionario.carga_horaria_semanal }}h</td>
+                        <td>{{ funcionario.carga_horaria_mensal }}h</td>
+                        <td><a href="{% url 'lancar_folha_funcionario' funcionario.id %}" class="btn">Lançar Folha</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; margin-top: 20px;"><strong>Nenhum funcionário encontrado.</strong></p>
+    {% endif %}
 
-<div class="voltar">
-    <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
+    <div class="voltar">
+        <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
+    </div>
 </div>
 
 </body>

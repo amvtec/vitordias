@@ -5,20 +5,33 @@
     <title>Funcionários Cadastrados</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f9f9f9;
-            padding: 30px;
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            font-size: 14px;
         }
 
         th, td {
@@ -28,24 +41,27 @@
         }
 
         th {
-            background: #eee;
+            background-color: #f0f0f0;
+            color: #003366;
         }
 
         .acoes a {
-            margin-right: 6px;
-            padding: 5px 10px;
-            font-size: 12px;
+            margin-right: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
             text-decoration: none;
             border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
         }
 
         .editar {
-            background: #1976D2;
+            background-color: #1976D2;
             color: white;
         }
 
         .excluir {
-            background: #D32F2F;
+            background-color: #D32F2F;
             color: white;
         }
 
@@ -58,14 +74,23 @@
             text-decoration: none;
             background: #555;
             color: white;
-            padding: 8px 16px;
-            border-radius: 5px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .nenhum {
+            text-align: center;
+            color: #555;
+            font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h2>Funcionários Cadastrados</h2>
+<div class="container">
+    <h2>👨‍🏫 Funcionários Cadastrados</h2>
 
     {% if funcionarios %}
         <table>
@@ -95,12 +120,13 @@
             </tbody>
         </table>
     {% else %}
-        <p style="text-align:center;"><strong>Nenhum funcionário encontrado.</strong></p>
+        <p class="nenhum">🚫 Nenhum funcionário encontrado.</p>
     {% endif %}
 
     <div class="voltar">
         <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
     </div>
+</div>
 
 </body>
 </html>

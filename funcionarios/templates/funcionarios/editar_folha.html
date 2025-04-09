@@ -5,113 +5,158 @@
     <title>Editar Lançamento - {{ funcionario.nome }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 30px;
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
         }
-        form {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            max-width: 600px;
+
+        .container {
+            max-width: 800px;
             margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
         }
+
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
         }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
         label {
-            display: block;
-            margin-top: 15px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 5px;
         }
+
         input, select, textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 14px;
         }
-        .btn {
-            margin-top: 20px;
-            background: #1976d2;
+
+        button {
+            margin-top: 30px;
+            background-color: #1976d2;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
             cursor: pointer;
+            align-self: center;
         }
-        .btn:hover {
-            background: #1565c0;
+
+        button:hover {
+            background-color: #1565c0;
         }
+
         .voltar {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
         }
+
         .voltar a {
             text-decoration: none;
-            color: #4CAF50;
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<h2>Editar Lançamento: {{ funcionario.nome }}</h2>
+<div class="container">
+    <h2>✏️ Editar Lançamento: {{ funcionario.nome }}</h2>
 
-<form method="post">
-    {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
 
-    <label for="mes">Mês</label>
-    <select name="mes" required>
-        <option value="">Selecione o mês</option>
-        {% for m in meses %}
-            <option value="{{ m }}" {% if m == folha.mes %}selected{% endif %}>{{ m }}</option>
-        {% endfor %}
-    </select>
+        <div class="form-group">
+            <label for="mes">Mês</label>
+            <select name="mes" required>
+                <option value="">Selecione o mês</option>
+                {% for m in meses %}
+                    <option value="{{ m }}" {% if m == folha.mes %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <label for="id_ano">Ano</label>
-    {{ form.ano }}
+        <div class="form-group">
+            <label for="id_ano">Ano</label>
+            {{ form.ano }}
+        </div>
 
-    <label for="id_faltas">Faltas</label>
-    {{ form.faltas }}
+        <div class="form-group">
+            <label for="id_faltas">Faltas</label>
+            {{ form.faltas }}
+        </div>
 
-    <label for="id_diarias_qtd">Diárias - Quantidade</label>
-    {{ form.diarias_qtd }}
+        <div class="form-group">
+            <label for="id_diarias_qtd">Diárias - Quantidade</label>
+            {{ form.diarias_qtd }}
+        </div>
 
-    <label for="id_diarias_horas">Diárias - Horas</label>
-    {{ form.diarias_horas }}
+        <div class="form-group">
+            <label for="id_diarias_horas">Diárias - Horas</label>
+            {{ form.diarias_horas }}
+        </div>
 
-    <label for="id_servidor_substituto">Servidor Substituto</label>
-    {{ form.servidor_substituto }}
+        <div class="form-group">
+            <label for="id_servidor_substituto">Servidor Substituto</label>
+            {{ form.servidor_substituto }}
+        </div>
 
-    <label for="id_observacoes">Observações</label>
-    {{ form.observacoes }}
+        <div class="form-group" style="flex: 1 1 100%;">
+            <label for="id_observacoes">Observações</label>
+            {{ form.observacoes }}
+        </div>
 
-    <button type="submit" class="btn">Salvar Alterações</button>
-</form>
+        <button type="submit">💾 Salvar Alterações</button>
+    </form>
+
+    <div class="voltar">
+        <a href="{% url 'imprimir_folha' %}">← Voltar para Imprimir Folha</a>
+    </div>
+</div>
 
 <script>
-    // Aplicando o mesmo cálculo automático do lançamento
     document.addEventListener('DOMContentLoaded', function () {
         const inputQtd = document.getElementById('id_diarias_qtd');
         const inputHoras = document.getElementById('id_diarias_horas');
-        // Desabilita o campo de horas
+
         if (inputHoras) {
             inputHoras.disabled = true;
         }
+
         if (inputQtd && inputHoras) {
             inputQtd.addEventListener('input', function () {
                 const qtd = parseFloat(inputQtd.value);
-                if (!isNaN(qtd)) {
-                    inputHoras.value = (qtd * 4).toFixed(0);
-                } else {
-                    inputHoras.value = '';
-                }
+                inputHoras.value = !isNaN(qtd) ? (qtd * 4).toFixed(0) : '';
             });
         }
     });
 </script>
-
-<div class="voltar">
-    <a href="{% url 'imprimir_folha' %}">← Voltar para Imprimir Folha</a>
-</div>
 
 </body>
 </html>
