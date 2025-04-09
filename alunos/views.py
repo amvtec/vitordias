@@ -530,6 +530,7 @@ def import_alunos(request):
                         aluno.nome_pai = row.get('Nome do Pai', aluno.nome_pai)
                         aluno.nome_mae = row.get('Nome da Mãe', aluno.nome_mae)
                         aluno.endereco = row.get('Endereço', aluno.endereco)
+                        aluno.bairro = row.get('Bairro', aluno.bairro)  # <- campo novo
                         aluno.telefone_pai = row.get('Telefone Pai', aluno.telefone_pai)
                         aluno.telefone_mae = row.get('Telefone Mãe', aluno.telefone_mae)
                         aluno.cidade = row.get('Cidade', aluno.cidade)
