@@ -505,7 +505,6 @@ def parse_data(data_str):
     except:
         return None
 
-import datetime
 
 def formatar_data(valor):
     """Tenta converter a data em formatos comuns: dd/mm/yyyy, dd.mm.yyyy, yyyy-mm-dd"""
