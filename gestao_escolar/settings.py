@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'funcionarios',
     'cloudinary',
     'cloudinary_storage',
+    'controle',
+    'funcionarios',
 ]
 
 # Middlewares

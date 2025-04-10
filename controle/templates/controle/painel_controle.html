@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Controle</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 25px;
+            justify-items: center;
+        }
+
+        .botao {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        .botao:hover {
+            filter: brightness(0.9);
+        }
+
+        .azul { background-color: #2b6cb0; }
+        .verde { background-color: #2f855a; }
+        .vermelho { background-color: #c53030; }
+        .laranja { background-color: #dd6b20; }
+        .roxo { background-color: #6b46c1; }
+        .cinza { background-color: #4a5568; }
+
+        .rodape {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .rodape a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 0px 60px;  /* Ajuste para aumentar a altura e largura */
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            font-size: 13px;  /* Tamanho ajustado para ficar mais alinhado aos outros botões */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📊 Painel de Controle - Frequência de Funcionários</h2>
+
+    <div class="grid">
+        <a class="botao azul" href="{% url 'cadastrar_funcionario' %}">Cadastrar<br>Funcionário</a>
+        <a class="botao verde" href="{% url 'listar_funcionarios' %}">Listar<br>Funcionários</a>
+        <a class="botao laranja" href="{% url 'cadastrar_horario' %}">Cadastrar<br>Horário</a>
+        <a class="botao roxo" href="{% url 'cadastrar_feriado' %}">Cadastrar<br>Feriado</a>
+        <a class="botao vermelho" href="{% url 'selecionar_funcionarios' %}">Gerar<br>Folhas</a>
+        <a class="botao cinza" href="{% url 'listar_folhas' %}">Folhas<br>Geradas</a>
+    </div>
+
+    <div class="rodape">
+        <!-- Botão ajustado para ficar no mesmo estilo dos outros -->
+        <a href="{% url 'painel_alunos' %}" class="botao cinza">← Voltar</a>
+    </div>
+    
+</div>
+
+</body>
+</html>

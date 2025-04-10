@@ -114,8 +114,8 @@
         }
 
         .btn {
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
             background-color: #e0e0e0;
             color: #000;
             text-decoration: none;
@@ -221,7 +221,6 @@
         <a href="{% url 'relatorio_rematricula' %}">📑 Relatório de Rematrícula</a>
         <a href="{% url 'alocar_alunos' %}">👥 Alunos</a>
         <a href="{% url 'aniversariantes_view' %}">🎂 Aniversariantes</a>
-        <a href="{% url 'pagina_inicial' %}">💼 Folha de Pagamento</a>
     {% endif %}
 
     <a href="{% url 'logout' %}" class="logout">🚪 Sair</a>
@@ -237,9 +236,10 @@
         <a href="{% url 'pagina_matricula' %}" class="btn"><span>📄</span>Matrícula</a>
         <a href="{% url 'buscar_aluno_rematricula' %}" class="btn"><span>🔄</span>Rematrícula</a>
 
-        {% if request.user.funcionario.funcao == "Agente Administrativo" %}
+        {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
             <a href="{% url 'importar_alunos' %}" class="btn"><span>📥</span>Importar<br>Alunos</a>
-            <a href="{% url 'cadastrar_funcionario' %}" class="btn"><span>👨‍💼</span>Cadastrar<br>Funcionário</a>
+            <a href="{% url 'painel_controle' %}" class="btn"><span>📑</span>Folha de Frequência</a>
+            <a href="{% url 'pagina_inicial' %}" class="btn"><span>💼</span>Folha de Pagamento</a>
         {% endif %}
     </div>
 

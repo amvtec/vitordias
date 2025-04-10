@@ -67,16 +67,16 @@ def imprimir_folha(request):
 
 from .forms import FuncionarioForm
 
-def cadastrar_funcionario(request):
+def cadastrar_novo_funcionario(request):  # Novo nome da função
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('pagina_inicial')
+            return redirect('pagina_inicial')  # Redireciona após salvar
     else:
         form = FuncionarioForm()
     
-    return render(request, 'funcionarios/cadastrar_funcionario.html', {'form': form})
+    return render(request, 'funcionarios/cadastrar_novo_funcionario.html', {'form': form})
 
 
 def editar_folha(request, folha_id):
@@ -110,7 +110,7 @@ def excluir_folha(request, folha_id):
         return redirect('imprimir_folha')
     return render(request, 'funcionarios/excluir_folha.html', {'folha': folha})
 
-def listar_funcionarios(request):
+def ver_funcionarios(request):
     funcionarios = Funcionario.objects.all().order_by('nome')
     return render(request, 'funcionarios/listar_funcionarios.html', {'funcionarios': funcionarios})
 

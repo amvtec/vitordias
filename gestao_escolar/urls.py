@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('alunos/', include('alunos.urls')),
     path('funcionarios/', include('funcionarios.urls')),
+    path('controle/', include('controle.urls')),
 ]
 
 # 👇 Adicione isso para servir arquivos de mídia durante o desenvolvimento

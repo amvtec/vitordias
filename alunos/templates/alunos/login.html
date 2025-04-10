@@ -1,4 +1,3 @@
-<!-- alunos/templates/login.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,7 +6,7 @@
     <title>Login</title>
     <style>
         body {
-            font-family: Tahoma, Arial, sans-serif;
+            font-family: 'Tahoma', 'Arial', sans-serif;
             background-color: #dce4f7;
             margin: 0;
             padding: 0;
@@ -15,33 +14,45 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background-image: 
+                url('https://cdn-icons-png.flaticon.com/512/3036/3036618.png'),
+                url('https://cdn-icons-png.flaticon.com/512/3036/3036640.png'),
+                url('https://cdn-icons-png.flaticon.com/512/3036/3036581.png'),
+                url('https://cdn-icons-png.flaticon.com/512/2921/2921222.png'),
+                url('https://cdn-icons-png.flaticon.com/512/3701/3701411.png');
+            background-position: 10px 10px, 100px 50px, 150px 200px, 300px 100px, 500px 300px;
+            background-repeat: no-repeat;
+            background-size: 60px 60px;
+            background-attachment: fixed;
         }
 
         .login-container {
-            background-color: #f2f2f2;
-            padding: 30px 30px 25px 30px;
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo branco com opacidade */
+            padding: 25px 30px 20px 30px;
             border-radius: 6px;
             border: 2px solid #999;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-            width: 340px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            width: 300px;  /* Reduzir largura */
             text-align: center;
+            z-index: 1; /* Para garantir que o formulário fique sobre o fundo */
         }
 
         h2 {
-            font-size: 20px;
+            font-size: 18px; /* Reduzir o tamanho do título */
             color: #003366;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #ccc;
             padding-bottom: 8px;
+            font-weight: bold;
         }
 
         input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            border-radius: 2px;
+            width: 281px;  /* Ajustar largura do campo de entrada */
+            padding: 8px;  /* Diminuir o preenchimento */
+            margin: 6px 0 12px 0;  /* Ajustar a margem */
+            border-radius: 4px;
             border: 1px solid #999;
-            font-size: 14px;
+            font-size: 12px;  /* Reduzir o tamanho da fonte */
             background-color: #fff;
         }
 
@@ -52,7 +63,7 @@
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 10px;  /* Ajustar o tamanho do botão */
             background-color: #4d90fe;
             color: white;
             border: none;
@@ -68,7 +79,7 @@
         }
 
         .error, .success {
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 10px;
             padding: 6px;
             border-radius: 4px;
@@ -93,16 +104,30 @@
 
         label {
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px; /* Reduzir o tamanho da fonte do label */
             display: block;
             margin-bottom: 4px;
             text-align: left;
         }
+
+        .school-logo {
+            width: 80%;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .rodape {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #003366;
+        }
     </style>
 </head>
 <body>
+
     <div class="login-container">
-        <h2>🔐 Login</h2>
+        <h2>📚 Sistema de Gestão Escolar - Login</h2>
+
 
         {% if messages %}
             <div>
@@ -127,6 +152,11 @@
             {% endfor %}
             <button type="submit">Entrar</button>
         </form>
+
+        <div class="rodape">
+            <p>🔐 Acesso restrito a usuários autorizados.</p>
+        </div>
     </div>
+
 </body>
 </html>

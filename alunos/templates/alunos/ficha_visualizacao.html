@@ -204,7 +204,7 @@
         <a href="{% url 'pesquisar_aluno_sidebar' %}" class="btn btn-voltar">🔙 Voltar</a>
         {% if request.user.is_authenticated %}
             {% with funcionario=request.user.funcionario %}
-                {% if funcionario.funcao == "Diretor(a)" or funcionario.funcao == "Secretario(a)" %}
+            {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
                     <a href="{% url 'gerar_pdf_matricula' aluno.id %}" class="btn btn-pdf">📅 PDF</a>
                     <a href="{% url 'editar_aluno' aluno.id %}" class="btn btn-editar">✏️ Editar</a>
                 {% elif funcionario.funcao == "Coordenador(a)" %}

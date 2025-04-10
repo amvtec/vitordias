@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Horário de Trabalho</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px; /* Espaço entre os campos */
+        }
+
+        .input-group div {
+            flex: 1;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 5px;
+        }
+
+        select, input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 14px;
+        }
+
+        .btn {
+            align-self: center;
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #204b80;
+        }
+
+        .voltar {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🕒 Cadastrar Horário de Trabalho</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="input-group">
+            <div>
+                <label for="{{ form.funcionario.id_for_label }}">Funcionário:</label>
+                {{ form.funcionario }}
+            </div>
+
+            <div>
+                <label for="{{ form.turno.id_for_label }}">Turno:</label>
+                {{ form.turno }}
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div>
+                <label for="{{ form.horario_inicio.id_for_label }}">Horário de Início:</label>
+                {{ form.horario_inicio }}
+            </div>
+
+            <div>
+                <label for="{{ form.horario_fim.id_for_label }}">Horário de Fim:</label>
+                {{ form.horario_fim }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Salvar Horário</button>
+    </form>
+
+    <div class="voltar">
+        <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>
+    </div>
+</div>
+
+</body>
+</html>

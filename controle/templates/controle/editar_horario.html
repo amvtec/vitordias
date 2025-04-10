@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Horário</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container input, .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .botao {
+            background-color: #2b6cb0;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .botao:hover {
+            background-color: #1a4b7c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🕒 Editar Horário de {{ funcionario.nome }}</h2>
+
+    <div class="form-container">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="botao">Salvar Horário</button>
+        </form>
+    </div>
+
+    <div class="rodape">
+        <a href="{% url 'listar_funcionarios' %}" class="botao">← Voltar para a Lista de Funcionários</a>
+    </div>
+</div>
+
+</body>
+</html>
