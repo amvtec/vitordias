@@ -62,11 +62,16 @@ WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
 # Banco de Dados (ajuste conforme seu banco real)
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://vitordias_9z7b_user:fIL9uO7kRAWJWpPrreeEnTCes2Gatn0M@dpg-cvqpcrfdiees739naid0-a/vitordias_9z7b',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  # Nome do banco de dados
+        'USER': 'postgres.yyfimibwyjcnhlmfjdun',  # O nome do usuário
+        'PASSWORD': 'Amv@1302',  # Sua senha
+        'HOST': 'aws-0-us-east-1.pooler.supabase.com',  # O host
+        'PORT': '5432',  # A porta padrão do PostgreSQL
+    }
 }
+
 
 # Validação de senha
 AUTH_PASSWORD_VALIDATORS = [
