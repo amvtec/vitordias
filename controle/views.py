@@ -329,7 +329,7 @@ def cadastrar_funcionario(request):
         form = FuncionarioForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('cadastrar_funcionario')  # ou redirecionar para uma lista
+            return redirect('listar_funcionarios')  # Redireciona para a lista de funcionários após salvar
     else:
         form = FuncionarioForm()
 
