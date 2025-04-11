@@ -5,6 +5,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Controle</title>
     <style>
         body {
@@ -12,10 +13,10 @@
             background-color: #f0f4ff;
             margin: 0;
             padding: 0;
-            height: 100vh; /* Garante que o corpo da página tenha 100% da altura da tela */
+            height: 100vh;
             display: flex;
-            align-items: center;  /* Alinha verticalmente no centro */
-            justify-content: center;  /* Alinha horizontalmente no centro */
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
@@ -52,7 +53,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;  /* Ajuste do tamanho do emoji */
+            font-size: 24px;
             font-weight: bold;
             flex-direction: column;
             text-align: center;
@@ -66,8 +67,8 @@
         }
 
         .botao span {
-            font-size: 14px;  /* Ajustando o texto embaixo */
-            margin-top: 5px;  /* Deixa o nome um pouco mais distante do emoji */
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         /* Definindo cores diferentes para cada botão */
@@ -92,7 +93,6 @@
             font-weight: bold;
         }
 
-        /* Estilos dos aniversariantes */
         .aniversariantes {
             margin-top: 50px;
             background-color: #f9f9f9;
@@ -112,6 +112,28 @@
             color: #003366;
         }
 
+        /* Botão de Importação no canto inferior direito */
+        .importar-botao {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #007BFF;  /* Cor do botão */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .importar-botao:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +190,9 @@
         <a href="{% url 'painel_alunos' %}">← Voltar</a>
     </div>
 </div>
+
+<!-- Botão de Importação no canto inferior -->
+<a href="{% url 'importar_funcionarios' %}" class="importar-botao">📥</a>
 
 </body>
 </html>

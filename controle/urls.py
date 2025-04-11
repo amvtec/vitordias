@@ -19,6 +19,7 @@ urlpatterns = [
     path('editar-horario/<int:funcionario_id>/', views.editar_horario, name='editar_horario'),
     path('excluir-folha/<int:folha_id>/', views.excluir_folha, name='excluir_folha'),
     path('listar-folhas/', views.listar_folhas, name='listar_folhas'),
+    path('importar_funcionarios/', views.importar_funcionarios, name='importar_funcionarios'),
 
     
 

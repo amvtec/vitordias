@@ -51,3 +51,7 @@ class FeriadoForm(forms.ModelForm):
             'data': forms.DateInput(attrs={'type': 'date'}),
             'sabado_letivo': forms.CheckboxInput(attrs={'class': 'checkbox-input'}),  # Checkbox para sábado letivo
         }
+
+
+class ImportacaoFuncionarioForm(forms.Form):
+    excel_file = forms.FileField(label='Arquivo Excel', required=True)

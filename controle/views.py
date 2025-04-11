@@ -12,6 +12,12 @@ from django.shortcuts import render
 from .models import FolhaFrequencia
 from django.db.models import Q
 import locale
+import pandas as pd
+from django.shortcuts import render
+from django.contrib import messages
+from .models import Funcionario, Setor
+from django.http import HttpResponseRedirect
+from .forms import ImportacaoFuncionarioForm
 
 
 # Mapeamento manual dos dias da semana em português
@@ -458,3 +464,55 @@ def painel_controle(request):
     }
 
     return render(request, 'controle/painel_controle.html', context)
+
+def importar_funcionarios(request):
+    if request.method == 'POST' and request.FILES.get('excel_file'):
+        excel_file = request.FILES['excel_file']
+
+        # Verifique se o arquivo é um Excel
+        if not excel_file.name.endswith('.xlsx') and not excel_file.name.endswith('.xls'):
+            messages.error(request, "Por favor, envie um arquivo Excel (.xlsx ou .xls).")
+            return render(request, 'controle/importar_funcionarios.html')
+
+        try:
+            # Usando pandas para ler o arquivo Excel
+            df = pd.read_excel(excel_file)
+
+            # Verificando os nomes das colunas
+            print("Colunas encontradas no arquivo Excel:", df.columns)
+
+            # Convertendo as colunas de data para o formato correto (YYYY-MM-DD)
+            df['Data de Admissão'] = pd.to_datetime(df['Data de Admissão'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+            df['Data de Nascimento'] = pd.to_datetime(df['Data de Nascimento'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+
+            # Percorrendo as linhas do arquivo Excel
+            for index, row in df.iterrows():
+                # Verificar se o setor existe antes de atribuir
+                setor = Setor.objects.filter(nome=row['Setor']).first()  # Ajuste conforme o nome do setor no seu arquivo
+
+                # Verifica se o setor existe no banco
+                if setor:
+                    # Criando ou atualizando o funcionário com base nos dados do Excel
+                    funcionario_data = {
+                        'nome': row['Nome'],
+                        'matricula': row['Matrícula'],
+                        'cargo': row['Cargo'],
+                        'funcao': row['Função'],
+                        'data_admissao': row['Data de Admissão'],  # Usando o formato de data corrigido
+                        'setor': setor,
+                        'data_nascimento': row['Data de Nascimento'],  # Usando o formato de data corrigido
+                    }
+
+                    # Verificando se o funcionário já existe com a matrícula (por exemplo) e atualizando ou criando um novo
+                    funcionario, created = Funcionario.objects.update_or_create(
+                        matricula=row['Matrícula'],  # Ou qualquer outro campo único
+                        defaults=funcionario_data
+                    )
+
+            # Exibe uma mensagem de sucesso
+            messages.success(request, f'{len(df)} funcionários foram importados com sucesso.')
+        
+        except Exception as e:
+            messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
+    
+    return render(request, 'controle/importar_funcionarios.html')
