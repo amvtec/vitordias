@@ -471,50 +471,50 @@ def importar_funcionarios(request):
     if request.method == 'POST' and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
 
-        # Verifique se o arquivo é um Excel
-        if not excel_file.name.endswith('.xlsx') and not excel_file.name.endswith('.xls'):
+        # Verifica se é um arquivo Excel
+        if not excel_file.name.endswith(('.xlsx', '.xls')):
             messages.error(request, "Por favor, envie um arquivo Excel (.xlsx ou .xls).")
             return render(request, 'controle/importar_funcionarios.html')
 
         try:
-            # Usando pandas para ler o arquivo Excel
             df = pd.read_excel(excel_file)
 
-            # Verificando os nomes das colunas
-            print("Colunas encontradas no arquivo Excel:", df.columns)
+            # Converte datas
+            if 'Data de Admissão' in df.columns:
+                df['Data de Admissão'] = pd.to_datetime(df['Data de Admissão'], dayfirst=True, errors='coerce')
+            if 'Data de Nascimento' in df.columns:
+                df['Data de Nascimento'] = pd.to_datetime(df['Data de Nascimento'], dayfirst=True, errors='coerce')
 
-            # Convertendo as colunas de data para o formato correto (YYYY-MM-DD)
-            df['Data de Admissão'] = pd.to_datetime(df['Data de Admissão'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
-            df['Data de Nascimento'] = pd.to_datetime(df['Data de Nascimento'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+            total_importados = 0
 
-            # Percorrendo as linhas do arquivo Excel
-            for index, row in df.iterrows():
-                # Verificar se o setor existe antes de atribuir
-                setor = Setor.objects.filter(nome=row['Setor']).first()  # Ajuste conforme o nome do setor no seu arquivo
+            for _, row in df.iterrows():
+                setor = Setor.objects.filter(nome=str(row.get('Setor')).strip()).first()
+                if not setor:
+                    continue  # ignora se o setor não existir
 
-                # Verifica se o setor existe no banco
-                if setor:
-                    # Criando ou atualizando o funcionário com base nos dados do Excel
-                    funcionario_data = {
-                        'nome': row['Nome'],
-                        'matricula': row['Matrícula'],
-                        'cargo': row['Cargo'],
-                        'funcao': row['Função'],
-                        'data_admissao': row['Data de Admissão'],  # Usando o formato de data corrigido
-                        'setor': setor,
-                        'data_nascimento': row['Data de Nascimento'],  # Usando o formato de data corrigido
-                    }
+                funcionario_data = {
+                    'nome': str(row.get('Nome', '')).strip(),
+                    'cargo': str(row.get('Cargo', '')).strip(),
+                    'funcao': str(row.get('Função', '')).strip(),
+                    'data_admissao': row.get('Data de Admissão'),
+                    'setor': setor,
+                    'tem_planejamento': str(row.get('Tem Planejamento', '')).strip().lower() in ['sim', 'true', '1'],
+                    'horario_planejamento': str(row.get('Horário Planejamento', '')).strip() or None,
+                    'sabado_letivo': str(row.get('Sábado Letivo', '')).strip().lower() in ['sim', 'true', '1'],
+                    'data_nascimento': row.get('Data de Nascimento')
+                }
 
-                    # Verificando se o funcionário já existe com a matrícula (por exemplo) e atualizando ou criando um novo
-                    funcionario, created = Funcionario.objects.update_or_create(
-                        matricula=row['Matrícula'],  # Ou qualquer outro campo único
+                matricula = str(row.get('Matrícula', '')).strip()
+                if matricula:
+                    Funcionario.objects.update_or_create(
+                        matricula=matricula,
                         defaults=funcionario_data
                     )
+                    total_importados += 1
 
-            # Exibe uma mensagem de sucesso
-            messages.success(request, f'{len(df)} funcionários foram importados com sucesso.')
-        
+            messages.success(request, f'{total_importados} funcionários foram importados com sucesso.')
+
         except Exception as e:
             messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
-    
+
     return render(request, 'controle/importar_funcionarios.html')
