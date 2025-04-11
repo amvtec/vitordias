@@ -1,3 +1,6 @@
+{% load static %}
+{% load custom_filters %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -5,20 +8,25 @@
     <title>Painel de Controle</title>
     <style>
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f0f4ff;
             margin: 0;
-            padding: 40px;
+            padding: 0;
+            height: 100vh; /* Garante que o corpo da página tenha 100% da altura da tela */
+            display: flex;
+            align-items: center;  /* Alinha verticalmente no centro */
+            justify-content: center;  /* Alinha horizontalmente no centro */
         }
 
         .container {
-            max-width: 960px;
-            margin: auto;
+            width: 100%;
+            max-width: 900px;
             background-color: white;
             padding: 40px 30px;
-            border-radius: 10px;
+            border-radius: 0px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
+            border: 0px solid #999;
+            text-align: center;
         }
 
         h2 {
@@ -38,30 +46,37 @@
         .botao {
             width: 100px;
             height: 100px;
-            border-radius: 50%;
             color: white;
             text-decoration: none;
-            font-weight: bold;
-            font-size: 13px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 24px;  /* Ajuste do tamanho do emoji */
+            font-weight: bold;
+            flex-direction: column;
             text-align: center;
             padding: 10px;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
+            transition: background-color 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .botao:hover {
             filter: brightness(0.9);
         }
 
-        .azul { background-color: #2b6cb0; }
-        .verde { background-color: #2f855a; }
-        .vermelho { background-color: #c53030; }
-        .laranja { background-color: #dd6b20; }
-        .roxo { background-color: #6b46c1; }
-        .cinza { background-color: #4a5568; }
+        .botao span {
+            font-size: 14px;  /* Ajustando o texto embaixo */
+            margin-top: 5px;  /* Deixa o nome um pouco mais distante do emoji */
+        }
+
+        /* Definindo cores diferentes para cada botão */
+        .botao.cadastrar { background-color: #ff9e3d; }
+        .botao.listar { background-color: #0eb8b8; }
+        .botao.horario { background-color: #2f855a; }
+        .botao.feriado { background-color: #dd6b20; }
+        .botao.folhas { background-color: #6b46c1; }
+        .botao.geradas { background-color: #ff6347; }
 
         .rodape {
             text-align: center;
@@ -72,34 +87,86 @@
             text-decoration: none;
             background: #555;
             color: white;
-            padding: 0px 60px;  /* Ajuste para aumentar a altura e largura */
+            padding: 10px 20px;
             border-radius: 5px;
             font-weight: bold;
-            display: inline-block;
-            text-align: center;
-            font-size: 13px;  /* Tamanho ajustado para ficar mais alinhado aos outros botões */
         }
+
+        /* Estilos dos aniversariantes */
+        .aniversariantes {
+            margin-top: 50px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .aniversariantes ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .aniversariantes li {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #003366;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📊 Painel de Controle - Frequência de Funcionários</h2>
+    <h2>📊 Painel de Controle</h2>
 
     <div class="grid">
-        <a class="botao azul" href="{% url 'cadastrar_funcionario' %}">Cadastrar<br>Funcionário</a>
-        <a class="botao verde" href="{% url 'listar_funcionarios' %}">Listar<br>Funcionários</a>
-        <a class="botao laranja" href="{% url 'cadastrar_horario' %}">Cadastrar<br>Horário</a>
-        <a class="botao roxo" href="{% url 'cadastrar_feriado' %}">Cadastrar<br>Feriado</a>
-        <a class="botao vermelho" href="{% url 'selecionar_funcionarios' %}">Gerar<br>Folhas</a>
-        <a class="botao cinza" href="{% url 'listar_folhas' %}">Folhas<br>Geradas</a>
+        <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar">
+            ➕<span>Cadastrar</span>
+        </a>
+        <a href="{% url 'listar_funcionarios' %}" class="botao listar">
+            👥<span>Listar</span>
+        </a>
+        <a href="{% url 'cadastrar_horario' %}" class="botao horario">
+            🕓<span>Horário</span>
+        </a>
+        <a href="{% url 'cadastrar_feriado' %}" class="botao feriado">
+            📅<span>Feriado</span>
+        </a>
+        <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas">
+            📊<span>Folhas</span>
+        </a>
+        <a href="{% url 'listar_folhas' %}" class="botao geradas">
+            📄<span>Geradas</span>
+        </a>
+    </div>
+
+    <!-- Seção de aniversariantes do mês -->
+    <div class="aniversariantes">
+        <h3>🎉 Aniversariantes do Mês</h3>
+        <ul>
+            {% for funcionario in aniversariantes_mes %}
+                <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
+            {% empty %}
+                <li>Nenhum aniversariante deste mês.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Seção de aniversariantes do dia -->
+    <div class="aniversariantes">
+        <h3>🎂 Aniversariantes de Hoje</h3>
+        <ul>
+            {% for funcionario in aniversariantes_dia %}
+                <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
+            {% empty %}
+                <li>Nenhum aniversariante de hoje.</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <div class="rodape">
-        <!-- Botão ajustado para ficar no mesmo estilo dos outros -->
-        <a href="{% url 'painel_alunos' %}" class="botao cinza">← Voltar</a>
+        <a href="{% url 'painel_alunos' %}">← Voltar</a>
     </div>
-    
 </div>
 
 </body>

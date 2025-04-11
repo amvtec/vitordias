@@ -15,13 +15,15 @@ class Funcionario(models.Model):
     data_admissao = models.DateField()
     setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
     
-    # Adicionando novos campos
+    # Campos adicionais
     tem_planejamento = models.BooleanField(default=False)  # Se o funcionário tem planejamento
     horario_planejamento = models.CharField(max_length=50, blank=True, null=True)  # Horário do planejamento
     sabado_letivo = models.BooleanField(default=False)  # Se o sábado é letivo para esse funcionário
+    data_nascimento = models.DateField(null=True, blank=True)  # Data de nascimento, podendo ser nula
 
     def __str__(self):
         return self.nome
+
 
 
 

@@ -2,11 +2,26 @@ from django.shortcuts import render, redirect
 from .models import Funcionario, FolhaMensal
 from .forms import FolhaMensalForm
 from django.shortcuts import render, redirect, get_object_or_404
-
-
+from datetime import datetime
+from .models import Funcionario
 
 def pagina_inicial(request):
-    return render(request, 'funcionarios/index.html')
+    # Data de hoje
+    hoje = datetime.now()
+    mes_atual = hoje.month
+    dia_atual = hoje.day
+    
+    # Buscar aniversariantes do mês
+    aniversariantes_mes = Funcionario.objects.filter(data_nascimento__month=mes_atual)
+    
+    # Buscar aniversariantes do dia
+    aniversariantes_dia = Funcionario.objects.filter(data_nascimento__month=mes_atual, data_nascimento__day=dia_atual)
+
+    return render(request, 'funcionarios/index.html', {
+        'aniversariantes_mes': aniversariantes_mes,
+        'aniversariantes_dia': aniversariantes_dia
+    })
+
 
 
 def selecionar_funcionario(request):

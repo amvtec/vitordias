@@ -4,9 +4,14 @@ from .models import Funcionario
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
-        fields = ['nome', 'matricula', 'cargo', 'funcao', 'data_admissao', 'setor', 'tem_planejamento', 'horario_planejamento']
+        fields = ['nome', 'matricula', 'cargo', 'funcao', 'data_admissao', 'data_nascimento', 'setor', 'tem_planejamento', 'horario_planejamento']
         widgets = {
             'data_admissao': forms.TextInput(attrs={
+                'placeholder': '00/00/0000',
+                'class': 'data-input',
+                'autocomplete': 'off'
+            }),
+            'data_nascimento': forms.TextInput(attrs={
                 'placeholder': '00/00/0000',
                 'class': 'data-input',
                 'autocomplete': 'off'
@@ -16,8 +21,9 @@ class FuncionarioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FuncionarioForm, self).__init__(*args, **kwargs)
 
-        # Permitir formato dd/mm/yyyy para o campo data_admissao
+        # Permitir formato dd/mm/yyyy para os campos data_admissao e data_nascimento
         self.fields['data_admissao'].input_formats = ['%d/%m/%Y']
+        self.fields['data_nascimento'].input_formats = ['%d/%m/%Y']
 
         # Controlar se o campo de horário é obrigatório
         self.fields['horario_planejamento'].required = False

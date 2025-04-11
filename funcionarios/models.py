@@ -7,9 +7,11 @@ class Funcionario(models.Model):
     carga_horaria_mensal = models.IntegerField()
     planejamento = models.BooleanField(default=False)
     aluno_especial = models.BooleanField(default=False)
+    data_nascimento = models.DateField(null=True, blank=True)  # Permite valores nulos
 
     def __str__(self):
         return self.nome
+
 
 class FolhaMensal(models.Model):
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, related_name='folhas')

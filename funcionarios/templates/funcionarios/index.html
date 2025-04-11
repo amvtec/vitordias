@@ -7,19 +7,23 @@
     <title>Folha de Pagamento - Início</title>
     <style>
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f0f4ff;
             margin: 0;
-            padding: 40px;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            max-width: 700px;
-            margin: auto;
+            width: 100%;
+            max-width: 960px;
             background-color: white;
-            padding: 30px 40px;
+            padding: 40px 30px;
             border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
             border: 2px solid #999;
             text-align: center;
         }
@@ -30,39 +34,82 @@
             margin-bottom: 30px;
         }
 
-        .botoes {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 25px;
+            justify-items: center;
         }
 
         .botao {
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            background-color: #003366;
+            width: 100px;
+            height: 100px;
             color: white;
-            border-radius: 6px;
-            transition: background-color 0.3s;
+            text-decoration: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;  /* Ajuste do tamanho do emoji */
+            font-weight: bold;
+            flex-direction: column;
+            text-align: center;
+            padding: 10px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .botao:hover {
-            background-color: #002244;
+            filter: brightness(0.9);
+        }
+
+        .botao span {
+            font-size: 14px;  /* Ajustando o texto embaixo */
+            margin-top: 5px;  /* Deixa o nome um pouco mais distante do emoji */
+        }
+
+        .botao.lancamento { background-color: #ff9e3d; }
+        .botao.imprimir { background-color: #2b6cb0; }
+        .botao.cadastro { background-color: #2f855a; }
+        .botao.funcionarios { background-color: #dd6b20; }
+        .botao.voltar { background-color: #c71919; }
+
+        .rodape {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .rodape a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📄 Gestão de Folha de Pagamento</h1>
+    <h1>Lançar folha de Pagamento</h1>
 
-    <div class="botoes">
-        <a href="{% url 'selecionar_funcionario' %}" class="botao">📝 Lançar Folha de Pagamento</a>
-        <a href="{% url 'imprimir_folha' %}" class="botao">🖨️ Imprimir Folha</a>
-        <a href="{% url 'cadastrar_novo_funcionario' %}" class="botao">👤 Novo Funcionário</a>
-        <a href="{% url 'ver_funcionarios' %}" class="botao">📋 Ver Funcionários</a>
-        <a href="{% url 'painel_alunos' %}" class="botao">⬅ Voltar para o Painel de Alunos</a>
+    <div class="grid">
+        <a href="{% url 'selecionar_funcionario' %}" class="botao lancamento">
+            📝<span>Lançar</span>
+        </a>
+        <a href="{% url 'imprimir_folha' %}" class="botao imprimir">
+            🖨️<span>Imprimir</span>
+        </a>
+        <a href="{% url 'cadastrar_novo_funcionario' %}" class="botao cadastro">
+            👤<span>Cadastro</span>
+        </a>
+        <a href="{% url 'ver_funcionarios' %}" class="botao funcionarios">
+            📋<span>Funcionários</span>
+        </a>
+        <a href="{% url 'painel_alunos' %}" class="botao voltar">
+            ⬅<span>Voltar</span>
+        </a>
     </div>
 </div>
 

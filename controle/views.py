@@ -439,3 +439,22 @@ def excluir_folha(request, folha_id):
     folha = get_object_or_404(FolhaFrequencia, id=folha_id)
     folha.delete()
     return redirect('listar_folhas')
+
+from django.shortcuts import render
+from datetime import datetime
+from .models import Funcionario
+
+def painel_controle(request):
+    # Aniversariantes do mês
+    hoje = datetime.today()
+    aniversariantes_mes = Funcionario.objects.filter(data_nascimento__month=hoje.month)
+
+    # Aniversariantes do dia
+    aniversariantes_dia = Funcionario.objects.filter(data_nascimento__day=hoje.day)
+
+    context = {
+        'aniversariantes_mes': aniversariantes_mes,
+        'aniversariantes_dia': aniversariantes_dia,
+    }
+
+    return render(request, 'controle/painel_controle.html', context)
