@@ -62,14 +62,11 @@ WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
 # Banco de Dados (ajuste conforme seu banco real)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',  # Nome do banco de dados
-        'USER': 'postgres.yyfimibwyjcnhlmfjdun',  # O nome do usuário
-        'PASSWORD': 'Amv@1302',  # Sua senha
-        'HOST': 'aws-0-us-east-1.pooler.supabase.com',  # O host
-        'PORT': '5432',  # A porta padrão do PostgreSQL
-    }
+    'default': dj_database_url.config(
+        default='postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
