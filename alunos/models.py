@@ -227,6 +227,7 @@ class Escola(models.Model):
     cidade = models.CharField(max_length=100)
     uf = models.CharField(max_length=2)  # UF do Brasil (exemplo: 'MG', 'SP', etc.)
     logo = models.ImageField(upload_to='escolas/logos/', blank=True, null=True)
+    imagem_fundo = models.ImageField(upload_to='escolas/fundos/', blank=True, null=True)  # Novo campo para imagem de fundo
     telefone = models.CharField(max_length=15, blank=True, null=True)  # Telefone da escola
     email = models.EmailField(max_length=254, blank=True, null=True)  # E-mail da escola
 

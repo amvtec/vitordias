@@ -450,26 +450,37 @@ def painel_alunos(request):
     })
 
 def login_view(request):
+    # Verifica se o método da requisição é POST (submissão do formulário)
     if request.method == 'POST':
         form = LoginForm(request.POST)
+        
+        # Verifica se o formulário é válido
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            
+            # Tenta autenticar o usuário
             user = authenticate(request, username=username, password=password)
-
+            
+            # Verifica se a autenticação foi bem-sucedida
             if user is not None:
-                login(request, user)
+                login(request, user)  # Realiza o login
                 messages.success(request, "Login realizado com sucesso!")
-                return redirect('painel_alunos')  # Redireciona para o painel dos alunos
+                
+                # Redireciona o usuário para o painel de alunos
+                return redirect('painel_alunos')
             else:
+                # Caso a autenticação falhe
                 messages.error(request, "Nome de usuário ou senha inválidos.")
     else:
-        form = LoginForm()
+        form = LoginForm()  # Cria um novo formulário vazio caso a requisição não seja POST
 
+    # Renderiza o template de login com o formulário
     return render(request, 'alunos/login.html', {'form': form})
 
 def home(request):
-    return render(request, 'alunos/painel_alunos.html')  # Crie o template 'home.html' conforme sua necessidade
+    # Após o login, redireciona para o painel de alunos
+    return redirect('painel_alunos')
 
 def pesquisar_aluno_sidebar(request):
     aluno = None
@@ -1109,6 +1120,9 @@ def painel_alunos(request):
     })
 
 def login_view(request):
+    # Recupera a instância da escola (assumindo que você tem apenas uma escola cadastrada)
+    escola = Escola.objects.first()  # Pegue a primeira escola, se existir
+    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -1119,13 +1133,14 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, "Login realizado com sucesso!")
-                return redirect('painel_alunos')  # Redireciona para o painel dos alunos
+                return redirect('painel_alunos')
             else:
                 messages.error(request, "Nome de usuário ou senha inválidos.")
     else:
         form = LoginForm()
 
-    return render(request, 'alunos/login.html', {'form': form})
+    # Passa a escola como contexto para o template
+    return render(request, 'alunos/login.html', {'form': form, 'escola': escola})
 
 def home(request):
     return render(request, 'alunos/painel_alunos.html')  # Crie o template 'home.html' conforme sua necessidade

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -14,16 +16,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: 
-                url('https://cdn-icons-png.flaticon.com/512/3036/3036618.png'),
-                url('https://cdn-icons-png.flaticon.com/512/3036/3036640.png'),
-                url('https://cdn-icons-png.flaticon.com/512/3036/3036581.png'),
-                url('https://cdn-icons-png.flaticon.com/512/2921/2921222.png'),
-                url('https://cdn-icons-png.flaticon.com/512/3701/3701411.png');
-            background-position: 10px 10px, 100px 50px, 150px 200px, 300px 100px, 500px 300px;
-            background-repeat: no-repeat;
-            background-size: 60px 60px;
-            background-attachment: fixed;
+            {% if escola.imagem_fundo %}
+                background-image: url('{{ escola.imagem_fundo.url }}');  /* Carrega a imagem de fundo da escola */
+                background-position: center;
+                background-size: cover;
+                background-attachment: fixed;
+            {% else %}
+                background-color: #dce4f7;
+            {% endif %}
         }
 
         .login-container {
@@ -121,13 +121,18 @@
             font-size: 14px;
             color: #003366;
         }
+
+        .rodape p {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div class="login-container">
         <h2>📚 Sistema de Gestão Escolar - Login</h2>
-
 
         {% if messages %}
             <div>
@@ -154,7 +159,7 @@
         </form>
 
         <div class="rodape">
-            <p>🔐 Acesso restrito a usuários autorizados.</p>
+            <p>Desenvolvido por Alexandre Martins Vieira ® 2025</p>
         </div>
     </div>
 
