@@ -4,7 +4,10 @@ from .forms import FolhaMensalForm
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
 from .models import Funcionario
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def pagina_inicial(request):
     # Data de hoje
     hoje = datetime.now()
@@ -23,11 +26,11 @@ def pagina_inicial(request):
     })
 
 
-
+@login_required
 def selecionar_funcionario(request):
     funcionarios = Funcionario.objects.all()
     return render(request, 'funcionarios/selecionar_funcionario.html', {'funcionarios': funcionarios})
-
+@login_required
 def lancar_folha_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     MESES = [
@@ -54,7 +57,7 @@ def lancar_folha_funcionario(request, funcionario_id):
 
 
 from django.db.models import Q
-
+@login_required
 def imprimir_folha(request):
     folhas = []
     mes_selecionado = None
@@ -81,7 +84,7 @@ def imprimir_folha(request):
     })
 
 from .forms import FuncionarioForm
-
+@login_required
 def cadastrar_novo_funcionario(request):  # Novo nome da função
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
@@ -93,7 +96,7 @@ def cadastrar_novo_funcionario(request):  # Novo nome da função
     
     return render(request, 'funcionarios/cadastrar_novo_funcionario.html', {'form': form})
 
-
+@login_required
 def editar_folha(request, folha_id):
     folha = get_object_or_404(FolhaMensal, id=folha_id)
     funcionario = folha.funcionario
@@ -117,18 +120,18 @@ def editar_folha(request, folha_id):
         'funcionario': funcionario,
         'meses': MESES,
     })
-
+@login_required
 def excluir_folha(request, folha_id):
     folha = get_object_or_404(FolhaMensal, id=folha_id)
     if request.method == "POST":
         folha.delete()
         return redirect('imprimir_folha')
     return render(request, 'funcionarios/excluir_folha.html', {'folha': folha})
-
+@login_required
 def ver_funcionarios(request):
     funcionarios = Funcionario.objects.all().order_by('nome')
     return render(request, 'funcionarios/listar_funcionarios.html', {'funcionarios': funcionarios})
-
+@login_required
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     if request.method == 'POST':
@@ -139,7 +142,7 @@ def editar_funcionario(request, funcionario_id):
     else:
         form = FuncionarioForm(instance=funcionario)
     return render(request, 'funcionarios/editar_funcionario.html', {'form': form, 'funcionario': funcionario})
-
+@login_required
 def excluir_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     funcionario.delete()

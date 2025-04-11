@@ -52,28 +52,12 @@ from calendar import monthrange
 from django.utils import timezone
 
 
-
-
-
-def cadastrar_aluno(request):
-    if request.method == 'POST':
-        form = AlunoForm(request.POST)
-        if form.is_valid():
-            aluno = form.save()  # Salva o aluno no banco de dados
-            return redirect('gerar_pdf_matricula', aluno_id=aluno.id)  # Redireciona para gerar o PDF com o id do aluno
-        else:
-            return render(request, 'alunos/cadastrar_aluno.html', {'form': form})  # Recarrega o formulário com erros
-    else:
-        form = AlunoForm()  # Cria um formulário vazio para o GET
-    return render(request, 'alunos/cadastrar_aluno.html', {'form': form})
-
-
-
+@login_required
 def pagina_matricula(request):
     return render(request, 'alunos/pagina_matricula.html')
 
 
-
+@login_required
 def buscar_aluno_rematricula(request):
     if request.method == 'POST':
         termo = request.POST.get('busca')
@@ -83,7 +67,7 @@ def buscar_aluno_rematricula(request):
 
 
 
-
+@login_required
 def rematricula_formulario(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     ano_atual = datetime.now().year
@@ -103,16 +87,16 @@ def rematricula_formulario(request, aluno_id):
 
     return render(request, "alunos/rematricula_ficha.html", {"aluno": aluno})
 
-
+@login_required
 def aluno_cadastrado(request, aluno_id):
     return render(request, 'alunos/aluno_cadastrado.html', {'aluno_id': aluno_id})
 
-
+@login_required
 def imprimir_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     return render(request, 'alunos/imprimir_matricula.html', {'aluno': aluno})
 
-
+@login_required
 def gerar_pdf_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     usuario_logado = request.user.username if request.user.is_authenticated else "Desconhecido"
@@ -298,37 +282,11 @@ def gerar_pdf_matricula(request, aluno_id):
 
     doc.build(elements)
     return response
-
-
-
-
-
-def rematricula_confirmacao(request, aluno_id):
-    aluno = get_object_or_404(Aluno, id=aluno_id)
-
-    if request.method == 'POST':
-        resultado = request.POST.get('resultado')  # 'aprovado' ou 'reprovado'
-
-        if resultado == 'aprovado':
-            anos = ["1º ANO", "2º ANO", "3º ANO", "4º ANO", "5º ANO"]
-            atual = aluno.ano_serie
-            if atual in anos:
-                idx = anos.index(atual)
-                if idx < len(anos) - 1:
-                    aluno.ano_serie = anos[idx + 1]
-        # Se reprovado, mantém ano_serie
-        aluno.status = 'veterano'
-        aluno.save()
-
-        # Redireciona para a página de sucesso
-        return redirect('rematricula_sucesso')
-
-    return render(request, 'alunos/rematricula_confirmacao.html', {'aluno': aluno})
-
+@login_required
 def rematricula_sucesso(request):
     return render(request, 'alunos/rematricula_sucesso.html')
 
-
+@login_required
 def editar_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     if request.method == 'POST':
@@ -348,7 +306,7 @@ def editar_aluno(request, aluno_id):
 
 from django.urls import reverse
 from django.utils.http import urlencode
-
+@login_required
 def atualizar_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     if request.method == 'POST':
@@ -371,7 +329,7 @@ def atualizar_aluno(request, aluno_id):
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
-
+@login_required
 def painel_alunos(request):
     total_masculino = Aluno.objects.filter(sexo='M').count()
     total_feminino = Aluno.objects.filter(sexo='F').count()
@@ -481,7 +439,7 @@ def login_view(request):
 def home(request):
     # Após o login, redireciona para o painel de alunos
     return redirect('painel_alunos')
-
+@login_required
 def pesquisar_aluno_sidebar(request):
     aluno = None
     alunos = []
@@ -503,7 +461,7 @@ def pesquisar_aluno_sidebar(request):
     })
 
 
-
+@login_required
 def visualizar_ficha_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     return render(request, 'alunos/ficha_visualizacao.html', {'aluno': aluno})
@@ -513,7 +471,7 @@ def parse_data(data_str):
         return pd.to_datetime(data_str, dayfirst=True, errors='coerce').date()
     except:
         return None
-
+@login_required
 def import_alunos(request): 
     if request.method == "POST" and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
@@ -552,7 +510,7 @@ def import_alunos(request):
     return render(request, 'alunos/importar_alunos.html')
 
 
-
+@login_required
 def gerar_declaracao_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
@@ -724,7 +682,7 @@ from datetime import date
 
 
 
-
+@login_required
 def cadastrar_aluno(request):
     if request.method == 'POST':
         form = AlunoForm(request.POST)
@@ -738,12 +696,12 @@ def cadastrar_aluno(request):
     return render(request, 'alunos/cadastrar_aluno.html', {'form': form})
 
 
-
+@login_required
 def pagina_matricula(request):
     return render(request, 'alunos/pagina_matricula.html')
 
 
-
+@login_required
 def buscar_aluno_rematricula(request):
     if request.method == 'POST':
         termo = request.POST.get('busca')
@@ -753,7 +711,7 @@ def buscar_aluno_rematricula(request):
 
 
 
-
+@login_required
 def rematricula_formulario(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     ano_atual = datetime.now().year
@@ -773,16 +731,16 @@ def rematricula_formulario(request, aluno_id):
 
     return render(request, "alunos/rematricula_ficha.html", {"aluno": aluno})
 
-
+@login_required
 def aluno_cadastrado(request, aluno_id):
     return render(request, 'alunos/aluno_cadastrado.html', {'aluno_id': aluno_id})
 
-
+@login_required
 def imprimir_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     return render(request, 'alunos/imprimir_matricula.html', {'aluno': aluno})
 
-
+@login_required
 def gerar_pdf_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     usuario_logado = request.user.username if request.user.is_authenticated else "Desconhecido"
@@ -972,7 +930,7 @@ def gerar_pdf_matricula(request, aluno_id):
 
 
 
-
+@login_required
 def rematricula_confirmacao(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
 
@@ -998,7 +956,7 @@ def rematricula_confirmacao(request, aluno_id):
 def rematricula_sucesso(request):
     return render(request, 'alunos/rematricula_sucesso.html')
 
-
+@login_required
 def editar_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     if request.method == 'POST':
@@ -1018,7 +976,7 @@ def editar_aluno(request, aluno_id):
 
 from django.urls import reverse
 from django.utils.http import urlencode
-
+@login_required
 def atualizar_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     if request.method == 'POST':
@@ -1041,7 +999,7 @@ def atualizar_aluno(request, aluno_id):
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
-
+@login_required
 def painel_alunos(request):
     total_masculino = Aluno.objects.filter(sexo='M').count()
     total_feminino = Aluno.objects.filter(sexo='F').count()
@@ -1144,7 +1102,7 @@ def login_view(request):
 
 def home(request):
     return render(request, 'alunos/painel_alunos.html')  # Crie o template 'home.html' conforme sua necessidade
-
+@login_required
 def pesquisar_aluno_sidebar(request):
     aluno = None
     alunos = []
@@ -1166,7 +1124,7 @@ def pesquisar_aluno_sidebar(request):
     })
 
 
-
+@login_required
 def visualizar_ficha_aluno(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     return render(request, 'alunos/ficha_visualizacao.html', {'aluno': aluno})
@@ -1201,7 +1159,7 @@ def parse_boolean(valor):
         valor = valor.strip().lower()
         return valor in ['sim', '1', 'true']
     return bool(valor)
-
+@login_required
 def import_alunos(request):
     if request.method == "POST" and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
@@ -1268,7 +1226,7 @@ def import_alunos(request):
 
 
 
-
+@login_required
 def gerar_declaracao_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
@@ -1416,7 +1374,7 @@ def distribuir_alunos_turmas():
                 aluno.save()
 
             turma.save()
-
+@login_required
 def cadastrar_funcionario_views(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
@@ -1426,7 +1384,7 @@ def cadastrar_funcionario_views(request):
     else:
         form = FuncionarioForm()
     return render(request, 'alunos/cadastrar_funcionario.html', {'form': form})
-
+@login_required
 def pesquisar_funcionario(request):
     busca = request.GET.get('busca', '')
     funcionarios = Funcionario.objects.filter(nome__icontains=busca) if busca else []
@@ -1435,11 +1393,11 @@ def pesquisar_funcionario(request):
         'funcionarios': funcionarios,
         'busca': busca
     })
-
+@login_required
 def listar_funcionarios(request):
     funcionarios = Funcionario.objects.all()
     return render(request, 'alunos/listar_funcionarios.html', {'funcionarios': funcionarios})
-
+@login_required
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
@@ -1457,7 +1415,7 @@ def editar_funcionario(request, funcionario_id):
     }
     return render(request, 'alunos/editar_funcionario.html', context)
 
-
+@login_required
 def excluir_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     funcionario.delete()
@@ -1474,7 +1432,7 @@ def emitir_documentos(request):
 def calcular_idade(nascimento):
     today = date.today()
     return today.year - nascimento.year - ((today.month, today.day) < (nascimento.month, nascimento.day))
-
+@login_required
 def relatorio_por_turma_view(request):
     # Buscar valores únicos de séries e turmas
     series = Turma.objects.values_list('serie', flat=True).distinct()
@@ -1532,7 +1490,7 @@ def relatorio_por_turma_view(request):
 
     return render(request, 'alunos/relatorio_por_turma.html', context)
 
-
+@login_required
 def gerar_relatorio_por_turma(request):
     serie = request.GET.get('serie')
     turma_nome = request.GET.get('turma')
@@ -1553,7 +1511,7 @@ def gerar_relatorio_por_turma(request):
         'serie': serie,
     })
 
-
+@login_required
 def relatorio_rematricula(request):
     serie_selecionada = request.GET.get('serie')
     turma_selecionada = request.GET.get('turma')
@@ -1645,7 +1603,7 @@ def alocar_alunos_turma(request):
     })
 
 
-
+@login_required
 def relatorio_alunos_alocados(request):
     turma_id = request.GET.get('turma_id')
     turmas = Turma.objects.all()
@@ -1677,7 +1635,7 @@ def relatorio_alunos_alocados(request):
         'usuario': request.user,
         'data_hora_impressao': timezone.now(),
     })
-
+@login_required
 def pesquisar_alunos(request):
     alunos = Aluno.objects.all()
 
@@ -1691,7 +1649,7 @@ def pesquisar_alunos(request):
 
     return render(request, 'alunos/pesquisar_alunos.html', {'alunos': alunos})
 
-
+@login_required
 def aniversariantes_view(request):
     hoje = date.today()
     mes = hoje.month
@@ -1822,7 +1780,7 @@ def distribuir_alunos_turmas():
                 aluno.save()
 
             turma.save()
-
+@login_required
 def cadastrar_funcionario_views(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
@@ -1832,7 +1790,7 @@ def cadastrar_funcionario_views(request):
     else:
         form = FuncionarioForm()
     return render(request, 'alunos/cadastrar_funcionario.html', {'form': form})
-
+@login_required
 def pesquisar_funcionario(request):
     busca = request.GET.get('busca', '')
     funcionarios = Funcionario.objects.filter(nome__icontains=busca) if busca else []
@@ -1841,11 +1799,11 @@ def pesquisar_funcionario(request):
         'funcionarios': funcionarios,
         'busca': busca
     })
-
+@login_required
 def listar_funcionarios(request):
     funcionarios = Funcionario.objects.all()
     return render(request, 'alunos/listar_funcionarios.html', {'funcionarios': funcionarios})
-
+@login_required
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
@@ -1863,7 +1821,7 @@ def editar_funcionario(request, funcionario_id):
     }
     return render(request, 'alunos/editar_funcionario.html', context)
 
-
+@login_required
 def excluir_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     funcionario.delete()
@@ -1880,7 +1838,7 @@ def emitir_documentos(request):
 def calcular_idade(nascimento):
     today = date.today()
     return today.year - nascimento.year - ((today.month, today.day) < (nascimento.month, nascimento.day))
-
+@login_required
 def relatorio_por_turma_view(request):
     # Buscar valores únicos de séries e turmas
     series = Turma.objects.values_list('serie', flat=True).distinct()
@@ -1938,7 +1896,7 @@ def relatorio_por_turma_view(request):
 
     return render(request, 'alunos/relatorio_por_turma.html', context)
 
-
+@login_required
 def gerar_relatorio_por_turma(request):
     serie = request.GET.get('serie')
     turma_nome = request.GET.get('turma')
@@ -1959,7 +1917,7 @@ def gerar_relatorio_por_turma(request):
         'serie': serie,
     })
 
-
+@login_required
 def relatorio_rematricula(request):
     serie_selecionada = request.GET.get('serie')
     turma_selecionada = request.GET.get('turma')
@@ -2051,7 +2009,7 @@ def alocar_alunos_turma(request):
     })
 
 
-
+@login_required
 def relatorio_alunos_alocados(request):
     turma_id = request.GET.get('turma_id')
     turmas = Turma.objects.all()
@@ -2083,7 +2041,7 @@ def relatorio_alunos_alocados(request):
         'usuario': request.user,
         'data_hora_impressao': timezone.now(),
     })
-
+@login_required
 def pesquisar_alunos(request):
     alunos = Aluno.objects.all()
 
@@ -2097,7 +2055,7 @@ def pesquisar_alunos(request):
 
     return render(request, 'alunos/pesquisar_alunos.html', {'alunos': alunos})
 
-
+@login_required
 def aniversariantes_view(request):
     hoje = date.today()
     mes = hoje.month

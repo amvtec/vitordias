@@ -18,6 +18,8 @@ from django.contrib import messages
 from .models import Funcionario, Setor
 from django.http import HttpResponseRedirect
 from .forms import ImportacaoFuncionarioForm
+from django.contrib.auth.decorators import login_required
+
 
 
 # Mapeamento manual dos dias da semana em português
@@ -45,7 +47,7 @@ from calendar import monthrange
 from .models import SabadoLetivo
 
 from .models import Escola
-
+@login_required
 def gerar_folha_frequencia(request, funcionario_id, mes, ano):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
@@ -136,7 +138,7 @@ def gerar_folha_frequencia(request, funcionario_id, mes, ano):
     return HttpResponse(html_renderizado)
 
 
-
+@login_required
 def selecionar_funcionarios(request):
     setores = Setor.objects.all()
     funcionarios = []
@@ -171,7 +173,7 @@ def selecionar_funcionarios(request):
         'meses': meses,
     })
 
-
+@login_required
 def listar_folhas(request):
     # Obtendo o nome do funcionário da barra de pesquisa (se houver)
     nome_funcionario = request.GET.get('nome', '')
@@ -186,7 +188,7 @@ def listar_folhas(request):
 
     return render(request, 'controle/listar_folhas.html', {'folhas': folhas})
 
-
+@login_required
 def visualizar_folha_salva(request, folha_id):
     folha = get_object_or_404(FolhaFrequencia, id=folha_id)
     return HttpResponse(folha.html_armazenado)
@@ -212,7 +214,7 @@ meses_pt = {
 }
 
 from calendar import monthrange
-
+@login_required
 def gerar_folhas_em_lote(request):
     if request.method == 'POST':
         ids_funcionarios = request.POST.getlist('funcionarios')
@@ -321,7 +323,7 @@ def gerar_folhas_em_lote(request):
 
 from .forms import FuncionarioForm
 from django.shortcuts import redirect
-
+@login_required
 def cadastrar_funcionario(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
@@ -332,11 +334,11 @@ def cadastrar_funcionario(request):
         form = FuncionarioForm()
 
     return render(request, 'controle/cadastrar_funcionario.html', {'form': form})
-
+@login_required
 def listar_funcionarios(request):
     funcionarios = Funcionario.objects.select_related('setor').order_by('nome')
     return render(request, 'controle/listar_funcionarios.html', {'funcionarios': funcionarios})
-
+@login_required
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
@@ -349,7 +351,7 @@ def editar_funcionario(request, funcionario_id):
         form = FuncionarioForm(instance=funcionario)
 
     return render(request, 'controle/editar_funcionario.html', {'form': form, 'funcionario': funcionario})
-
+@login_required
 def cadastrar_horario(request):
     if request.method == 'POST':
         form = HorarioTrabalhoForm(request.POST)
@@ -360,7 +362,7 @@ def cadastrar_horario(request):
         form = HorarioTrabalhoForm()
 
     return render(request, 'controle/cadastrar_horario.html', {'form': form})
-
+@login_required
 def cadastrar_feriado(request):
     feriados = Feriado.objects.order_by('data')
 
@@ -376,10 +378,10 @@ def cadastrar_feriado(request):
         'form': form,
         'feriados': feriados
     })
-
+@login_required
 def painel_controle(request):
     return render(request, 'controle/painel_controle.html')
-
+@login_required
 def editar_feriado(request, feriado_id):
     feriado = get_object_or_404(Feriado, id=feriado_id)
 
@@ -392,14 +394,14 @@ def editar_feriado(request, feriado_id):
         form = FeriadoForm(instance=feriado)
 
     return render(request, 'controle/editar_feriado.html', {'form': form, 'feriado': feriado})
-
+@login_required
 def excluir_feriado(request, feriado_id):
     feriado = get_object_or_404(Feriado, id=feriado_id)
     feriado.delete()
     return redirect('cadastrar_feriado')
 
 from django.contrib import messages
-
+@login_required
 def cadastrar_funcionario(request):
     if request.method == 'POST':
         form = FuncionarioForm(request.POST)
@@ -413,12 +415,12 @@ def cadastrar_funcionario(request):
         form = FuncionarioForm()
 
     return render(request, 'controle/cadastrar_funcionario.html', {'form': form})
-
+@login_required
 def excluir_funcionario(request, id):
     funcionario = get_object_or_404(Funcionario, id=id)
     funcionario.delete()
     return redirect('listar_funcionarios')
-
+@login_required
 def editar_horario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     
@@ -440,7 +442,7 @@ def editar_horario(request, funcionario_id):
         'form': form,
         'funcionario': funcionario
     })
-
+@login_required
 def excluir_folha(request, folha_id):
     folha = get_object_or_404(FolhaFrequencia, id=folha_id)
     folha.delete()
@@ -449,7 +451,7 @@ def excluir_folha(request, folha_id):
 from django.shortcuts import render
 from datetime import datetime
 from .models import Funcionario
-
+@login_required
 def painel_controle(request):
     # Aniversariantes do mês
     hoje = datetime.today()
@@ -464,7 +466,7 @@ def painel_controle(request):
     }
 
     return render(request, 'controle/painel_controle.html', context)
-
+@login_required
 def importar_funcionarios(request):
     if request.method == 'POST' and request.FILES.get('excel_file'):
         excel_file = request.FILES['excel_file']
