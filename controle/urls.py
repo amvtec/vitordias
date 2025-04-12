@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import importar_horarios_trabalho
 
 urlpatterns = [
     path('folha-frequencia/<int:funcionario_id>/<int:mes>/<int:ano>/', views.gerar_folha_frequencia, name='folha_frequencia'),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('excluir-folha/<int:folha_id>/', views.excluir_folha, name='excluir_folha'),
     path('listar-folhas/', views.listar_folhas, name='listar_folhas'),
     path('importar_funcionarios/', views.importar_funcionarios, name='importar_funcionarios'),
+    path('importar-horarios/', importar_horarios_trabalho, name='importar_horarios_trabalho'),
 
     
 

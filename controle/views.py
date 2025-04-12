@@ -518,3 +518,49 @@ def importar_funcionarios(request):
             messages.error(request, f'Ocorreu um erro ao importar o arquivo: {e}')
 
     return render(request, 'controle/importar_funcionarios.html')
+
+@login_required
+def importar_horarios_trabalho(request):
+    if request.method == 'POST' and request.FILES.get('arquivo_horarios'):
+        arquivo = request.FILES['arquivo_horarios']
+
+        # Verifica extensão
+        if not arquivo.name.endswith(('.xlsx', '.xls', '.csv')):
+            messages.error(request, "Envie um arquivo .xlsx, .xls ou .csv válido.")
+            return render(request, 'controle/importar_horarios.html')
+
+        try:
+            # Lê o arquivo
+            if arquivo.name.endswith('.csv'):
+                df = pd.read_csv(arquivo)
+            else:
+                df = pd.read_excel(arquivo)
+
+            total_importados = 0
+
+            for _, row in df.iterrows():
+                funcionario_id = int(row.get('funcionario_id'))
+                turno = str(row.get('turno')).strip().capitalize()
+
+                # Formata os horários corretamente
+                horario_inicio = datetime.strptime(str(row.get('horario_inicio')), '%H:%M:%S').time()
+                horario_fim = datetime.strptime(str(row.get('horario_fim')), '%H:%M:%S').time()
+
+                funcionario = Funcionario.objects.filter(id=funcionario_id).first()
+                if funcionario:
+                    HorarioTrabalho.objects.update_or_create(
+                        funcionario=funcionario,
+                        turno=turno,
+                        defaults={
+                            'horario_inicio': horario_inicio,
+                            'horario_fim': horario_fim
+                        }
+                    )
+                    total_importados += 1
+
+            messages.success(request, f'{total_importados} horários de trabalho importados com sucesso.')
+
+        except Exception as e:
+            messages.error(request, f'Erro ao importar horários: {e}')
+
+    return render(request, 'controle/importar_horarios.html')
