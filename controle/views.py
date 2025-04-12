@@ -524,7 +524,6 @@ def importar_horarios_trabalho(request):
     if request.method == 'POST' and request.FILES.get('arquivo_horarios'):
         arquivo = request.FILES['arquivo_horarios']
 
-        # Verifica extensão
         if not arquivo.name.endswith(('.xlsx', '.xls', '.csv')):
             messages.error(request, "Envie um arquivo .xlsx, .xls ou .csv válido.")
             return render(request, 'controle/importar_horarios.html')
@@ -539,15 +538,14 @@ def importar_horarios_trabalho(request):
             total_importados = 0
 
             for _, row in df.iterrows():
-                funcionario_id = int(row.get('funcionario_id'))
+                nome = str(row.get('nome')).strip()
                 turno = str(row.get('turno')).strip().capitalize()
+                funcionario = Funcionario.objects.filter(nome__iexact=nome).first()
 
-                # Formata os horários corretamente
-                horario_inicio = datetime.strptime(str(row.get('horario_inicio')), '%H:%M:%S').time()
-                horario_fim = datetime.strptime(str(row.get('horario_fim')), '%H:%M:%S').time()
-
-                funcionario = Funcionario.objects.filter(id=funcionario_id).first()
                 if funcionario:
+                    horario_inicio = datetime.strptime(str(row.get('horario_inicio')), '%H:%M:%S').time()
+                    horario_fim = datetime.strptime(str(row.get('horario_fim')), '%H:%M:%S').time()
+
                     HorarioTrabalho.objects.update_or_create(
                         funcionario=funcionario,
                         turno=turno,
@@ -557,6 +555,8 @@ def importar_horarios_trabalho(request):
                         }
                     )
                     total_importados += 1
+                else:
+                    messages.warning(request, f'Funcionário não encontrado: {nome}')
 
             messages.success(request, f'{total_importados} horários de trabalho importados com sucesso.')
 
