@@ -1290,53 +1290,46 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(Spacer(1, 20))
     elements.append(Paragraph("Esta declaração é válida para comprovação de matrícula do(a) referido(a) aluno(a), conforme solicitado.", normal))
     elements.append(Spacer(1, 20))
-    elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", normal))
-    elements.append(Spacer(1, 30))
+    elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", center_style))
+    elements.append(Spacer(1, 40))
 
-    # Buscar o funcionário logado
+    # Buscar o funcionário logado e o diretor
     funcionario = Funcionario.objects.filter(user=request.user).first()
-
-    # Buscar o diretor
     diretor = Funcionario.objects.filter(funcao__icontains="diretor").first()
 
-    # Assinatura do usuário logado
-    assinatura_usuario = [
-        [Paragraph("____________________________________", center_style)],
-        [Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style)],
-        [Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style)],
-        [Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style)],
-        [Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style)],
+    # Criar células com o conteúdo de cada assinatura
+    celula_usuario = [
+        Paragraph("____________________________________", center_style),
+        Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style),
+        Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
+        Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
+        Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
     ]
 
-    # Assinatura do diretor
-    assinatura_diretor = [
-        [Paragraph("____________________________________", center_style)],
-        [Paragraph(f"{diretor.nome if diretor else 'Diretor(a)'}", center_style)],
-        [Paragraph(f"{diretor.funcao if diretor else ''}", center_style)],
-        [Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style)],
-        [Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style)],
+    celula_diretor = [
+        Paragraph("____________________________________", center_style),
+        Paragraph(f"{diretor.nome if diretor else 'Diretor(a)'}", center_style),
+        Paragraph(f"{diretor.funcao if diretor else ''}", center_style),
+        Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style),
+        Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style),
     ]
 
-    # Exibir as duas assinaturas lado a lado
-    tabela_assinaturas = Table(
-        [assinatura_usuario, assinatura_diretor],
-        colWidths=[260, 260]
-    )
+    # Tabela com duas colunas: assinaturas lado a lado
+    tabela_assinaturas = Table([[celula_usuario, celula_diretor]], colWidths=[260, 260])
     tabela_assinaturas.setStyle(TableStyle([
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('TOPPADDING', (0, 0), (-1, -1), 0),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
     ]))
 
     elements.append(tabela_assinaturas)
-    elements.append(Spacer(1, 30))
+    elements.append(Spacer(1, 20))
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
 
     doc.build(elements)
     return response
-
 
 def distribuir_alunos_turmas():
     # Obtenha todos os alunos, agrupados por série
