@@ -256,11 +256,15 @@
         <a href="{% url 'pagina_matricula' %}" class="btn"><span>📄</span>Matrícula</a>
         <a href="{% url 'buscar_aluno_rematricula' %}" class="btn"><span>🔄</span>Rematrícula</a>
 
-        {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
-            <a href="{% url 'painel_controle' %}" class="btn"><span>📑</span>Folha de Frequência</a>
-            <a href="{% url 'pagina_inicial' %}" class="btn"><span>💼</span>Folha de Pagamento</a>
-            <a href="{% url 'documentos_pendentes_assinatura' %}" class="btn"><span>🖋️</span>Assinar Docs</a>
-        {% endif %}
+        {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Agente Administrativo" %}
+        <a href="{% url 'painel_controle' %}" class="btn"><span>📑</span>Folha de Frequência</a>
+        <a href="{% url 'pagina_inicial' %}" class="btn"><span>💼</span>Folha de Pagamento</a>
+    {% endif %}
+
+    {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a)" %}
+        <a href="{% url 'documentos_pendentes_assinatura' %}" class="btn"><span>🖋️</span>Assinar Docs</a>
+    {% endif %}
+
     </div>
 
     <div class="chart-section">
