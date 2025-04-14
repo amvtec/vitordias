@@ -5,6 +5,9 @@ import dj_database_url
 # Cloudinary
 import cloudinary
 import cloudinary_storage
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,9 +97,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'djxezavtr',
-    'API_KEY': '475138434129133',
-    'API_SECRET': 'TT9Cymt-w0xPSvbaygHqjk_d7DwE',
+    'CLOUD_NAME': 'dcwnkxjhd',
+    'API_KEY': '938618262161565',
+    'API_SECRET': 'a9lhiXNtZIENfXcnj8HP02r6n1k',
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

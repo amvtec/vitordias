@@ -6,6 +6,8 @@ from .views import gerar_relatorio_por_turma
 from .views import relatorio_rematricula
 from .views import aniversariantes_view
 from .views import relatorio_alunos_por_idade
+from .views import documentos_gerados_aluno
+from .views import documentos_pendentes_assinatura, assinar_documentos_em_lote
 
 
 
@@ -50,21 +52,17 @@ urlpatterns = [
     path('relatorios-personalizados/', views.relatorios_personalizados, name='relatorios_personalizados'),
     path('relatorio/idade/', relatorio_alunos_por_idade, name='relatorio_alunos_por_idade'),
 
- 
 
-
-
-
-
-
-
-
-
-
-
+    path('alunos/<int:aluno_id>/documentos/', documentos_gerados_aluno, name='documentos_gerados_aluno'),
 
     
-    
+    path('documentos/<int:documento_id>/assinar/<str:tipo_assinatura>/', views.assinar_documento, name='assinar_documento'),
+
+    path('documento/<int:documento_id>/excluir/', views.excluir_documento, name='excluir_documento'),
+
+    path('documentos/pendentes/', documentos_pendentes_assinatura, name='documentos_pendentes_assinatura'),
+    path('documentos/assinar-lote/', assinar_documentos_em_lote, name='assinar_documentos_em_lote'),
+
     
 ]
 

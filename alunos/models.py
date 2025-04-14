@@ -212,6 +212,7 @@ class Funcionario(models.Model):
     funcao = models.CharField(max_length=30, choices=FUNCOES)
     numero_matricula = models.CharField(max_length=20)
     decreto_nomeacao = models.CharField(max_length=100)
+    assinatura = models.ImageField(upload_to='assinaturas/', null=True, blank=True)  # ✅ Campo para imagem da assinatura
 
     def __str__(self):
         return f"{self.nome} - {self.funcao}"
@@ -237,3 +238,29 @@ class Escola(models.Model):
     class Meta:
         verbose_name = "Escola"
         verbose_name_plural = "Escolas"
+
+class DocumentoAluno(models.Model):
+    TIPO_CHOICES = [
+        ('matricula', 'Ficha de Matrícula'),
+        ('declaracao', 'Declaração de Matrícula'),
+    ]
+
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='documentos')
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    data_geracao = models.DateTimeField(auto_now_add=True)
+
+    html_gerado = models.TextField()  # Conteúdo da versão renderizada
+
+    assinada_diretor = models.BooleanField(default=False)
+    data_assinatura_diretor = models.DateTimeField(blank=True, null=True)
+
+    assinada_secretario = models.BooleanField(default=False)
+    data_assinatura_secretario = models.DateTimeField(blank=True, null=True)
+
+    criado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} - {self.aluno.nome} ({self.data_geracao.date()})"
+
+    class Meta:
+        ordering = ['-data_geracao']

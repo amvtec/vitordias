@@ -50,6 +50,12 @@ from .models import Turma
 from datetime import date
 from calendar import monthrange
 from django.utils import timezone
+from .models import DocumentoAluno
+from reportlab.lib.enums import TA_JUSTIFY
+from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.http import require_POST
+
+
 
 
 @login_required
@@ -740,195 +746,6 @@ def imprimir_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     return render(request, 'alunos/imprimir_matricula.html', {'aluno': aluno})
 
-@login_required
-def gerar_pdf_matricula(request, aluno_id):
-    aluno = get_object_or_404(Aluno, id=aluno_id)
-    usuario_logado = request.user.username if request.user.is_authenticated else "Desconhecido"
-    data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-
-    escola = Escola.objects.first()
-    diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
-    secretario = Funcionario.objects.filter(funcao='Secretario(a)').first()
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=matricula_{aluno.nome}.pdf'
-
-    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10)
-    styles = getSampleStyleSheet()
-    normal = ParagraphStyle(name="Normal", fontSize=7, leading=8)
-    center = ParagraphStyle(name="Center", fontSize=7, alignment=1, leading=8)
-    title_style = ParagraphStyle(name="TitleBlock", parent=normal, fontSize=7, alignment=1,
-                                 textColor=colors.white, backColor=colors.grey, spaceAfter=3)
-    small_style = ParagraphStyle(name="Small", fontSize=6, leading=8, alignment=0)
-    elements = []
-
-    def dado(texto):
-        return Paragraph(texto if texto else "Não informado", normal)
-
-    def campo(label, valor):
-        return Paragraph(f"<b>{label}:</b> {valor if valor else 'Não informado'}", normal)
-
-    def bloco_titulo(titulo):
-        elements.append(Spacer(1, 8))
-        elements.append(Paragraph(titulo, title_style))
-        elements.append(Spacer(1, 4))
-
-    try:
-        if aluno.foto:
-            foto_path = os.path.join(settings.MEDIA_ROOT, aluno.foto.name)
-            foto = RLImage(foto_path)
-            foto.drawHeight = 0.9 * inch
-            foto.drawWidth = 0.7 * inch
-        else:
-            foto = None
-    except:
-        foto = None
-
-    escola_nome = escola.nome_escola if escola else "ESCOLA MUNICIPAL"
-    secretaria_nome = escola.nome_secretaria if escola else "SECRETARIA MUNICIPAL DE EDUCAÇÃO"
-    cnpj = escola.cnpj if escola else "00.000.000/0000-00"
-    endereco = f"{escola.endereco}, {escola.numero}, {escola.bairro}, {escola.cidade}/{escola.uf}" if escola else "Endereço não cadastrado"
-    contato = f"Telefone: {escola.telefone} | E-mail: {escola.email}" if escola else "Contato não cadastrado"
-
-    cabecalho_texto = [
-        [Paragraph(f"<b>{secretaria_nome}</b>", center)],
-        [Paragraph(f"<b>{escola_nome}</b>", center)],
-        [Paragraph(f"CNPJ: {cnpj}", center)],
-        [Paragraph(f"Endereço: {endereco}", center)],
-        [Paragraph(f"{contato}", center)],
-    ]
-    tabela_texto = Table(cabecalho_texto, colWidths=[500])
-    tabela_texto.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
-        ('TOPPADDING', (0, 0), (-1, -1), 1),
-    ]))
-
-    if foto:
-        cabecalho_completo = Table([
-            [tabela_texto, foto]
-        ], colWidths=[460, 60])
-        cabecalho_completo.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
-        ]))
-        elements.append(cabecalho_completo)
-    else:
-        elements.append(tabela_texto)
-
-    elements.append(Spacer(1, 8))
-    elements.append(Paragraph("<b>FICHA DE MATRÍCULA – 2025</b>", ParagraphStyle(name="Header", fontSize=9, alignment=1)))
-    elements.append(Spacer(1, 4))
-
-    # Blocos 1 a 6 (mantidos do código anterior, exatamente iguais)
-    # Bloco 1: Informações Escolares
-    bloco_titulo("1. Informações Escolares")
-    tabela1 = Table([
-        [dado("(X) Aluno Veterano" if aluno.status == "veterano" else "( ) Aluno Veterano"),
-         dado("(X) Aluno Novato" if aluno.status == "novato" else "( ) Aluno Novato")],
-        [campo("Unidade Escolar", aluno.unidade_escolar), campo("Município", aluno.municipio), campo("DRE", aluno.dre)],
-        [Paragraph(
-            f"{('(X)' if aluno.modalidade == 'regular' else '( )')} Regular    "
-            f"{('(X)' if aluno.modalidade == 'eja' else '( )')} EJA    "
-            f"{('(X)' if aluno.modalidade == 'especial' else '( )')} Especial    "
-            f"{('(X)' if aluno.modalidade == 'outra' else '( )')} Outra: {aluno.outra_modalidade or ''}", normal)],
-        [campo("Etapa", aluno.etapa), campo("Ano/Série", aluno.ano_serie), campo("Ensino Religioso", "Sim" if aluno.ensino_religioso else "Não")],
-        [campo("Turno", aluno.turno)],
-    ])
-    tabela1.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela1)
-
-    # Bloco 2: Dados Pessoais
-    bloco_titulo("2. Dados Pessoais")
-    tabela2 = Table([
-        [campo("Nome", aluno.nome), campo("Sexo", aluno.get_sexo_display()), campo("ID", aluno.aluno_id), campo("NIS", aluno.nis)],
-        [
-        campo("Nascimento", aluno.data_nascimento.strftime('%d/%m/%Y') if aluno.data_nascimento else None),
-        campo("Profissão", aluno.profissao),
-        campo("Raça/Cor", aluno.cor_raca)
-        ],
-        [campo("Endereço", aluno.endereco), campo("Bairro", aluno.bairro), campo("CEP", aluno.cep)],
-        [campo("Cidade", aluno.cidade), campo("UF", aluno.uf), campo("Zona", aluno.get_zona_display())],
-        [campo("Transporte Escolar", "Sim" if aluno.transporte_escolar else "Não"), campo("Rota", aluno.rota), campo("Distância", aluno.distancia)],
-        [campo("Cidade Nasc.", aluno.cidade_nascimento), campo("UF Nasc.", aluno.uf_nascimento), campo("Nacionalidade", aluno.nacionalidade)],
-        [campo("Nº Certidão", aluno.certidao_numero), campo("Folha", aluno.certidao_folha), campo("Livro", aluno.certidao_livro)],
-        [campo("Matrícula", aluno.numero_matricula)],
-        [campo("Cartório", aluno.cartorio_nome), campo("UF", aluno.cartorio_uf), campo("Cidade Cartório", aluno.cartorio_cidade)],
-        [campo("CPF", aluno.cpf), campo("RG", aluno.rg)],
-    ])
-    tabela2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela2)
-
-    # Bloco 3: Responsáveis
-    bloco_titulo("3. Responsáveis")
-    tabela3 = Table([
-        [campo("Pai", aluno.nome_pai), campo("Nascimento", aluno.nascimento_pai.strftime('%d/%m/%Y') if aluno.nascimento_pai else None), campo("Telefone", aluno.telefone_pai)],
-        [campo("Escolaridade Pai", aluno.escolaridade_pai), campo("Profissão Pai", aluno.profissao_pai)],
-        [campo("Mãe", aluno.nome_mae), campo("Nascimento", aluno.nascimento_mae.strftime('%d/%m/%Y') if aluno.nascimento_mae else None), campo("Telefone", aluno.telefone_mae)],
-        [campo("Escolaridade Mãe", aluno.escolaridade_mae), campo("Profissão Mãe", aluno.profissao_mae)],
-    ])
-    tabela3.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela3)
-
-    # Bloco 4: Saúde e Necessidades
-    bloco_titulo("4. Saúde e Necessidades")
-    tabela4 = Table([
-        [campo("Reações Alérgicas", "Sim" if aluno.reacoes_alergicas else "Não"), campo("Descrição", aluno.descricao_alergia)],
-        [campo("Necessidade Especial", "Sim" if aluno.necessidade_especial else "Não"), campo("Descrição", aluno.descricao_necessidade)],
-        [campo("Possui Laudo", "Sim" if aluno.possui_laudo else "Não"), campo("Sala Recursos", "Sim" if aluno.sala_recursos else "Não")],
-        [campo("Medicamento Controlado", "Sim" if aluno.medicamento_controlado else "Não"), campo("Qual Medicamento", aluno.nome_medicamento)],
-        [campo("UE Atendimento", aluno.ue_atendimento)],
-    ])
-    tabela4.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela4)
-
-    # Bloco 5: Programas Sociais
-    bloco_titulo("5. Programas Sociais")
-    tabela5 = Table([
-        [campo("Bolsa Família", "Sim" if aluno.bolsa_familia else "Não"), campo("BPC", "Sim" if aluno.bpc else "Não"), campo("Outro Programa", aluno.outro_programa)],
-    ])
-    tabela5.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela5)
-
-    # Bloco 6: Procedência Escolar
-    bloco_titulo("6. Procedência Escolar")
-    tabela6 = Table([
-        [campo("Escola Anterior", aluno.escola_anterior), campo("Aprovado no", aluno.aprovado_ano), campo("Reprovado no", aluno.reprovado_ano), campo("Em Curso no", aluno.em_curso_ano)],
-        [campo("Classificado", "Sim" if aluno.classificado else "Não"), campo("Reclassificado", "Sim" if aluno.reclassificado else "Não")],
-    ])
-    tabela6.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    elements.append(tabela6)
-
-    # Assinaturas
-    elements.append(Spacer(1, 25))
-    assinatura_data = [
-        ['________________________________________', '________________________________________', '_________________________________________'],
-        [f"{diretor.nome if diretor else 'Não disponível'}", f"{secretario.nome if secretario else 'Não disponível'}", 'Responsável'],
-        [f"{diretor.funcao if diretor else ''}", f"{secretario.funcao if secretario else ''}", ""],
-        [f"Decreto: {diretor.decreto_nomeacao if diretor else '---'}", f"Decreto: {secretario.decreto_nomeacao if secretario else '---'}", ""],
-        [f"Matrícula: {diretor.numero_matricula if diretor else '---'}", f"Matrícula: {secretario.numero_matricula if secretario else '---'}", ""],
-    ]
-    assinatura_table = Table(assinatura_data, colWidths=[2.2 * inch] * 3)
-    assinatura_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTSIZE', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), -2),
-        ('TOPPADDING', (0, 0), (-1, -1), -2),
-        ('LEFTPADDING', (0, 0), (-1, -1), -2),
-        ('RIGHTPADDING', (0, 0), (-1, -1), -2),
-    ]))
-    elements.append(assinatura_table)
-
-    # Rodapé
-    elements.append(Spacer(1, 15))
-    elements.append(Paragraph(f"Gerado por: {usuario_logado}", small_style))
-    elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
-
-    doc.build(elements)
-    return response
-
-
-
 
 @login_required
 def rematricula_confirmacao(request, aluno_id):
@@ -971,6 +788,7 @@ def editar_aluno(request, aluno_id):
         'aluno': aluno,
         'modo': 'editar'
     })
+
 
 
 
@@ -1224,10 +1042,212 @@ def import_alunos(request):
     return render(request, 'alunos/importar_alunos.html')
 
 
+@login_required
+def gerar_pdf_matricula(request, aluno_id):
+    aluno = get_object_or_404(Aluno, id=aluno_id)
+    usuario_logado = request.user.username if request.user.is_authenticated else "Desconhecido"
+    data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
+    escola = Escola.objects.first()
+    diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
+    secretario = Funcionario.objects.filter(funcao='Secretario(a)').first()
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=matricula_{aluno.nome}.pdf'
+
+    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10)
+    styles = getSampleStyleSheet()
+    normal = ParagraphStyle(name="Normal", fontSize=7, leading=8)
+    center = ParagraphStyle(name="Center", fontSize=7, alignment=1, leading=8)
+    title_style = ParagraphStyle(name="TitleBlock", parent=normal, fontSize=7, alignment=1,
+                                 textColor=colors.white, backColor=colors.grey, spaceAfter=3)
+    small_style = ParagraphStyle(name="Small", fontSize=6, leading=8, alignment=0)
+    elements = []
+
+    def dado(texto):
+        return Paragraph(texto if texto else "Não informado", normal)
+
+    def campo(label, valor):
+        return Paragraph(f"<b>{label}:</b> {valor if valor else 'Não informado'}", normal)
+
+    def bloco_titulo(titulo):
+        elements.append(Spacer(1, 8))
+        elements.append(Paragraph(titulo, title_style))
+        elements.append(Spacer(1, 4))
+
+    try:
+        if aluno.foto:
+            foto_path = os.path.join(settings.MEDIA_ROOT, aluno.foto.name)
+            foto = RLImage(foto_path)
+            foto.drawHeight = 0.9 * inch
+            foto.drawWidth = 0.7 * inch
+        else:
+            foto = None
+    except:
+        foto = None
+
+    escola_nome = escola.nome_escola if escola else "ESCOLA MUNICIPAL"
+    secretaria_nome = escola.nome_secretaria if escola else "SECRETARIA MUNICIPAL DE EDUCAÇÃO"
+    cnpj = escola.cnpj if escola else "00.000.000/0000-00"
+    endereco = f"{escola.endereco}, {escola.numero}, {escola.bairro}, {escola.cidade}/{escola.uf}" if escola else "Endereço não cadastrado"
+    contato = f"Telefone: {escola.telefone} | E-mail: {escola.email}" if escola else "Contato não cadastrado"
+
+    cabecalho_texto = [
+        [Paragraph(f"<b>{secretaria_nome}</b>", center)],
+        [Paragraph(f"<b>{escola_nome}</b>", center)],
+        [Paragraph(f"CNPJ: {cnpj}", center)],
+        [Paragraph(f"Endereço: {endereco}", center)],
+        [Paragraph(f"{contato}", center)],
+    ]
+    tabela_texto = Table(cabecalho_texto, colWidths=[500])
+    tabela_texto.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+        ('TOPPADDING', (0, 0), (-1, -1), 1),
+    ]))
+
+    if foto:
+        cabecalho_completo = Table([
+            [tabela_texto, foto]
+        ], colWidths=[460, 60])
+        cabecalho_completo.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ]))
+        elements.append(cabecalho_completo)
+    else:
+        elements.append(tabela_texto)
+
+    elements.append(Spacer(1, 8))
+    elements.append(Paragraph("<b>FICHA DE MATRÍCULA – 2025</b>", ParagraphStyle(name="Header", fontSize=9, alignment=1)))
+    elements.append(Spacer(1, 4))
+
+    # Blocos 1 a 6 (mantidos do código anterior, exatamente iguais)
+    # Bloco 1: Informações Escolares
+    bloco_titulo("1. Informações Escolares")
+    tabela1 = Table([
+        [dado("(X) Aluno Veterano" if aluno.status == "veterano" else "( ) Aluno Veterano"),
+         dado("(X) Aluno Novato" if aluno.status == "novato" else "( ) Aluno Novato")],
+        [campo("Unidade Escolar", aluno.unidade_escolar), campo("Município", aluno.municipio), campo("DRE", aluno.dre)],
+        [Paragraph(
+            f"{('(X)' if aluno.modalidade == 'regular' else '( )')} Regular    "
+            f"{('(X)' if aluno.modalidade == 'eja' else '( )')} EJA    "
+            f"{('(X)' if aluno.modalidade == 'especial' else '( )')} Especial    "
+            f"{('(X)' if aluno.modalidade == 'outra' else '( )')} Outra: {aluno.outra_modalidade or ''}", normal)],
+        [campo("Etapa", aluno.etapa), campo("Ano/Série", aluno.ano_serie), campo("Ensino Religioso", "Sim" if aluno.ensino_religioso else "Não")],
+        [campo("Turno", aluno.turno)],
+    ])
+    tabela1.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela1)
+
+    # Bloco 2: Dados Pessoais
+    bloco_titulo("2. Dados Pessoais")
+    tabela2 = Table([
+        [campo("Nome", aluno.nome), campo("Sexo", aluno.get_sexo_display()), campo("ID", aluno.aluno_id), campo("NIS", aluno.nis)],
+        [
+        campo("Nascimento", aluno.data_nascimento.strftime('%d/%m/%Y') if aluno.data_nascimento else None),
+        campo("Profissão", aluno.profissao),
+        campo("Raça/Cor", aluno.cor_raca)
+        ],
+        [campo("Endereço", aluno.endereco), campo("Bairro", aluno.bairro), campo("CEP", aluno.cep)],
+        [campo("Cidade", aluno.cidade), campo("UF", aluno.uf), campo("Zona", aluno.get_zona_display())],
+        [campo("Transporte Escolar", "Sim" if aluno.transporte_escolar else "Não"), campo("Rota", aluno.rota), campo("Distância", aluno.distancia)],
+        [campo("Cidade Nasc.", aluno.cidade_nascimento), campo("UF Nasc.", aluno.uf_nascimento), campo("Nacionalidade", aluno.nacionalidade)],
+        [campo("Nº Certidão", aluno.certidao_numero), campo("Folha", aluno.certidao_folha), campo("Livro", aluno.certidao_livro)],
+        [campo("Matrícula", aluno.numero_matricula)],
+        [campo("Cartório", aluno.cartorio_nome), campo("UF", aluno.cartorio_uf), campo("Cidade Cartório", aluno.cartorio_cidade)],
+        [campo("CPF", aluno.cpf), campo("RG", aluno.rg)],
+    ])
+    tabela2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela2)
+
+    # Bloco 3: Responsáveis
+    bloco_titulo("3. Responsáveis")
+    tabela3 = Table([
+        [campo("Pai", aluno.nome_pai), campo("Nascimento", aluno.nascimento_pai.strftime('%d/%m/%Y') if aluno.nascimento_pai else None), campo("Telefone", aluno.telefone_pai)],
+        [campo("Escolaridade Pai", aluno.escolaridade_pai), campo("Profissão Pai", aluno.profissao_pai)],
+        [campo("Mãe", aluno.nome_mae), campo("Nascimento", aluno.nascimento_mae.strftime('%d/%m/%Y') if aluno.nascimento_mae else None), campo("Telefone", aluno.telefone_mae)],
+        [campo("Escolaridade Mãe", aluno.escolaridade_mae), campo("Profissão Mãe", aluno.profissao_mae)],
+    ])
+    tabela3.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela3)
+
+    # Bloco 4: Saúde e Necessidades
+    bloco_titulo("4. Saúde e Necessidades")
+    tabela4 = Table([
+        [campo("Reações Alérgicas", "Sim" if aluno.reacoes_alergicas else "Não"), campo("Descrição", aluno.descricao_alergia)],
+        [campo("Necessidade Especial", "Sim" if aluno.necessidade_especial else "Não"), campo("Descrição", aluno.descricao_necessidade)],
+        [campo("Possui Laudo", "Sim" if aluno.possui_laudo else "Não"), campo("Sala Recursos", "Sim" if aluno.sala_recursos else "Não")],
+        [campo("Medicamento Controlado", "Sim" if aluno.medicamento_controlado else "Não"), campo("Qual Medicamento", aluno.nome_medicamento)],
+        [campo("UE Atendimento", aluno.ue_atendimento)],
+    ])
+    tabela4.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela4)
+
+    # Bloco 5: Programas Sociais
+    bloco_titulo("5. Programas Sociais")
+    tabela5 = Table([
+        [campo("Bolsa Família", "Sim" if aluno.bolsa_familia else "Não"), campo("BPC", "Sim" if aluno.bpc else "Não"), campo("Outro Programa", aluno.outro_programa)],
+    ])
+    tabela5.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela5)
+
+    # Bloco 6: Procedência Escolar
+    bloco_titulo("6. Procedência Escolar")
+    tabela6 = Table([
+        [campo("Escola Anterior", aluno.escola_anterior), campo("Aprovado no", aluno.aprovado_ano), campo("Reprovado no", aluno.reprovado_ano), campo("Em Curso no", aluno.em_curso_ano)],
+        [campo("Classificado", "Sim" if aluno.classificado else "Não"), campo("Reclassificado", "Sim" if aluno.reclassificado else "Não")],
+    ])
+    tabela6.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+    elements.append(tabela6)
+
+    # Assinaturas com imagem, se disponível
+    elements.append(Spacer(1, 25))
+
+# Caminhos das assinaturas (ajuste conforme onde estão salvas)
+    assinatura_diretor_path = os.path.join(settings.MEDIA_ROOT, 'assinaturas', 'assinatura_diretor.png')
+    assinatura_secretario_path = os.path.join(settings.MEDIA_ROOT, 'assinaturas', 'assinatura_secretario.png')
+
+    assinatura_diretor_img = RLImage(assinatura_diretor_path, width=100, height=30) if os.path.exists(assinatura_diretor_path) else ''
+    assinatura_secretario_img = RLImage(assinatura_secretario_path, width=100, height=30) if os.path.exists(assinatura_secretario_path) else ''
+
+    assinatura_table = Table([
+    [assinatura_diretor_img, '', assinatura_secretario_img],
+    ['________________________________________', '', '________________________________________'],
+    [f"{diretor.nome if diretor else 'Não disponível'}", '', f"{secretario.nome if secretario else 'Não disponível'}"],
+    [f"{diretor.funcao if diretor else ''}", '', f"{secretario.funcao if secretario else ''}"],
+    [f"Decreto: {diretor.decreto_nomeacao if diretor else '---'}", '', f"Decreto: {secretario.decreto_nomeacao if secretario else '---'}"],
+    [f"Matrícula: {diretor.numero_matricula if diretor else '---'}", '', f"Matrícula: {secretario.numero_matricula if secretario else '---'}"],
+    ], colWidths=[200, 100, 200])
+
+    assinatura_table.setStyle(TableStyle([
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('FONTSIZE', (0, 0), (-1, -1), 6),
+    ('SPAN', (1, 0), (1, 5)),
+    ('TOPPADDING', (0, 0), (-1, -1), 2),
+    ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+    ]))
+
+    elements.append(assinatura_table)
+
+
+    # Rodapé
+    elements.append(Spacer(1, 15))
+    elements.append(Paragraph(f"Gerado por: {usuario_logado}", small_style))
+    elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
+
+    doc.build(elements)
+    DocumentoAluno.objects.create(
+    aluno=aluno,
+    tipo='matricula',
+    html_gerado="GERADO EM PDF",  # Apenas para preencher o campo
+    )
+    return response
 
 @login_required 
 def gerar_declaracao_matricula(request, aluno_id):
+    from reportlab.lib.enums import TA_JUSTIFY
+
     aluno = get_object_or_404(Aluno, id=aluno_id)
     data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
@@ -1236,18 +1256,17 @@ def gerar_declaracao_matricula(request, aluno_id):
 
     doc = SimpleDocTemplate(response, pagesize=letter)
     styles = getSampleStyleSheet()
-    normal = ParagraphStyle(name="Normal", fontSize=10, leading=12, alignment=4)
+    normal = ParagraphStyle(name="Normal", fontSize=10, leading=12, alignment=TA_JUSTIFY)
     title_style = ParagraphStyle(name="Title", fontSize=14, alignment=1)
     center_style = ParagraphStyle(name="Center", fontSize=10, leading=12, alignment=1)
     small_style = ParagraphStyle(name="Small", fontSize=6, leading=8, alignment=0)
     elements = []
 
-    # Cabeçalho da escola
     escola = Escola.objects.first()
     if escola:
         try:
             logo_path = os.path.join(settings.MEDIA_ROOT, escola.logo.name)
-            logo = Image(logo_path, width=60, height=60)
+            logo = RLImage(logo_path, width=60, height=60)
             logo.hAlign = 'CENTER'
             elements.append(logo)
         except:
@@ -1293,6 +1312,7 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", center_style))
     elements.append(Spacer(1, 40))
 
+<<<<<<< HEAD
     # Buscar o funcionário logado e o diretor
     funcionario = Funcionario.objects.filter(user=request.user).first()
     diretor = Funcionario.objects.filter(funcao__icontains="diretor").first()
@@ -1325,12 +1345,103 @@ def gerar_declaracao_matricula(request, aluno_id):
 
     elements.append(tabela_assinaturas)
     elements.append(Spacer(1, 20))
+=======
+    funcionario = Funcionario.objects.filter(user=request.user).first()
+    diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
+    doc_gerado = DocumentoAluno.objects.filter(aluno=aluno, tipo='declaracao').order_by('-data_geracao').first()
+
+    assinatura_img_func = ''
+    assinatura_img_dir = ''
+
+    # Condições para exibir assinaturas
+    if doc_gerado and funcionario:
+        # Assinatura do funcionário logado
+        if funcionario.assinatura and os.path.exists(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name)):
+            if funcionario.funcao == 'Diretor(a)' and doc_gerado.assinada_diretor:
+                assinatura_img_func = RLImage(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name), width=250, height=95)
+            elif funcionario.funcao == 'Secretario(a)' and doc_gerado.assinada_secretario:
+                assinatura_img_func = RLImage(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name), width=250, height=95)
+
+    if doc_gerado and diretor and diretor.assinatura and os.path.exists(os.path.join(settings.MEDIA_ROOT, diretor.assinatura.name)):
+        if doc_gerado.assinada_diretor:
+            assinatura_img_dir = RLImage(os.path.join(settings.MEDIA_ROOT, diretor.assinatura.name), width=250, height=95)
+
+    # Monta bloco com 2 colunas
+    assinatura_data = []
+
+    # Primeira linha: imagem da assinatura
+    linha_imagem = []
+    linha_imagem.append(assinatura_img_func if assinatura_img_func else Paragraph(" ", center_style))
+    linha_imagem.append(assinatura_img_dir if assinatura_img_dir else Paragraph(" ", center_style))
+    assinatura_data.append(linha_imagem)
+
+    # Linha da linha
+    assinatura_data.append([
+        Paragraph("____________________________________", center_style),
+        Paragraph("____________________________________", center_style),
+    ])
+
+    # Nome
+    assinatura_data.append([
+        Paragraph(f"{funcionario.nome if funcionario else ' '}", center_style),
+        Paragraph(f"{diretor.nome if diretor else ' '}", center_style),
+    ])
+
+    # Função
+    assinatura_data.append([
+        Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
+        Paragraph(f"{diretor.funcao if diretor else ''}", center_style),
+    ])
+
+    # Matrícula
+    assinatura_data.append([
+        Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
+        Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style),
+    ])
+
+    # Decreto
+    assinatura_data.append([
+        Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
+        Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style),
+    ])
+
+    tabela_assinaturas = Table(assinatura_data, colWidths=[260, 260])
+    tabela_assinaturas.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+
+    # Ajuste individual por linha (linha 0: imagem | linha 1: linha)
+        ('BOTTOMPADDING', (0, 0), (-1, 0), -45),    # menos espaço embaixo da imagem
+        ('TOPPADDING',    (0, 1), (-1, 1), -4),   # menos espaço acima da linha
+
+        ('TOPPADDING', (0, 2), (-1, -1), 0),      # normal para os outros
+        ('BOTTOMPADDING', (0, 2), (-1, -1), 0),
+    ]))
+
+    elements.append(tabela_assinaturas)
+
+    elements.append(Spacer(1, 30))
+>>>>>>> e3fe196 (Alteracoes nos templates, models, urls, views)
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
 
     doc.build(elements)
+
+    # Registrar documento se ainda não existir
+    if not DocumentoAluno.objects.filter(aluno=aluno, tipo='declaracao').exists():
+        DocumentoAluno.objects.create(
+            aluno=aluno,
+            tipo='declaracao',
+            html_gerado="DECLARAÇÃO GERADA"
+        )
+
     return response
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> e3fe196 (Alteracoes nos templates, models, urls, views)
 def distribuir_alunos_turmas():
     # Obtenha todos os alunos, agrupados por série
     series = Aluno.objects.values_list('ano_serie', flat=True).distinct()
@@ -2140,3 +2251,97 @@ def relatorio_alunos_por_idade(request):
 
     return render(request, 'alunos/relatorio_por_idade.html', context)
 
+
+@login_required
+def assinar_documento(request, documento_id, tipo_assinatura):
+    documento = get_object_or_404(DocumentoAluno, id=documento_id)
+
+    try:
+        funcionario = request.user.funcionario
+    except:
+        messages.error(request, "Usuário não vinculado a um funcionário.")
+        return redirect('painel_alunos')
+
+    if funcionario.funcao == "Diretor(a)" and tipo_assinatura == "diretor":
+        documento.assinada_diretor = True
+        documento.save()
+        messages.success(request, "Documento assinado como Diretor.")
+    elif funcionario.funcao == "Secretario(a)" and tipo_assinatura == "secretario":
+        documento.assinada_secretario = True
+        documento.save()
+        messages.success(request, "Documento assinado como Secretário.")
+    else:
+        messages.error(request, "Você não tem permissão para esta assinatura.")
+
+    return redirect('documentos_gerados_aluno', aluno_id=documento.aluno.id)
+
+@login_required
+def excluir_documento(request, documento_id):
+    documento = get_object_or_404(DocumentoAluno, id=documento_id)
+
+    funcionario = getattr(request.user, 'funcionario', None)
+    if funcionario and funcionario.funcao in ['Diretor(a)', 'Secretario(a)', 'Coordenador(a)']:
+        documento.delete()
+        messages.success(request, "Documento excluído com sucesso.")
+    else:
+        messages.error(request, "Você não tem permissão para excluir este documento.")
+
+    return redirect('documentos_gerados_aluno', aluno_id=documento.aluno.id)
+
+@login_required
+def documentos_gerados_aluno(request, aluno_id):
+    aluno = get_object_or_404(Aluno, id=aluno_id)
+    documentos = DocumentoAluno.objects.filter(aluno=aluno).order_by('-data_geracao')
+    return render(request, 'alunos/documentos_gerados.html', {
+        'aluno': aluno,
+        'documentos': documentos,
+    })
+
+def eh_diretor_ou_secretario(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        return user.funcionario.funcao in ['Diretor(a)', 'Secretario(a)']
+    except:
+        return False
+
+@login_required
+@user_passes_test(eh_diretor_ou_secretario)
+def documentos_pendentes_assinatura(request):
+    funcionario = request.user.funcionario
+    funcao = funcionario.funcao
+
+    if funcao == 'Diretor(a)':
+        documentos = DocumentoAluno.objects.filter(assinada_diretor=False)
+    else:  # Secretário
+        documentos = DocumentoAluno.objects.filter(assinada_secretario=False)
+
+    context = {
+        'documentos': documentos,
+        'funcao': funcao,
+    }
+    return render(request, 'alunos/documentos_pendentes.html', context)
+
+@login_required
+@user_passes_test(eh_diretor_ou_secretario)
+@require_POST
+def assinar_documentos_em_lote(request):
+    documentos_ids = request.POST.getlist('documentos')
+    funcionario = request.user.funcionario
+    funcao = funcionario.funcao
+
+    if not documentos_ids:
+        messages.warning(request, "Nenhum documento selecionado.")
+        return redirect('documentos_pendentes_assinatura')
+
+    documentos = DocumentoAluno.objects.filter(id__in=documentos_ids)
+
+    for doc in documentos:
+        if funcao == 'Diretor(a)':
+            doc.assinada_diretor = True
+        elif funcao == 'Secretario(a)':
+            doc.assinada_secretario = True
+        doc.save()
+
+    messages.success(request, f"{len(documentos_ids)} documento(s) assinados com sucesso!")
+    return redirect('documentos_pendentes_assinatura')

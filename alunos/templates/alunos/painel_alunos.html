@@ -188,11 +188,10 @@
             margin-bottom: 4px;
         }
 
-        /* Botão Importar Alunos no canto inferior */
         .btn-importar-alunos {
             position: fixed;
-            bottom: 20px;  /* Distância do fundo */
-            left: 30px;    /* Distância da esquerda */
+            bottom: 20px;
+            left: 30px;
             background-color: #003366;
             color: white;
             padding: 10px 10px;
@@ -200,7 +199,7 @@
             text-decoration: none;
             border-radius: 6px;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-            z-index: 9999;  /* Garante que o botão fique sobre os outros elementos */
+            z-index: 9999;
             transition: background-color 0.3s, transform 0.2s;
         }
 
@@ -236,8 +235,6 @@
 <div id="sidebar" class="sidebar">
     <h2>🎓 Menu</h2>
     <a href="{% url 'pesquisar_aluno_sidebar' %}">🔍 Pesquisar Aluno</a>
-    {% if request.user.funcionario.funcao in "Administrador Agente Administrativo" %}
-    {% endif %}
 
     {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
         <a href="javascript:void(0);" class="desabilitado">📋 Relatório por Turma</a>
@@ -262,6 +259,7 @@
         {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
             <a href="{% url 'painel_controle' %}" class="btn"><span>📑</span>Folha de Frequência</a>
             <a href="{% url 'pagina_inicial' %}" class="btn"><span>💼</span>Folha de Pagamento</a>
+            <a href="{% url 'documentos_pendentes_assinatura' %}" class="btn"><span>🖋️</span>Assinar Docs</a>
         {% endif %}
     </div>
 
@@ -305,7 +303,6 @@
     </div>
 </div>
 
-<!-- Botão Importar Alunos no canto inferior -->
 <a href="{% url 'importar_alunos' %}" class="btn-importar-alunos">
     <span>📥</span>
 </a>

@@ -166,11 +166,15 @@
                             <a href="{% url 'editar_aluno' aluno.id %}" class="btn btn-editar">Editar Aluno</a>
                             <a href="{% url 'gerar_pdf_matricula' aluno.id %}" class="btn btn-pdf">Reimprimir Matrícula</a>
                             <a href="{% url 'gerar_declaracao_matricula' aluno.id %}" class="btn btn-declaracao">Imprimir Declaração</a>
+                            <a href="{% url 'documentos_gerados_aluno' aluno.id %}" class="btn btn-ficha" style="background-color: #8e24aa; color: white;">
+                                📄 Ver Documentos
+                            </a>
                         {% endif %}
                         <a href="{% url 'visualizar_ficha_aluno' aluno.id %}" class="btn btn-ficha">Ver Ficha</a>
                     {% endwith %}
                 {% endif %}
             </div>
+            
             <hr>
         {% endfor %}
     {% endif %}

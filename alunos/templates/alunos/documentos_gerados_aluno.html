@@ -1,0 +1,30 @@
+{% block content %}
+<h2>Documentos Gerados para {{ aluno.nome }}</h2>
+
+<table border="1" cellspacing="0" cellpadding="6">
+  <thead>
+    <tr>
+      <th>Tipo</th>
+      <th>Data</th>
+      <th>Ass. Diretor</th>
+      <th>Ass. Secretário</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doc in documentos %}
+    <tr>
+      <td>{{ doc.get_tipo_display }}</td>
+      <td>{{ doc.data_geracao|date:"d/m/Y H:i" }}</td>
+      <td>{{ doc.assinada_diretor|yesno:"✅,❌" }}</td>
+      <td>{{ doc.assinada_secretario|yesno:"✅,❌" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">Nenhum documento gerado ainda.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'painel_alunos' %}">🔙 Voltar</a>
+{% endblock %}

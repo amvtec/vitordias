@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import Aluno, Professor, Turma, Escola, Funcionario
+from .models import DocumentoAluno
+
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
@@ -30,3 +32,10 @@ class EscolaAdmin(admin.ModelAdmin):
     list_display = ('nome_escola', 'nome_secretaria', 'cnpj', 'cidade', 'uf')
     search_fields = ('nome_escola', 'cnpj')
     list_filter = ('uf',)
+
+@admin.register(DocumentoAluno)
+class DocumentoAlunoAdmin(admin.ModelAdmin):
+    list_display = ('aluno', 'tipo', 'data_geracao', 'assinada_diretor', 'assinada_secretario')
+    list_filter = ('tipo', 'assinada_diretor', 'assinada_secretario')
+    search_fields = ('aluno__nome',)
+
