@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 
 
 
-# Mapeamento manual dos dias da semana em português
+# Mapeamento manual dos dias da semana
 dias_da_semana_pt = {
     0: 'segunda-feira',
     1: 'terça-feira',
@@ -33,51 +33,38 @@ dias_da_semana_pt = {
     6: 'domingo'
 }
 
-# Mapeamento manual dos meses (opcional para garantir capitalização correta)
+# Mapeamento manual dos meses
 meses_pt = {
     1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
     5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
     9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
 }
 
-from datetime import date
-from calendar import monthrange
-
-# Função de gerar a folha de frequência
-from .models import SabadoLetivo
-
-from .models import Escola
 @login_required
 def gerar_folha_frequencia(request, funcionario_id, mes, ano):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+    escola = Escola.objects.first()
 
-    # Obter as informações da escola
-    escola = Escola.objects.first()  # Se houver mais de uma escola, ajuste conforme necessário
-
-    # Obter todos os dias do mês
     total_dias = monthrange(ano, mes)[1]
     datas_do_mes = [date(ano, mes, dia) for dia in range(1, total_dias + 1)]
 
-    # Feriados cadastrados
     feriados = Feriado.objects.filter(data__month=mes, data__year=ano)
     feriados_dict = {f.data: f.descricao for f in feriados}
 
-    # Sábados Letivos
     sabados_letivos = SabadoLetivo.objects.filter(data__month=mes, data__year=ano)
     sabados_letivos_dict = {sabado.data: sabado.descricao for sabado in sabados_letivos}
 
-    # Horários atribuídos ao funcionário
     horarios = HorarioTrabalho.objects.filter(funcionario=funcionario)
     horario_manha = horarios.filter(turno='Manhã').first()
     horario_tarde = horarios.filter(turno='Tarde').first()
 
     dias_uteis = []
+
     for data_atual in datas_do_mes:
         dia_semana = dias_da_semana_pt[data_atual.weekday()]
 
-        # Verificando se é sábado letivo e tratando como dia normal
         if data_atual.weekday() == 5 and data_atual in sabados_letivos_dict:
-            # Tratar como dia normal (não feriado)
+            # Sábado letivo
             dias_uteis.append({
                 'data': data_atual,
                 'dia_semana': dia_semana,
@@ -87,13 +74,17 @@ def gerar_folha_frequencia(request, funcionario_id, mes, ano):
                 'sabado_letivo': True
             })
         elif data_atual in feriados_dict:
+            # Feriado COM horários incluídos
             dias_uteis.append({
                 'data': data_atual,
                 'dia_semana': dia_semana,
+                'manha': horario_manha,
+                'tarde': horario_tarde,
                 'feriado': True,
                 'descricao': feriados_dict[data_atual]
             })
-        elif data_atual.weekday() < 5:  # Segunda a sexta
+        elif data_atual.weekday() < 5:
+            # Dias úteis normais
             dias_uteis.append({
                 'data': data_atual,
                 'dia_semana': dia_semana,
@@ -102,31 +93,29 @@ def gerar_folha_frequencia(request, funcionario_id, mes, ano):
                 'feriado': False
             })
 
-    # Planejamento (somente para professores com planejamento)
+    # Planejamento para professores
     planejamento = []
     if funcionario.funcao.lower() == "professor(a)" and funcionario.tem_planejamento:
         for d in datas_do_mes:
-            # Verificando se é segunda-feira e se não é feriado
             if d.weekday() == 0 and d not in feriados_dict:
                 planejamento.append({
                     'data': d,
                     'dia_semana': dias_da_semana_pt[d.weekday()],
-                    'horario': funcionario.horario_planejamento  # Exibe o horário de planejamento do funcionário
+                    'horario': funcionario.horario_planejamento
                 })
 
-    # Preparar contexto para o template
     context = {
         'funcionario': funcionario,
         'dias': dias_uteis,
         'planejamento': planejamento,
         'mes': mes,
         'ano': ano,
-        'nome_mes': meses_pt[mes],  # Nome do mês por extenso
-        'escola': escola,  # Adicionando os dados da escola
+        'nome_mes': meses_pt[mes],
+        'escola': escola,
     }
 
-    # Gerar HTML e salvar no banco
     html_renderizado = render_to_string('controle/folha_frequencia.html', context)
+
     FolhaFrequencia.objects.update_or_create(
         funcionario=funcionario,
         mes=mes,
@@ -134,7 +123,6 @@ def gerar_folha_frequencia(request, funcionario_id, mes, ano):
         defaults={'html_armazenado': html_renderizado}
     )
 
-    # Retornar a folha na tela para visualização/impressão
     return HttpResponse(html_renderizado)
 
 
