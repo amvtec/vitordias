@@ -185,7 +185,7 @@ def visualizar_folha_salva(request, folha_id):
 
 from django.utils.safestring import mark_safe
 
-# Mapeamento manual dos dias da semana
+# Mapeamento dos dias da semana
 dias_da_semana_pt = {
     0: 'segunda-feira',
     1: 'terça-feira',
@@ -196,14 +196,13 @@ dias_da_semana_pt = {
     6: 'domingo'
 }
 
-# Mapeamento dos meses por extenso
+# Mapeamento dos meses
 meses_pt = {
     1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril',
     5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto',
     9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'
 }
 
-from calendar import monthrange
 @login_required
 def gerar_folhas_em_lote(request):
     if request.method == 'POST':
@@ -212,29 +211,21 @@ def gerar_folhas_em_lote(request):
         ano = int(request.POST.get('ano'))
 
         folhas_renderizadas = []
-
-        # Obter as informações da escola
-        escola = Escola.objects.first()  # Se houver mais de uma escola, ajuste conforme necessário
+        escola = Escola.objects.first()
 
         for id_func in ids_funcionarios:
             funcionario = get_object_or_404(Funcionario, id=id_func)
 
-            # Obter todos os dias do mês
             total_dias = monthrange(ano, mes)[1]
             datas_do_mes = [date(ano, mes, dia) for dia in range(1, total_dias + 1)]
-
-            # Calcular o último dia do mês
             ultimo_dia_mes = date(ano, mes, total_dias)
 
-            # Feriados cadastrados
             feriados = Feriado.objects.filter(data__month=mes, data__year=ano)
             feriados_dict = {f.data: f.descricao for f in feriados}
 
-            # Sábados Letivos
             sabados_letivos = SabadoLetivo.objects.filter(data__month=mes, data__year=ano)
             sabados_letivos_dict = {sabado.data: sabado.descricao for sabado in sabados_letivos}
 
-            # Horários atribuídos ao funcionário
             horarios = HorarioTrabalho.objects.filter(funcionario=funcionario)
             horario_manha = horarios.filter(turno='Manhã').first()
             horario_tarde = horarios.filter(turno='Tarde').first()
@@ -243,7 +234,6 @@ def gerar_folhas_em_lote(request):
             for data_atual in datas_do_mes:
                 dia_semana = dias_da_semana_pt[data_atual.weekday()]
 
-                # Verifica se o dia é um sábado letivo e trata como dia normal
                 if data_atual.weekday() == 5 and data_atual in sabados_letivos_dict:
                     dias_uteis.append({
                         'data': data_atual,
@@ -251,12 +241,14 @@ def gerar_folhas_em_lote(request):
                         'manha': horario_manha,
                         'tarde': horario_tarde,
                         'feriado': False,
-                        'sabado_letivo': True  # Marca como sábado letivo
+                        'sabado_letivo': True
                     })
                 elif data_atual in feriados_dict:
                     dias_uteis.append({
                         'data': data_atual,
                         'dia_semana': dia_semana,
+                        'manha': horario_manha,
+                        'tarde': horario_tarde,
                         'feriado': True,
                         'descricao': feriados_dict[data_atual]
                     })
@@ -269,18 +261,16 @@ def gerar_folhas_em_lote(request):
                         'feriado': False
                     })
 
-            # Planejamento (somente para professores com planejamento)
             planejamento = []
             if funcionario.funcao.lower() == "professor(a)" and funcionario.tem_planejamento:
                 for d in datas_do_mes:
-                    if d.weekday() == 0 and d not in feriados_dict:  # Segunda-feira
+                    if d.weekday() == 0 and d not in feriados_dict:
                         planejamento.append({
                             'data': d,
                             'dia_semana': dias_da_semana_pt[d.weekday()],
                             'horario': funcionario.horario_planejamento
                         })
 
-            # Preparar contexto para o template
             context = {
                 'funcionario': funcionario,
                 'dias': dias_uteis,
@@ -288,11 +278,10 @@ def gerar_folhas_em_lote(request):
                 'mes': mes,
                 'ano': ano,
                 'nome_mes': meses_pt[mes],
-                'ultimo_dia_mes': ultimo_dia_mes,  # Passando o último dia do mês
-                'escola': escola,  # Adicionando os dados da escola
+                'ultimo_dia_mes': ultimo_dia_mes,
+                'escola': escola,
             }
 
-            # Gerar HTML e salvar no banco
             html_folha = render_to_string('controle/folha_frequencia.html', context)
 
             FolhaFrequencia.objects.update_or_create(
