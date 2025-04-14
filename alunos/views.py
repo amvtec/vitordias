@@ -1244,7 +1244,7 @@ def gerar_pdf_matricula(request, aluno_id):
     )
     return response
 
-@login_required 
+@login_required
 def gerar_declaracao_matricula(request, aluno_id):
     from reportlab.lib.enums import TA_JUSTIFY
 
@@ -1309,43 +1309,9 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(Spacer(1, 20))
     elements.append(Paragraph("Esta declaração é válida para comprovação de matrícula do(a) referido(a) aluno(a), conforme solicitado.", normal))
     elements.append(Spacer(1, 20))
-    elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", center_style))
-    elements.append(Spacer(1, 40))
+    elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", normal))
+    elements.append(Spacer(1, 30))
 
-<<<<<<< HEAD
-    # Buscar o funcionário logado e o diretor
-    funcionario = Funcionario.objects.filter(user=request.user).first()
-    diretor = Funcionario.objects.filter(funcao__icontains="diretor").first()
-
-    # Criar células com o conteúdo de cada assinatura
-    celula_usuario = [
-        Paragraph("____________________________________", center_style),
-        Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style),
-        Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
-        Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
-        Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
-    ]
-
-    celula_diretor = [
-        Paragraph("____________________________________", center_style),
-        Paragraph(f"{diretor.nome if diretor else 'Diretor(a)'}", center_style),
-        Paragraph(f"{diretor.funcao if diretor else ''}", center_style),
-        Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style),
-        Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style),
-    ]
-
-    # Tabela com duas colunas: assinaturas lado a lado
-    tabela_assinaturas = Table([[celula_usuario, celula_diretor]], colWidths=[260, 260])
-    tabela_assinaturas.setStyle(TableStyle([
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('TOPPADDING', (0, 0), (-1, -1), 0),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-    ]))
-
-    elements.append(tabela_assinaturas)
-    elements.append(Spacer(1, 20))
-=======
     funcionario = Funcionario.objects.filter(user=request.user).first()
     diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
     doc_gerado = DocumentoAluno.objects.filter(aluno=aluno, tipo='declaracao').order_by('-data_geracao').first()
@@ -1421,7 +1387,6 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(tabela_assinaturas)
 
     elements.append(Spacer(1, 30))
->>>>>>> e3fe196 (Alteracoes nos templates, models, urls, views)
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
 
@@ -1437,11 +1402,8 @@ def gerar_declaracao_matricula(request, aluno_id):
 
     return response
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> e3fe196 (Alteracoes nos templates, models, urls, views)
 def distribuir_alunos_turmas():
     # Obtenha todos os alunos, agrupados por série
     series = Aluno.objects.values_list('ano_serie', flat=True).distinct()
