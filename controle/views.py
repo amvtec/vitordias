@@ -430,14 +430,21 @@ def excluir_folha(request, folha_id):
 from django.shortcuts import render
 from datetime import datetime
 from .models import Funcionario
+
 @login_required
 def painel_controle(request):
-    # Aniversariantes do mês
     hoje = datetime.today()
-    aniversariantes_mes = Funcionario.objects.filter(data_nascimento__month=hoje.month)
 
-    # Aniversariantes do dia
-    aniversariantes_dia = Funcionario.objects.filter(data_nascimento__day=hoje.day)
+    # Aniversariantes do mês (excluindo os de hoje)
+    aniversariantes_mes = Funcionario.objects.filter(
+        data_nascimento__month=hoje.month
+    ).exclude(data_nascimento__day=hoje.day)
+
+    # Aniversariantes do dia (dia e mês)
+    aniversariantes_dia = Funcionario.objects.filter(
+        data_nascimento__month=hoje.month,
+        data_nascimento__day=hoje.day
+    )
 
     context = {
         'aniversariantes_mes': aniversariantes_mes,
@@ -445,6 +452,7 @@ def painel_controle(request):
     }
 
     return render(request, 'controle/painel_controle.html', context)
+
 @login_required
 def importar_funcionarios(request):
     if request.method == 'POST' and request.FILES.get('excel_file'):

@@ -11,88 +11,101 @@
             background-color: #f0f4ff;
             margin: 0;
             padding: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .container {
-            width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
+            margin: 60px auto;
             background-color: white;
             padding: 40px 30px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #ccc;
             text-align: center;
         }
 
         h1 {
             color: #003366;
             font-size: 24px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 25px;
             justify-items: center;
+            margin-bottom: 30px;
         }
 
         .botao {
-            width: 100px;
-            height: 100px;
-            color: white;
+            background-color: #e0e0e0;
+            color: #003366;
             text-decoration: none;
-            border-radius: 50%;
+            border-radius: 10px;
+            width: 120px;
+            height: 120px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 24px;  /* Ajuste do tamanho do emoji */
+            font-size: 14px;
             font-weight: bold;
-            flex-direction: column;
-            text-align: center;
-            padding: 10px;
-            transition: background-color 0.3s ease;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+            border: 1px solid #bbb;
         }
 
         .botao:hover {
-            filter: brightness(0.9);
+            background-color: #d0e4ff;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            color: #000;
         }
 
         .botao span {
-            font-size: 14px;  /* Ajustando o texto embaixo */
-            margin-top: 5px;  /* Deixa o nome um pouco mais distante do emoji */
+            margin-top: 8px;
+            font-size: 13px;
         }
 
-        .botao.lancamento { background-color: #ff9e3d; }
-        .botao.imprimir { background-color: #2b6cb0; }
-        .botao.cadastro { background-color: #2f855a; }
-        .botao.funcionarios { background-color: #dd6b20; }
-        .botao.voltar { background-color: #c71919; }
+        .botao.lancamento { background-color: #f6ad55; }
+        .botao.imprimir   { background-color: #3182ce; }
+        .botao.cadastro   { background-color: #48bb78; }
+        .botao.funcionarios { background-color: #ed8936; }
+        .botao.voltar     { background-color: #e53e3e; }
 
         .rodape {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
         }
 
         .rodape a {
             text-decoration: none;
-            background: #555;
+            background-color: #003366;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 10px 24px;
+            border-radius: 6px;
             font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .rodape a:hover {
+            background-color: #001f4d;
+        }
+
+        @media (max-width: 600px) {
+            .botao {
+                width: 100px;
+                height: 100px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Lançar folha de Pagamento</h1>
+    <h1>💼 Lançar Folha de Pagamento</h1>
 
     <div class="grid">
         <a href="{% url 'selecionar_funcionario' %}" class="botao lancamento">
