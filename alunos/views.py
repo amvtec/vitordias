@@ -1226,7 +1226,7 @@ def import_alunos(request):
 
 
 
-@login_required
+@login_required 
 def gerar_declaracao_matricula(request, aluno_id):
     aluno = get_object_or_404(Aluno, id=aluno_id)
     data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
@@ -1296,8 +1296,11 @@ def gerar_declaracao_matricula(request, aluno_id):
     # Buscar o funcionário logado
     funcionario = Funcionario.objects.filter(user=request.user).first()
 
-    # Assinatura única (usuário logado)
-    assinaturas = [
+    # Buscar o diretor
+    diretor = Funcionario.objects.filter(funcao__icontains="diretor").first()
+
+    # Assinatura do usuário logado
+    assinatura_usuario = [
         [Paragraph("____________________________________", center_style)],
         [Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style)],
         [Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style)],
@@ -1305,7 +1308,20 @@ def gerar_declaracao_matricula(request, aluno_id):
         [Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style)],
     ]
 
-    tabela_assinaturas = Table(assinaturas, colWidths=[520])
+    # Assinatura do diretor
+    assinatura_diretor = [
+        [Paragraph("____________________________________", center_style)],
+        [Paragraph(f"{diretor.nome if diretor else 'Diretor(a)'}", center_style)],
+        [Paragraph(f"{diretor.funcao if diretor else ''}", center_style)],
+        [Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style)],
+        [Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style)],
+    ]
+
+    # Exibir as duas assinaturas lado a lado
+    tabela_assinaturas = Table(
+        [assinatura_usuario, assinatura_diretor],
+        colWidths=[260, 260]
+    )
     tabela_assinaturas.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('TOPPADDING', (0, 0), (-1, -1), 0),
