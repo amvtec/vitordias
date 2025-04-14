@@ -8,6 +8,7 @@ from .forms import HorarioTrabalhoForm
 from .forms import FeriadoForm
 from .models import Setor
 from .models import Funcionario, Feriado, HorarioTrabalho, FolhaFrequencia
+from .models import Funcionario, Setor, Feriado, HorarioTrabalho, SabadoLetivo, FolhaFrequencia
 from .models import Escola
 from django.shortcuts import render
 from .models import FolhaFrequencia
