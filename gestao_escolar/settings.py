@@ -1,22 +1,15 @@
 from pathlib import Path
 import os
-import dj_database_url
-
-# Cloudinary
-import cloudinary
-import cloudinary_storage
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Segurança
-SECRET_KEY = 'chave-insegura-para-dev'
+SECRET_KEY = 'django-insecure-str=d@-**sv13#x&ztx@h^y#mvj_g&(^&m(e)q!$*hbj)g!dr%'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
-# Aplicações
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,15 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'alunos',
     'funcionarios',
+    'controle',
     'cloudinary',
     'cloudinary_storage',
-    'controle',
 ]
 
-# Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,17 +54,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-# Banco de Dados (ajuste conforme seu banco real)
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'vitordias',
+        'USER': 'root',
+        'PASSWORD': 'Amv@1302',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
 
-
-# Validação de senha
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -81,29 +72,31 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internacionalização
 LANGUAGE_CODE = 'pt-br'
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = 'America/Araguaina'
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
 # Arquivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
-# Cloudinary direto
+# Cloudinary: usando variáveis de ambiente
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'djxezavtr'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '475138434129133'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'T9Cymt-w0xPSvbaygHqjk_d7DwE'),
+}
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-import cloudinary
-cloudinary.config(secure=True, debug=True)
+# Config extra do cloudinary
+cloudinary.config(secure=True)
 
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dcwnkxjhd',
-    'API_KEY': '938618262161565',
-    'API_SECRET': 'a9lhiXNtZIENfXcnj8HP02r6n1k',
-}
+# ⚠️ Só ative isso se for usar mídia local em desenvolvimento
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
