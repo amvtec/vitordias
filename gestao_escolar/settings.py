@@ -19,7 +19,6 @@ CLOUDINARY_STORAGE = {
     'API_KEY': '938618262161565',
     'API_SECRET': 'a9lhiXNtZIENfXcnj8HP02r6n1k',
 }
-
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 cloudinary.config(
@@ -59,6 +58,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# ✅ Adicionado o ROOT_URLCONF que estava faltando
+ROOT_URLCONF = 'gestao_escolar.urls'
 
 # Templates
 TEMPLATES = [
@@ -119,7 +121,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# Media (desnecessário se tudo for Cloudinary, mas útil em DEBUG)
+# Media (opcional se usar Cloudinary)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
