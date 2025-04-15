@@ -96,6 +96,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Cloudinary direto
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+import cloudinary
+cloudinary.config(secure=True, debug=True)
+
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dcwnkxjhd',
     'API_KEY': '938618262161565',
