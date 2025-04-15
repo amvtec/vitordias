@@ -7,6 +7,7 @@ import cloudinary.uploader
 import cloudinary.api
 from django.contrib.messages import constants as messages
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'sua-chave-insegura'
@@ -15,9 +16,9 @@ ALLOWED_HOSTS = ['*']
 
 # Cloudinary
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dcwnkxjhd',
-    'API_KEY': '938618262161565',
-    'API_SECRET': 'a9lhiXNtZIENfXcnj8HP02r6n1k',
+    'CLOUD_NAME': 'dt4w5fw7r',
+    'API_KEY': '977185892622745',
+    'API_SECRET': 'Sh2SYBB-ylHNJiHycGc0-lSmzXA',
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
