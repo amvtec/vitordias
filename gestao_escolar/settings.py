@@ -5,16 +5,29 @@ import cloudinary
 import cloudinary_storage
 import cloudinary.uploader
 import cloudinary.api
+from django.contrib.messages import constants as messages
 
-# Base do projeto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Segurança
-SECRET_KEY = os.getenv('SECRET_KEY', 'chave-insegura-para-dev')
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+SECRET_KEY = 'sua-chave-insegura'
+DEBUG = False
+ALLOWED_HOSTS = ['*']
 
-# Aplicações
+# Cloudinary Storage
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dcwnkxjhd',
+    'API_KEY': '938618262161565',
+    'API_SECRET': 'a9lhiXNtZIENfXcnj8HP02r6n1k'
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    secure=True
+)
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -23,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Apps do projeto
+    # Seus apps
     'alunos',
     'funcionarios',
     'controle',
@@ -33,10 +46,9 @@ INSTALLED_APPS = [
     'cloudinary_storage',
 ]
 
-# Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # para servir estáticos em produção
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,7 +62,7 @@ ROOT_URLCONF = 'gestao_escolar.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,16 +77,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-# Banco de Dados
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
+    'default': dj_database_url.parse(
+        'postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
         conn_max_age=600,
         ssl_require=True
     )
 }
 
-# Validações de senha
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -82,7 +92,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internacionalização
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
@@ -90,25 +99,22 @@ USE_TZ = True
 
 # Arquivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Cloudinary para imagens
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
-)
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+# Arquivos de mídia (apenas se quiser guardar localmente imagens temporárias em DEBUG)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-primary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Auto ID padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
