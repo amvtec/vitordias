@@ -1224,8 +1224,8 @@ def gerar_pdf_matricula(request, aluno_id):
     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
     ('FONTSIZE', (0, 0), (-1, -1), 6),
     ('SPAN', (1, 0), (1, 5)),
-    ('TOPPADDING', (0, 0), (-1, -1), 2),
-    ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+    ('TOPPADDING', (0, 0), (-1, -1), -5),
+    ('BOTTOMPADDING', (0, 0), (-1, -1), -1),
     ]))
 
     elements.append(assinatura_table)
