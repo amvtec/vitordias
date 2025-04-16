@@ -82,6 +82,12 @@
             border-radius: 6px;
             font-weight: bold;
         }
+
+        .errorlist {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +102,7 @@
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
                 {% if field.errors %}
-                    <div style="color: red; font-size: 12px;">{{ field.errors }}</div>
+                    <div class="errorlist">{{ field.errors }}</div>
                 {% endif %}
             </div>
         {% endfor %}

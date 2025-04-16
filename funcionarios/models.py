@@ -1,16 +1,23 @@
 from django.db import models
 
 class Funcionario(models.Model):
-    nome = models.CharField(max_length=100)
-    funcao = models.CharField(max_length=50)
-    carga_horaria_semanal = models.IntegerField()
-    carga_horaria_mensal = models.IntegerField()
+    SETOR_CHOICES = [
+        ('Administrativo', 'Administrativo'),
+        ('Pedagógico', 'Pedagógico'),
+    ]
+
+    nome = models.CharField(max_length=100)  # Obrigatório
+    funcao = models.CharField(max_length=50, blank=True, null=True)
+    carga_horaria_semanal = models.IntegerField(blank=True, null=True)
+    carga_horaria_mensal = models.IntegerField(blank=True, null=True)
     planejamento = models.BooleanField(default=False)
     aluno_especial = models.BooleanField(default=False)
-    data_nascimento = models.DateField(null=True, blank=True)  # Permite valores nulos
+    data_nascimento = models.DateField(null=True, blank=True)
+    setor = models.CharField(max_length=20, choices=SETOR_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.nome
+
 
 
 class FolhaMensal(models.Model):

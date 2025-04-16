@@ -11,6 +11,7 @@
             background-color: #f0f4ff;
             margin: 0;
             padding: 0;
+            position: relative;
         }
 
         .container {
@@ -93,11 +94,38 @@
             background-color: #001f4d;
         }
 
+        .importar-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #555;
+            color: white;
+            padding: 10px 18px;
+            font-size: 13px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+
+        .importar-btn:hover {
+            background-color: #333;
+        }
+
         @media (max-width: 600px) {
             .botao {
                 width: 100px;
                 height: 100px;
                 font-size: 12px;
+            }
+
+            .importar-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+                bottom: 15px;
+                right: 15px;
             }
         }
     </style>
@@ -125,6 +153,8 @@
         </a>
     </div>
 </div>
+
+<a href="{% url 'importar_funcionarios' %}" class="importar-btn">📥 Importar Funcionários</a>
 
 </body>
 </html>

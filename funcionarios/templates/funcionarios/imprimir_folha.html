@@ -13,10 +13,6 @@
             margin: 0;
         }
 
-        h2, h3, p {
-            margin: 4px 0;
-        }
-
         .cabecalho {
             text-align: center;
             margin-bottom: 20px;
@@ -49,7 +45,6 @@
             font-size: 13px;
             background-color: #fdfdfd;
         }
-
 
         button {
             margin-top: 15px;
@@ -91,8 +86,6 @@
             border: 1px solid #999;
             padding: 4px 5px;
             text-align: center;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
             white-space: normal;
         }
 
@@ -106,6 +99,10 @@
 
         .azul {
             background-color: #bbdefb;
+        }
+
+        .linha-com-lancamento {
+            background-color: #f2f2f2;
         }
 
         .btn-acoes {
@@ -133,26 +130,6 @@
 
         .assinatura p {
             margin: 5px 0;
-        }
-
-        .legenda-cores {
-            font-size: 12px;
-            margin-top: 20px;
-        }
-
-        .legenda-cores span {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .verde-box {
-            background-color: #c8e6c9;
-        }
-
-        .azul-box {
-            background-color: #bbdefb;
         }
 
         @media print {
@@ -185,91 +162,117 @@
     </style>
 </head>
 <body>
-    <div class="cabecalho" style="font-size: 13px; margin-bottom: 10px;">
+    <div class="cabecalho" style="font-size: 13px;">
         <strong>SECRETARIA MUNICIPAL DE EDUCAÇÃO</strong><br>
         PREFEITURA MUNICIPAL DE DARCINÓPOLIS<br>
         ESCOLA MUNICIPAL VITOR DIAS<br>
         Rua 7 de setembro, 669 – Centro – Darcinópolis-TO<br>
         E-mail: escvitordias@gmail.com
     </div>
-<div class="no-print">
-    <h3>📄 Imprimir Folha de Pagamento</h3>
 
-    <form method="post">
-        {% csrf_token %}
-        <label for="mes">Mês</label>
-        <select name="mes" required>
-            <option value="">Selecione</option>
-            {% for m in meses %}
-                <option value="{{ m }}" {% if m == mes_selecionado %}selected{% endif %}>{{ m }}</option>
-            {% endfor %}
-        </select>
+    <div class="no-print">
+        <h3>📄 Imprimir Folha de Pagamento</h3>
 
-        <label for="ano">Ano</label>
-        <input type="number" name="ano" required value="{{ ano_selecionado|default:'' }}">
+        <form method="post">
+            {% csrf_token %}
+            <label for="mes">Mês</label>
+            <select name="mes" required>
+                <option value="">Selecione</option>
+                {% for m in meses %}
+                    <option value="{{ m }}" {% if m == mes_selecionado %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
 
-        <button type="submit">Buscar</button>
-        <button type="button" onclick="window.print()">🖨️ Imprimir</button>
-    </form>
+            <label for="ano">Ano</label>
+            <select name="ano" required>
+                <option value="">Selecione</option>
+                {% for a in anos %}
+                    <option value="{{ a }}" {% if a == ano_selecionado %}selected{% endif %}>{{ a }}</option>
+                {% endfor %}
+            </select>
 
-    <div class="voltar">
-        <a href="{% url 'pagina_inicial' %}">⬅ Voltar para o Início</a>
+            <label for="setor">Setor</label>
+            <select name="setor" required>
+                <option value="">Selecione</option>
+                <option value="Administrativo" {% if setor_selecionado == "Administrativo" %}selected{% endif %}>Administrativo</option>
+                <option value="Pedagógico" {% if setor_selecionado == "Pedagógico" %}selected{% endif %}>Pedagógico</option>
+            </select>
+
+            <button type="submit">Buscar</button>
+            <button type="button" onclick="window.print()">🖨️ Imprimir</button>
+        </form>
+
+        <div class="voltar">
+            <a href="{% url 'pagina_inicial' %}">⬅ Voltar para o Início</a>
+        </div>
     </div>
-</div>
 
-{% if folhas %}
-    <h4 style="text-align:center;">Folha de Pagamento - {{ mes_selecionado }}/{{ ano_selecionado }}</h4>
+    {% if folhas %}
+        <h4 style="text-align:center;">
+            Folha de Pagamento - {{ setor_selecionado }} - {{ mes_selecionado }}/{{ ano_selecionado }}
+        </h4>
 
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 4%;">Nº</th>
-                <th style="width: 14%;">Servidor</th>
-                <th style="width: 12%;">Função</th>
-                <th style="width: 6%;">CH S.</th>
-                <th style="width: 6%;">CH M.</th>
-                <th style="width: 6%;">Faltas</th>
-                <th style="width: 8%;">Diárias (Qtd)</th>
-                <th style="width: 8%;">Diárias (Horas)</th>
-                <th style="width: 12%;">Substituto</th>
-                <th style="width: 7%;">A. Esp.</th>
-                <th style="width: 7%;">Planej.</th>
-                <th style="width: 10%;">Obs.</th>
-                <th class="no-print" style="width: 10%;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for folha in folhas %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td class="servidor">{{ folha.funcionario.nome }}</td>
-                <td>{{ folha.funcionario.funcao }}</td>
-                <td>{{ folha.funcionario.carga_horaria_semanal }}</td>
-                <td>{{ folha.funcionario.carga_horaria_mensal }}</td>
-                <td>{{ folha.faltas }}</td>
-                <td>{{ folha.diarias_qtd }}</td>
-                <td>{{ folha.diarias_horas|default:"0" }}</td>
-                <td>{% if folha.servidor_substituto %}{{ folha.servidor_substituto.nome }}{% else %}-{% endif %}</td>
-                <td class="{% if folha.funcionario.aluno_especial %}verde{% endif %}">{{ folha.funcionario.aluno_especial|yesno:"Sim,Não" }}</td>
-                <td class="{% if folha.funcionario.planejamento %}azul{% endif %}">{{ folha.funcionario.planejamento|yesno:"Sim,Não" }}</td>
-                <td>{{ folha.observacoes }}</td>
-                <td class="no-print">
-                    <a href="{% url 'editar_folha' folha.id %}" class="btn-acoes editar">Editar</a>
-                    <a href="{% url 'excluir_folha' folha.id %}" class="btn-acoes excluir" onclick="return confirm('Deseja excluir este lançamento?')">Excluir</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 4%;">Nº</th>
+                    <th style="width: 17%;">Servidor</th>
+                    <th style="width: 17%;">Função</th>
+                    <th style="width: 4%;">CH S.</th>
+                    <th style="width: 4%;">CH M.</th>
+                    <th style="width: 4%;">Faltas</th>
+                    <th style="width: 5%;">Diárias (Qtd)</th>
+                    <th style="width: 5%;">Diárias (Horas)</th>
+                    <th style="width: 5%;">Total de Horas</th>
+                    <th style="width: 16%;">Substituto</th>
+                    <th style="width: 4%;">A. Esp.</th>
+                    <th style="width: 4%;">Planej.</th>
+                    <th style="width: 25%;">Obs.</th>
+                    <th class="no-print" style="width: 10%;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for folha in folhas %}
+                <tr class="{% if folha.id %}linha-com-lancamento{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td class="servidor">{{ folha.funcionario.nome }}</td>
+                    <td>{{ folha.funcionario.funcao }}</td>
+                    <td>{{ folha.funcionario.carga_horaria_semanal }}</td>
+                    <td>{{ folha.funcionario.carga_horaria_mensal }}</td>
+                    <td>{{ folha.faltas }}</td>
+                    <td>{{ folha.diarias_qtd }}</td>
+                    <td>{{ folha.diarias_horas|default:"0" }}</td>
+                    <td>
+                        {% if folha.id and folha.diarias_horas %}
+                            {{ folha.funcionario.carga_horaria_mensal|add:folha.diarias_horas }}
+                        {% else %}
+                            {{ folha.funcionario.carga_horaria_mensal }}
+                        {% endif %}
+                    </td>
+                    <td>{% if folha.servidor_substituto %}{{ folha.servidor_substituto.nome }}{% else %}-{% endif %}</td>
+                    <td class="{% if folha.funcionario.aluno_especial %}verde{% endif %}">{{ folha.funcionario.aluno_especial|yesno:"Sim,Não" }}</td>
+                    <td class="{% if folha.funcionario.planejamento %}azul{% endif %}">{{ folha.funcionario.planejamento|yesno:"Sim,Não" }}</td>
+                    <td>{{ folha.observacoes }}</td>
+                    <td class="no-print">
+                        {% if folha.id %}
+                            <a href="{% url 'editar_folha' folha.id %}" class="btn-acoes editar">Editar</a>
+                            <a href="{% url 'excluir_folha' folha.id %}" class="btn-acoes excluir" onclick="return confirm('Deseja excluir este lançamento?')">Excluir</a>
+                        {% else %}
+                            <span style="color: #aaa;">Sem lançamento</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <div class="assinatura" style="font-size: 13px; margin-bottom: 10px;">
-        <p>Darcinópolis - TO, {{ now|date:"d/m/Y H:i" }}</p>
-        <p style="margin-top: 50px;">_______________________________________</p>
-        <p>Diretor(a) da Escola Municipal Vitor Dias</p>
-    </div>
-{% elif mes_selecionado and ano_selecionado %}
-    <p><strong>Nenhum lançamento encontrado para {{ mes_selecionado }}/{{ ano_selecionado }}.</strong></p>
-{% endif %}
-
+        <div class="assinatura" style="font-size: 13px; margin-bottom: 10px;">
+            <p>Darcinópolis - TO, {{ now|date:"d/m/Y H:i" }}</p>
+            <p style="margin-top: 50px;">_______________________________________</p>
+            <p>Diretor(a) da Escola Municipal Vitor Dias</p>
+        </div>
+    {% elif mes_selecionado and ano_selecionado %}
+        <p><strong>Nenhum lançamento encontrado para {{ setor_selecionado }} - {{ mes_selecionado }}/{{ ano_selecionado }}.</strong></p>
+    {% endif %}
 </body>
 </html>
