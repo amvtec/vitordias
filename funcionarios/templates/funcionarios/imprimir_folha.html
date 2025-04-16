@@ -124,6 +124,10 @@
             color: white;
         }
 
+        td.total-horas {
+            background-color: #afafaf;
+        }
+
         .excluir {
             background: #d32f2f;
             color: white;
@@ -248,7 +252,7 @@
                     <td>{{ folha.faltas }}</td>
                     <td>{{ folha.diarias_qtd }}</td>
                     <td>{{ folha.diarias_horas|default:"0" }}</td>
-                    <td>
+                    <td class="total-horas">
                         {% if folha.id and folha.diarias_horas %}
                             {{ folha.funcionario.carga_horaria_mensal|somar_horas:folha.diarias_horas }}
                         {% else %}
