@@ -223,8 +223,8 @@
                     <th style="width: 4%;">Faltas</th>
                     <th style="width: 5%;">Diárias (Qtd)</th>
                     <th style="width: 5%;">Diárias (Horas)</th>
-                    <th style="width: 5%;">Total de Horas</th>
-                    <th style="width: 16%;">Substituto</th>
+                    <th style="width: 5%;">Total de Horas a Pagar</th>
+                    <th style="width: 16%;">Servidor que foi Substituido</th>
                     <th style="width: 4%;">A. Esp.</th>
                     <th style="width: 4%;">Planej.</th>
                     <th style="width: 25%;">Obs.</th>
@@ -256,7 +256,7 @@
                     <td class="no-print">
                         {% if folha.id %}
                             <a href="{% url 'editar_folha' folha.id %}" class="btn-acoes editar">Editar</a>
-                            <a href="{% url 'excluir_folha' folha.id %}" class="btn-acoes excluir" onclick="return confirm('Deseja excluir este lançamento?')">Excluir</a>
+                            <a href="{% url 'deletar_folha' folha.id %}" class="btn-acoes excluir" onclick="return confirm('Deseja excluir este lançamento?')">Excluir</a>
                         {% else %}
                             <span style="color: #aaa;">Sem lançamento</span>
                         {% endif %}

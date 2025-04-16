@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
 from .models import Funcionario
 from django.contrib.auth.decorators import login_required
+from collections import defaultdict
+
 
 
 @login_required
@@ -33,17 +35,21 @@ def selecionar_funcionario(request):
 @login_required
 def lancar_folha_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+
     MESES = [
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ]
+
+    ANOS = list(range(2024, 2031))
 
     if request.method == 'POST':
         form = FolhaMensalForm(request.POST)
         if form.is_valid():
             folha = form.save(commit=False)
             folha.funcionario = funcionario
-            folha.mes = request.POST.get('mes')  # <-- ESSENCIAL
+            folha.mes = request.POST.get('mes')
+            folha.ano = request.POST.get('ano')
             folha.save()
             return redirect('pagina_inicial')
     else:
@@ -53,6 +59,7 @@ def lancar_folha_funcionario(request, funcionario_id):
         'funcionario': funcionario,
         'form': form,
         'meses': MESES,
+        'anos': ANOS,
     })
 
 
@@ -70,7 +77,6 @@ def imprimir_folha(request):
         setor_selecionado = request.POST.get('setor')
 
         funcionarios = Funcionario.objects.filter(setor=setor_selecionado).order_by('nome')
-        folhas = []
 
         for funcionario in funcionarios:
             folha = FolhaMensal.objects.filter(
@@ -82,33 +88,34 @@ def imprimir_folha(request):
             if folha:
                 folhas.append(folha)
             else:
+                # Folha "falsa" só para exibir dados básicos
                 folha_fake = FolhaMensal(
                     funcionario=funcionario,
                     mes=mes_selecionado,
                     ano=ano_selecionado,
                     faltas='-',
                     diarias_qtd='-',
-                    diarias_horas='-',
+                    diarias_horas=0,
                     servidor_substituto=None,
                     observacoes=''
                 )
+                folha_fake.id = None  # <- evita que gere link de edição
                 folhas.append(folha_fake)
 
     MESES = [
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ]
-
-    ANOS = list(range(datetime.now().year, 2031))  # do ano atual até 2030
+    ANOS = list(range(datetime.now().year, 2029 + 1))
 
     return render(request, 'funcionarios/imprimir_folha.html', {
         'meses': MESES,
         'anos': ANOS,
         'folhas': folhas,
         'mes_selecionado': mes_selecionado,
-        'ano_selecionado': int(ano_selecionado) if ano_selecionado else None,
+        'ano_selecionado': ano_selecionado,
         'setor_selecionado': setor_selecionado,
-        'now': datetime.now(),
+        'now': datetime.now()
     })
 
 from .forms import FuncionarioForm
@@ -149,12 +156,15 @@ def editar_folha(request, folha_id):
         'meses': MESES,
     })
 @login_required
-def excluir_folha(request, folha_id):
+def deletar_folha(request, folha_id):
     folha = get_object_or_404(FolhaMensal, id=folha_id)
+
     if request.method == "POST":
         folha.delete()
         return redirect('imprimir_folha')
-    return render(request, 'funcionarios/excluir_folha.html', {'folha': folha})
+
+    return render(request, 'funcionarios/deletar_folha.html', {'folha': folha})
+
 @login_required
 def ver_funcionarios(request):
     funcionarios = Funcionario.objects.all().order_by('nome')
@@ -217,3 +227,57 @@ def importar_funcionarios(request):
             return redirect('importar_funcionarios')
 
     return render(request, 'funcionarios/importar_funcionarios.html')
+
+@login_required
+def listar_folhas(request):
+    folhas = FolhaMensal.objects.select_related('funcionario').all().order_by('ano', 'mes')
+
+    folhas_por_periodo = defaultdict(list)
+    for folha in folhas:
+        periodo = f"{folha.mes}/{folha.ano}"
+        folhas_por_periodo[periodo].append(folha)
+
+    resultado = []
+    for periodo, lista in folhas_por_periodo.items():
+        mes, ano = periodo.split('/')
+        setor = lista[0].funcionario.setor if lista else ''
+        resultado.append({
+            'periodo': periodo,
+            'mes': mes,
+            'ano': ano,
+            'setor': setor,
+            'folhas': lista
+        })
+
+    return render(request, 'funcionarios/listar_folhas.html', {
+        'folhas_por_periodo': resultado
+    })
+
+@login_required
+def ver_folha_detalhada(request, mes, ano, setor):
+    folhas = FolhaMensal.objects.select_related('funcionario').filter(
+        mes=mes, ano=ano, funcionario__setor=setor
+    ).order_by('funcionario__nome')
+
+    return render(request, 'funcionarios/ver_folha.html', {
+        'mes': mes,
+        'ano': ano,
+        'setor': setor,
+        'folhas': folhas
+    })
+
+@login_required
+def reimprimir_folha(request, mes, ano, setor):
+    folhas = FolhaMensal.objects.filter(mes=mes, ano=ano, funcionario__setor=setor).order_by('funcionario__nome')
+    return render(request, 'funcionarios/imprimir_folha.html', {
+        'folhas': folhas,
+        'mes_selecionado': mes,
+        'ano_selecionado': ano,
+        'setor_selecionado': setor,
+        'now': datetime.now(),
+        'meses': [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ],
+        'anos': list(range(2024, 2031))
+    })

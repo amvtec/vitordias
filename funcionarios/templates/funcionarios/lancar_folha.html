@@ -96,8 +96,13 @@
             {% endfor %}
         </select>
 
-        <label for="id_ano">Ano</label>
-        {{ form.ano }}
+        <label for="ano">Ano</label>
+        <select name="ano" required>
+            <option value="">Selecione o ano</option>
+            {% for a in anos %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
 
         <label for="id_faltas">Faltas</label>
         {{ form.faltas }}
