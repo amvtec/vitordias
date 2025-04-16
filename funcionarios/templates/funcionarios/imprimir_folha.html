@@ -250,11 +250,11 @@
                     <td>{{ folha.diarias_horas|default:"0" }}</td>
                     <td>
                         {% if folha.id and folha.diarias_horas %}
-                            {{ folha.funcionario.carga_horaria_mensal|add:folha.diarias_horas }}
+                            {{ folha.funcionario.carga_horaria_mensal|somar_horas:folha.diarias_horas }}
                         {% else %}
                             {{ folha.funcionario.carga_horaria_mensal }}
                         {% endif %}
-                    </td>
+                    </td>                    
                     <td>{% if folha.servidor_substituto %}{{ folha.servidor_substituto.nome|primeiros_dois_nomes }}{% else %}-{% endif %}</td>
                     <td class="{% if folha.funcionario.aluno_especial %}verde{% endif %}">{{ folha.funcionario.aluno_especial|yesno:"Sim,Não" }}</td>
                     <td class="{% if folha.funcionario.planejamento %}azul{% endif %}">{{ folha.funcionario.planejamento|yesno:"Sim,Não" }}</td>
