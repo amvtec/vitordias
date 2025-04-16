@@ -90,18 +90,33 @@
             background-color: #0d47a1;
         }
 
-        .voltar {
-            text-align: center;
-            margin-top: 30px;
+        .btn-voltar-flutuante {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #555;
+            color: white;
+            padding: 10px 12px;
+            font-size: 14px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
         }
 
-        .voltar a {
-            text-decoration: none;
-            background: #555;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+        .btn-voltar-flutuante:hover {
+            background-color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .btn-voltar-flutuante {
+                padding: 8px 10px;
+                font-size: 13px;
+                bottom: 15px;
+                right: 15px;
+            }
         }
     </style>
 </head>
@@ -141,11 +156,10 @@
     {% else %}
         <p style="text-align: center; margin-top: 20px;"><strong>Nenhum funcionário encontrado.</strong></p>
     {% endif %}
-
-    <div class="voltar">
-        <a href="{% url 'pagina_inicial' %}">← Voltar para o Início</a>
-    </div>
 </div>
+
+<!-- Botão flutuante de voltar -->
+<a href="{% url 'pagina_inicial' %}" class="btn-voltar-flutuante" title="Voltar">⬅</a>
 
 </body>
 </html>

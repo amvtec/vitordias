@@ -73,25 +73,41 @@
             background-color: #b71c1c;
         }
 
-        .voltar {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .voltar a {
-            text-decoration: none;
-            background: #555;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
         .nenhum {
             text-align: center;
             color: #555;
             font-weight: bold;
             margin-top: 20px;
+        }
+
+        .btn-flutuante-voltar {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #555;
+            color: white;
+            padding: 10px 12px;
+            font-size: 14px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-flutuante-voltar:hover {
+            background-color: #333;
+        }
+
+        /* Responsivo para telas menores */
+        @media (max-width: 600px) {
+            .btn-flutuante-voltar {
+                bottom: 15px;
+                right: 15px;
+                padding: 8px 10px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -130,11 +146,10 @@
     {% else %}
         <p class="nenhum">🚫 Nenhum funcionário encontrado.</p>
     {% endif %}
-
-    <div class="voltar">
-        <a href="{% url 'pagina_inicial' %}">⬅ Voltar para o Início</a>
-    </div>
 </div>
+
+<!-- Botão flutuante de voltar -->
+<a href="{% url 'pagina_inicial' %}" class="btn-flutuante-voltar" title="Voltar">⬅</a>
 
 </body>
 </html>
