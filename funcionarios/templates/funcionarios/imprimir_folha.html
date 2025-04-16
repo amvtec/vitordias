@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -96,6 +97,11 @@
         .verde {
             background-color: #c8e6c9;
         }
+
+            td.funcao {
+            text-align: left;
+        }
+
 
         .azul {
             background-color: #bbdefb;
@@ -225,7 +231,7 @@
                     <th style="width: 5%;">Diárias (Horas)</th>
                     <th style="width: 5%;">Total de Horas a Pagar</th>
                     <th style="width: 20%;">Servidor que foi Substituido</th>
-                    <th style="width: 4%;">A. Esp.</th>
+                    <th style="width: 4%;">Aluno Esp.</th>
                     <th style="width: 4%;">Planej.</th>
                     <th style="width: 25%;">Obs.</th>
                     <th class="no-print" style="width: 10%;">Ações</th>
@@ -236,7 +242,7 @@
                 <tr class="{% if folha.id %}linha-com-lancamento{% endif %}">
                     <td>{{ forloop.counter }}</td>
                     <td class="servidor">{{ folha.funcionario.nome }}</td>
-                    <td>{{ folha.funcionario.funcao }}</td>
+                    <td class="funcao">{{ folha.funcionario.funcao }}</td>
                     <td>{{ folha.funcionario.carga_horaria_semanal }}</td>
                     <td>{{ folha.funcionario.carga_horaria_mensal }}</td>
                     <td>{{ folha.faltas }}</td>
@@ -249,7 +255,7 @@
                             {{ folha.funcionario.carga_horaria_mensal }}
                         {% endif %}
                     </td>
-                    <td>{% if folha.servidor_substituto %}{{ folha.servidor_substituto.nome }}{% else %}-{% endif %}</td>
+                    <td>{% if folha.servidor_substituto %}{{ folha.servidor_substituto.nome|primeiros_dois_nomes }}{% else %}-{% endif %}</td>
                     <td class="{% if folha.funcionario.aluno_especial %}verde{% endif %}">{{ folha.funcionario.aluno_especial|yesno:"Sim,Não" }}</td>
                     <td class="{% if folha.funcionario.planejamento %}azul{% endif %}">{{ folha.funcionario.planejamento|yesno:"Sim,Não" }}</td>
                     <td>{{ folha.observacoes }}</td>
