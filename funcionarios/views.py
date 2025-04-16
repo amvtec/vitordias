@@ -6,6 +6,13 @@ from datetime import datetime
 from .models import Funcionario
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
+from .models import FolhaMensal
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.utils import timezone
+from xhtml2pdf import pisa
+import io
+
 
 
 
@@ -296,3 +303,29 @@ def reimprimir_folha(request, mes, ano, setor):
         ],
         'anos': list(range(2024, 2031))
     })
+
+def baixar_folha_pagamento(request):
+    mes = request.GET.get("mes")
+    ano = request.GET.get("ano")
+    setor = request.GET.get("setor")
+
+    folhas = FolhaMensal.objects.select_related('funcionario', 'servidor_substituto').filter(
+        mes=mes, ano=ano, funcionario__setor=setor
+    )
+
+    context = {
+        'folhas': folhas,
+        'mes_selecionado': mes,
+        'ano_selecionado': ano,
+        'setor_selecionado': setor,
+        'now': timezone.now()
+    }
+
+    html = render_to_string('funcionarios/imprimir_folha_pdf.html', context)
+    result = io.BytesIO()
+    pisa_status = pisa.pisaDocument(io.BytesIO(html.encode('utf-8')), result)
+
+    if not pisa_status.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    else:
+        return HttpResponse("Erro ao gerar o PDF", status=500)

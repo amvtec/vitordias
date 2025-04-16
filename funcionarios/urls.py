@@ -16,6 +16,8 @@ urlpatterns = [
     path('folhas-geradas/', views.listar_folhas, name='ver_folhas'),
     path('folha/<str:mes>/<int:ano>/<str:setor>/', views.ver_folha_detalhada, name='ver_folha_detalhada'),
     path('reimprimir/<str:mes>/<int:ano>/<str:setor>/', views.reimprimir_folha, name='reimprimir_folha'),
+    path('funcionarios/baixar-folha/', views.baixar_folha_pagamento, name='baixar_folha_pagamento'),
+
 
 
 
