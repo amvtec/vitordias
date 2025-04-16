@@ -30,8 +30,14 @@ def pagina_inicial(request):
 
 @login_required
 def selecionar_funcionario(request):
-    funcionarios = Funcionario.objects.all()
+    busca = request.GET.get('q', '')
+    if busca:
+        funcionarios = Funcionario.objects.filter(nome__icontains=busca).order_by('nome')
+    else:
+        funcionarios = Funcionario.objects.all().order_by('nome')
     return render(request, 'funcionarios/selecionar_funcionario.html', {'funcionarios': funcionarios})
+
+
 @login_required
 def lancar_folha_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
@@ -51,7 +57,7 @@ def lancar_folha_funcionario(request, funcionario_id):
             folha.mes = request.POST.get('mes')
             folha.ano = request.POST.get('ano')
             folha.save()
-            return redirect('pagina_inicial')
+            return redirect('selecionar_funcionario')
     else:
         form = FolhaMensalForm()
 
@@ -169,22 +175,31 @@ def deletar_folha(request, folha_id):
 def ver_funcionarios(request):
     funcionarios = Funcionario.objects.all().order_by('nome')
     return render(request, 'funcionarios/listar_funcionarios.html', {'funcionarios': funcionarios})
+
 @login_required
-def editar_funcionario(request, funcionario_id):
+def alterar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     if request.method == 'POST':
         form = FuncionarioForm(request.POST, instance=funcionario)
         if form.is_valid():
             form.save()
-            return redirect('listar_funcionarios')
+            return redirect('ver_funcionarios')
     else:
         form = FuncionarioForm(instance=funcionario)
-    return render(request, 'funcionarios/editar_funcionario.html', {'form': form, 'funcionario': funcionario})
+    return render(request, 'funcionarios/alterar_funcionario.html', {
+        'form': form,
+        'funcionario': funcionario
+    })
+
+
+
 @login_required
-def excluir_funcionario(request, funcionario_id):
+def deletar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
     funcionario.delete()
-    return redirect('listar_funcionarios')
+    return redirect('ver_funcionarios')  # Corrigido aqui
+
+
 
 @login_required
 def importar_funcionarios(request):

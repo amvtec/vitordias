@@ -1218,6 +1218,8 @@ def gerar_pdf_matricula(request, aluno_id):
     [f"{diretor.funcao if diretor else ''}", '', f"{secretario.funcao if secretario else ''}"],
     [f"Decreto: {diretor.decreto_nomeacao if diretor else '---'}", '', f"Decreto: {secretario.decreto_nomeacao if secretario else '---'}"],
     [f"Matrícula: {diretor.numero_matricula if diretor else '---'}", '', f"Matrícula: {secretario.numero_matricula if secretario else '---'}"],
+    ['', '________________________________________', ''],
+    ['', 'Responsável', '']
     ], colWidths=[200, 100, 200])
 
     assinatura_table.setStyle(TableStyle([

@@ -60,9 +60,17 @@
             color: white;
         }
 
+        .editar:hover {
+            background-color: #125ea8;
+        }
+
         .excluir {
             background-color: #D32F2F;
             color: white;
+        }
+
+        .excluir:hover {
+            background-color: #b71c1c;
         }
 
         .voltar {
@@ -104,16 +112,16 @@
                 </tr>
             </thead>
             <tbody>
-                {% for funcionario in funcionarios %}
+                {% for funcionario in funcionarios|dictsort:"nome" %}
                     <tr>
                         <td>{{ funcionario.nome }}</td>
                         <td>{{ funcionario.funcao }}</td>
                         <td>{{ funcionario.carga_horaria_semanal }}</td>
                         <td>{{ funcionario.carga_horaria_mensal }}</td>
                         <td class="acoes">
-                            <a href="{% url 'editar_funcionario' funcionario.id %}" class="editar">Editar</a>
-                            <a href="{% url 'excluir_funcionario' funcionario.id %}" class="excluir"
-                               onclick="return confirm('Deseja realmente excluir este funcionário?')">Excluir</a>
+                            <a href="{% url 'alterar_funcionario' funcionario.id %}" class="editar">✏️ Alterar</a>
+                            <a href="{% url 'deletar_funcionario' funcionario.id %}" class="excluir"
+                               onclick="return confirm('Deseja realmente excluir este funcionário?')">🗑️ Excluir</a>
                         </td>
                     </tr>
                 {% endfor %}
