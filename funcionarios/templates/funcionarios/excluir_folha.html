@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Lançamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            padding: 30px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        button {
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        a {
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Excluir Lançamento</h2>
+    <p>Tem certeza que deseja excluir o lançamento da folha de pagamento de <strong>{{ folha.funcionario.nome }}</strong> para o mês de <strong>{{ folha.mes }}/{{ folha.ano }}</strong>?</p>
+    <form method="post">
+         {% csrf_token %}
+         <button type="submit">Sim, Excluir</button>
+         <a href="{% url 'imprimir_folha' %}">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>
