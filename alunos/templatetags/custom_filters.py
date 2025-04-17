@@ -1,3 +1,5 @@
+# alunos/templatetags/custom_filters.py
+
 from django import template
 import re
 from datetime import date
@@ -19,7 +21,6 @@ def to(value, arg):
 
 @register.filter
 def regex_sub(value, args):
-    """Uso: {{ value|regex_sub:'\\D,' }} remove tudo que não é número"""
     try:
         pattern, replacement = args.split(',')
         return re.sub(pattern, replacement, value)
@@ -40,7 +41,21 @@ def replace(value, args):
         return value.replace(old, new)
     except Exception:
         return value
+
 @register.filter
 def attr(obj, nome_campo):
-    """Permite acessar atributos dinamicamente em templates: aluno|attr:'cpf'"""
     return getattr(obj, nome_campo, '')
+
+@register.filter
+def primeiros_dois_nomes(nome):
+    if not nome:
+        return ''
+    partes = nome.split()
+    return ' '.join(partes[:2]) if len(partes) >= 2 else nome
+
+@register.filter
+def somar_horas(valor1, valor2):
+    try:
+        return float(valor1) + float(valor2)
+    except (TypeError, ValueError):
+        return valor1 or 0

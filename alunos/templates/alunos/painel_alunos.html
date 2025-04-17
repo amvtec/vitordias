@@ -1,6 +1,7 @@
 {% load static %}
 {% load custom_filters %}
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -301,7 +302,7 @@
             </thead>
             <tbody>
                 <tr>
-                    {% for idade in 5|to:15 %}
+                    {% for idade in idades %}
                         <td style="border: 1px solid #ccc; padding: 8px;">
                             {{ contagem_idades|get_item:idade|default:"0" }}
                         </td>

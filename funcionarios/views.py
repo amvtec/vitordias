@@ -7,11 +7,7 @@ from .models import Funcionario
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict
 from .models import FolhaMensal
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from django.utils import timezone
-from xhtml2pdf import pisa
-import io
+
 
 
 
