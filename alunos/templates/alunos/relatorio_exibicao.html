@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Alunos Alocados - Turma</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: white;
+            color: black;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #000;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .print-btn {
+            margin-top: 20px;
+            background: #003366;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .print-btn:hover {
+            background-color: #002244;
+        }
+
+        @media print {
+            button, .back-link, select, label, .print-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📋 Relatório de Alunos - Turma {{ turma.serie }} - {{ turma.nome }} ({{ turma.turno }})</h1>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimir</button>
+
+    {% if alunos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome do Aluno</th>
+                    <th>Data de Nascimento</th>
+                    <th>Pai</th>
+                    <th>Telefone Pai</th>
+                    <th>Mãe</th>
+                    <th>Telefone Mãe</th>
+                    <th>Endereço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                    <tr>
+                        <td>{{ aluno.nome }}</td>
+                        <td>{{ aluno.data_nascimento|date:"d/m/Y" }}</td>
+                        <td>{{ aluno.nome_pai }}</td>
+                        <td>{{ aluno.telefone_pai }}</td>
+                        <td>{{ aluno.nome_mae }}</td>
+                        <td>{{ aluno.telefone_mae }}</td>
+                        <td>{{ aluno.endereco }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 20px;">Nenhum aluno encontrado para a turma selecionada.</p>
+    {% endif %}
+
+    <a href="{% url 'relatorio_por_turma' %}" class="back-link">🔙 Voltar ao Relatório de Turma</a>
+</div>
+</body>
+</html>

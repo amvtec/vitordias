@@ -1,0 +1,168 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Folha de Pagamento - Início</title>
+  <style>
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      background-color: #f0f4ff;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    .topo-voltar {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .topo-voltar a {
+      background-color: #555;
+      color: white;
+      padding: 4px 7px;
+      font-size: 13px;
+      text-decoration: none;
+      border-radius: 0px;
+      font-weight: bold;
+    }
+
+    .topo-voltar a:hover {
+      background-color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 60px auto 40px;
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    h1 {
+      color: #003366;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .botao {
+      background-color: #e0e0e0;
+      color: #003366;
+      text-decoration: none;
+      border-radius: 10px;
+      width: 120px;
+      height: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border: 1px solid #bbb;
+    }
+
+    .botao:hover {
+      background-color: #d0e4ff;
+      transform: translateY(-2px) scale(1.02);
+      color: #000;
+    }
+
+    .botao span {
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .botao.lancamento    { background-color: #f6ad55; }
+    .botao.imprimir      { background-color: #3182ce; }
+    .botao.cadastro      { background-color: #48bb78; }
+    .botao.funcionarios  { background-color: #ed8936; }
+    .botao.folhas        { background-color: #4a5568; }
+
+    .importar-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #555;
+      color: white;
+      padding: 10px 18px;
+      font-size: 13px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+    }
+
+    .importar-btn:hover {
+      background-color: #333;
+    }
+
+    @media (max-width: 600px) {
+      .botao {
+        width: 100px;
+        height: 100px;
+        font-size: 12px;
+      }
+
+      .importar-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        bottom: 15px;
+        right: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topo-voltar">
+  <a href="{% url 'painel_alunos' %}">⬅ Voltar</a>
+</div>
+
+<div class="container">
+  <h1>💼 Lançar Folha de Pagamento</h1>
+
+  <div class="grid">
+    <a href="{% url 'selecionar_funcionario' %}" class="botao lancamento">
+      📝<span>Lançar</span>
+    </a>
+    <a href="{% url 'imprimir_folha' %}" class="botao imprimir">
+      🖨️<span>Imprimir</span>
+    </a>
+    <a href="{% url 'ver_folhas' %}" class="botao folhas">
+      📂<span>Folhas</span>
+    </a>  
+    <a href="{% url 'cadastrar_novo_funcionario' %}" class="botao cadastro">
+      👤<span>Cadastro</span>
+    </a>
+    <a href="{% url 'ver_funcionarios' %}" class="botao funcionarios">
+      📋<span>Funcionários</span>
+    </a>
+  </div>
+</div>
+
+<a href="{% url 'importar_funcionarios' %}" class="importar-btn">📥 Importar Funcionários</a>
+
+<footer style="text-align: center; margin-top: 40px; font-size: 13px; color: #666;">
+  Sistema desenvolvido por Alexandre Martins Vieira © 2025.
+</footer>
+
+
+</body>
+</html>

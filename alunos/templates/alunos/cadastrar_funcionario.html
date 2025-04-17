@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Funcionário</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #dce4f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: #f2f2f2;
+            padding: 30px 40px;
+            border-radius: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            border: 2px solid #999;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 30px;
+            font-size: 22px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #000;
+            font-size: 14px;
+        }
+
+        input, select {
+            padding: 8px 12px;
+            border-radius: 2px;
+            border: 1px solid #999;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        input:focus, select:focus {
+            border-color: #666;
+            outline: none;
+            background-color: #fdfddf;
+        }
+
+        button {
+            align-self: center;
+            padding: 10px 28px;
+            background-color: #4d90fe;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #357ae8;
+            transform: scale(1.03);
+        }
+
+        .voltar {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            background-color: #b39ddb;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 4px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .voltar:hover {
+            background-color: #9c8cd4;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Cadastro de Funcionário</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.user.label_tag }}
+                {{ form.user }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.nome.label_tag }}
+                {{ form.nome }}
+            </div>
+            <div class="form-field">
+                {{ form.funcao.label_tag }}
+                {{ form.funcao }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.numero_matricula.label_tag }}
+                {{ form.numero_matricula }}
+            </div>
+            <div class="form-field">
+                {{ form.decreto_nomeacao.label_tag }}
+                {{ form.decreto_nomeacao }}
+            </div>
+        </div>
+
+        <button type="submit">Salvar Funcionário</button>
+    </form>
+
+    <a href="{% url 'listar_funcionarios' %}" class="voltar">🔙 Voltar à Lista</a>
+</div>
+</body>
+</html>

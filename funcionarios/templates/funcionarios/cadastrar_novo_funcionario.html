@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Funcionário</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-field {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 14px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            align-self: center;
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #002244;
+        }
+
+        .voltar {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>👨‍🏫 Cadastrar Novo Funcionário</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.user.label_tag }}
+                {{ form.user }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.nome.label_tag }}
+                {{ form.nome }}
+            </div>
+            <div class="form-field">
+                {{ form.funcao.label_tag }}
+                {{ form.funcao }}
+            </div>
+            <div class="form-field">
+                {{ form.setor.label_tag }}
+                {{ form.setor }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.numero_matricula.label_tag }}
+                {{ form.numero_matricula }}
+            </div>
+            <div class="form-field">
+                {{ form.decreto_nomeacao.label_tag }}
+                {{ form.decreto_nomeacao }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-field">
+                {{ form.carga_horaria_semanal.label_tag }}
+                {{ form.carga_horaria_semanal }}
+            </div>
+            <div class="form-field">
+                {{ form.carga_horaria_mensal.label_tag }}
+                {{ form.carga_horaria_mensal }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-field">
+                {{ form.aluno_especial }} {{ form.aluno_especial.label_tag }}
+            </div>
+            <div class="checkbox-field">
+                {{ form.planejamento }} {{ form.planejamento.label_tag }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Salvar Funcionário</button>
+    </form>
+
+    <div class="voltar">
+        <a href="{% url 'pagina_inicial' %}">← Voltar à Página Inicial</a>
+    </div>
+</div>
+
+</body>
+</html>

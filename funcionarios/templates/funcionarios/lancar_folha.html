@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lançar Folha - {{ funcionario.nome }}</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[readonly] {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            margin-top: 25px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #002244;
+        }
+
+        .voltar {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .voltar a {
+            text-decoration: none;
+            background-color: #555;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📄 Lançar Folha: {{ funcionario.nome }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="mes">Mês</label>
+        <select name="mes" required>
+            <option value="">Selecione o mês</option>
+            {% for m in meses %}
+                <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="ano">Ano</label>
+        <select name="ano" required>
+            <option value="">Selecione o ano</option>
+            {% for a in anos %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="id_faltas">Faltas</label>
+        {{ form.faltas }}
+
+        <label for="id_diarias_qtd">Diárias - Quantidade</label>
+        {{ form.diarias_qtd }}
+
+        <label for="id_diarias_horas">Diárias - Horas</label>
+        {{ form.diarias_horas }}
+
+        <label for="id_servidor_substituto">Servidor Substituto</label>
+        {{ form.servidor_substituto }}
+
+        <label for="id_observacoes">Observações</label>
+        {{ form.observacoes }}
+
+        <button type="submit">💾 Salvar Lançamento</button>
+    </form>
+
+    <div class="voltar">
+        <a href="{% url 'selecionar_funcionario' %}">← Voltar</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputQtd = document.getElementById('id_diarias_qtd');
+        const inputHoras = document.getElementById('id_diarias_horas');
+
+        if (inputHoras) {
+            inputHoras.readOnly = true;
+        }
+
+        if (inputQtd && inputHoras) {
+            inputQtd.addEventListener('input', function () {
+                const qtd = parseFloat(inputQtd.value);
+                inputHoras.value = !isNaN(qtd) ? (qtd * 4).toFixed(0) : '';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

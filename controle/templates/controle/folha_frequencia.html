@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Folha de Frequência</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            font-size: 8px;
+            margin: 6px;
+            color: #000;
+        }
+        h2, h3 {
+            text-align: center;
+            margin: 2px 0;
+        }
+        .header-escola {
+            font-size: 9px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .header-escola img {
+            width: 500px;
+            height: auto;
+            margin-bottom: -10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 1px 3px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .assinatura {
+            height: 18px;
+        }
+        .feriado {
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+            text-align: center;
+            background-color: #c2c2c2;
+        }
+        .planejamento {
+            margin-top: 8px;
+        }
+        .assinaturas-planejamento {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .assinaturas-planejamento div {
+            width: 45%;
+            text-align: center;
+        }
+        .linha-assinatura {
+            border-top: 1px solid #000;
+            margin-top: 5px;
+            display: inline-block;
+            width: 130px;
+            text-align: center;
+        }
+        .tabela-func {
+            margin-bottom: 4px;
+            font-size: 8px;
+            width: 100%;
+        }
+        .tabela-func td {
+            text-align: left;
+            border: 1px solid #444;
+            padding: 4px;
+        }
+        .tabela-func th {
+            text-align: left;
+            border: 1px solid #444;
+            padding: 4px;
+        }
+        .col-small {
+            width: 7%;
+        }
+        .col-medium {
+            width: 18%;
+        }
+        .col-large {
+            width: 20%;
+        }
+        .col-extended {
+            width: 15%;
+        }
+        /* Centralizar a assinatura do diretor */
+        .assinatura-diretor {
+            text-align: center;
+            margin-top: 50px;  /* Aumentado para afastar do conteúdo acima */
+            font-weight: bold;
+            font-size: 10px;
+            width: 20%;
+        }
+        /* Estilo para a linha de assinatura curta */
+        .linha-assinatura-diretor {
+            border-top: 1px solid #000;
+            margin-top: 5px; /* Mantido para ficar mais próximo do texto */
+            width: 250px; /* Tamanho ajustado para ser pequeno */
+            margin-left: auto;
+            margin-right: auto; /* Centralizando a linha */
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-escola">
+    <!-- Exibindo a logo da escola -->
+    {% if escola.logo %}
+        <img src="{{ escola.logo.url }}" alt="Logo da Escola">
+    {% endif %}
+    <strong></strong><br>
+    <strong>{{ escola.nome_escola }}</strong><br>
+    CNPJ: {{ escola.cnpj }}<br>
+    Endereço: {{ escola.endereco }}, {{ escola.numero }}, {{ escola.bairro }}, {{ escola.cidade }}/{{ escola.uf }}<br>
+    Telefone: {{ escola.telefone }} | E-mail: {{ escola.email }}
+</div>
+
+<!-- Tabela Dados do Funcionário + Mês/Ano -->
+<table class="tabela-func">
+    <tr>
+        <td><strong>Nome:</strong> {{ funcionario.nome }}</td>
+        <td><strong>Matrícula:</strong> {{ funcionario.matricula }}</td>
+        <td rowspan="3" class="col-medium" style="text-align: center; font-size: 10px;">
+            <strong>{{ nome_mes }}</strong><br><strong>{{ ano }}</strong>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Cargo:</strong> {{ funcionario.cargo }}</td>
+        <td><strong>Função:</strong> {{ funcionario.funcao }}</td>
+    </tr>
+    <tr>
+        <td><strong>Data Admissão:</strong> {{ funcionario.data_admissao|date:"d/m/Y" }}</td>
+        <td><strong>Lotação:</strong> {{ escola.nome_escola }}</td>
+    </tr>
+</table>
+
+<p style="margin: 4px 0;"><strong>HORÁRIO DE FUNCIONAMENTO - Matutino 07h00min às 11h25min - 06h30min às 12h30min / Vespetino 13h00min às 17h25min - 12h30min às 18h30min</strong></p>
+
+<!-- Tabela principal -->
+<table>
+    <thead>
+        <tr>
+            <th class="col-small">Data</th>
+            <th class="col-small">Dia</th>
+            {% if dias.0.manha %}
+                <th class="col-medium">Horário Manhã</th>
+                <th class="col-large">Ass. Manhã</th>
+            {% endif %}
+            {% if dias.0.tarde %}
+                <th class="col-medium">Horário Tarde</th>
+                <th class="col-large">Ass. Tarde</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for dia in dias %}
+            <tr>
+                <td>{{ dia.data|date:"d/m/Y" }}</td>
+                <td>{{ dia.dia_semana }}</td>
+    
+                {% if dia.feriado %}
+                    <!-- Aplica a classe .feriado somente quando é feriado -->
+                    {% if dias.0.manha and dias.0.tarde %}
+                        <td colspan="4" class="feriado">FERIADO - {{ dia.descricao }}</td>
+                    {% elif dias.0.manha or dias.0.tarde %}
+                        <td colspan="2" class="feriado">FERIADO - {{ dia.descricao }}</td>
+                    {% endif %}
+                {% elif dia.sabado_letivo %}
+                    <!-- Sábado Letivo tratado como dia normal com horários de trabalho -->
+                    {% if dias.0.manha %}
+                        <td>
+                            {{ dia.manha.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                        </td>
+                        <td class="assinatura"></td>
+                    {% endif %}
+                    {% if dias.0.tarde %}
+                        <td>
+                            {{ dia.tarde.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                        </td>
+                        <td class="assinatura"></td>
+                    {% endif %}
+                {% elif dia.dia_semana|lower == 'sábado' or dia.dia_semana|lower == 'sabado' %}
+                    <!-- Para os sábados normais (não letivos) -->
+                    {% if dias.0.manha %}
+                        <td>--</td>
+                        <td>Sábado</td>
+                    {% endif %}
+                    {% if dias.0.tarde %}
+                        <td>--</td>
+                        <td>Sábado</td>
+                    {% endif %}
+                {% elif dia.dia_semana|lower == 'domingo' %}
+                    <!-- Para domingo -->
+                    {% if dias.0.manha %}
+                        <td>--</td>
+                        <td>Domingo</td>
+                    {% endif %}
+                    {% if dias.0.tarde %}
+                        <td>--</td>
+                        <td>Domingo</td>
+                    {% endif %}
+                {% else %}
+                    {% if dias.0.manha %}
+                        <td>
+                            {% if dia.manha %}
+                                {{ dia.manha.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                            {% else %} -- {% endif %}
+                        </td>
+                        <td class="assinatura"></td>
+                    {% endif %}
+                    {% if dias.0.tarde %}
+                        <td>
+                            {% if dia.tarde %}
+                                {{ dia.tarde.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                            {% else %} -- {% endif %}
+                        </td>
+                        <td class="assinatura"></td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Planejamento (Segundas-feiras) -->
+{% if planejamento %}
+    <h3>Planejamento - Segundas-feiras</h3>
+    <table>
+        <thead>
+            <tr>
+                <th class="col-small">Data</th>
+                <th class="col-small">Dia</th>
+                <th class="col-extended">Horário do Planejamento</th>
+                <th class="col-extended">Ass. Professor</th>
+                <th class="col-extended">Ass. Coordenador</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dia in planejamento %}
+                <tr>
+                    <td>{{ dia.data|date:"d/m/Y" }}</td>
+                    <td>{{ dia.dia_semana }}</td>
+                    <td>{{ dia.horario }}</td> <!-- Exibe o horário de planejamento -->
+                    <td class="assinatura"></td>
+                    <td class="assinatura"></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<!-- Observação abaixo do planejamento -->
+<p><strong>Observação:</strong> Encerrado em {{ ultimo_dia_mes|date:"d/m/Y" }} por Antonia Celia.</p>
+
+<!-- Linha e assinatura do diretor com afastamento -->
+<div class="assinatura-diretor">
+    <div class="linha-assinatura-diretor"></div>
+    <p>Assinatura do Diretor</p>
+</div>
+
+</body>
+</html>
