@@ -9,10 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-str=d@-**sv13#x&ztx@h^y#mvj_g&(^&m(e)q!$*hbj)g!dr%'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']  # Ajuste com seu domínio do Render na produção
 
 LOGIN_URL = '/login/'
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,7 +57,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-# ✅ Banco de Dados PostgreSQL (Neon)
+# ✅ Banco PostgreSQL (Neon)
 DATABASES = {
     'default': dj_database_url.parse(
         'postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
@@ -80,14 +79,18 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Arquivos estáticos
+# ✅ Arquivos Estáticos (Admin, CSS, JS)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ necessário para produção
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Cloudinary
+# ✅ Render / Produção: garante que admin funcione
+if not DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# ✅ Cloudinary para arquivos de mídia
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'djxezavtr'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY', '475138434129133'),
