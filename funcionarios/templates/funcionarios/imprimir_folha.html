@@ -226,8 +226,11 @@
             <button type="submit">Buscar</button>
             <button type="button" onclick="window.print()">🖨️ Imprimir</button>
             <a href="{% url 'baixar_folha_pagamento' %}?mes={{ mes_selecionado }}&ano={{ ano_selecionado }}&setor={{ setor_selecionado }}"
-            class="btn-baixar" target="_blank">📥 Baixar Folha (PDF)</a>
-
+            class="btn-baixar"
+            onclick="event.preventDefault();"
+            target="_blank">
+            📥 Baixar Folha (PDF)
+            </a>
         </form>
 
         <div class="voltar">
