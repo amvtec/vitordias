@@ -3,6 +3,7 @@ import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,8 +55,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
-import dj_database_url
-
+# ✅ Banco de Dados PostgreSQL (Neon)
 DATABASES = {
     'default': dj_database_url.parse(
         'postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
@@ -63,7 +63,6 @@ DATABASES = {
         ssl_require=True
     )
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -83,8 +82,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ necessário para produção
 
-# Cloudinary: usando variáveis de ambiente
+# Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'djxezavtr'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY', '475138434129133'),
@@ -92,11 +92,6 @@ CLOUDINARY_STORAGE = {
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Config extra do cloudinary
 cloudinary.config(secure=True)
-
-# ⚠️ Só ative isso se for usar mídia local em desenvolvimento
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
