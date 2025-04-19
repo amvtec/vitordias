@@ -259,7 +259,13 @@
 {% endif %}
 
 <!-- Observação abaixo do planejamento -->
-<p><strong>Observação:</strong> Encerrado em {{ ultimo_dia_mes|date:"d/m/Y" }} por Antonia Celia.</p>
+<p><strong>Observação:</strong> Encerrado em {{ ultimo_dia_mes|date:"d/m/Y" }} por 
+    {% if funcionario.funcao == "DIRETOR(A)" %}
+        {{ funcionario.nome }}
+    {% else %}
+        Outro funcionário
+    {% endif %}
+.</p>
 
 <!-- Linha e assinatura do diretor com afastamento -->
 <div class="assinatura-diretor">
