@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
+
 
 # Lista de UFs para escolha
 UF_CHOICES = [
@@ -96,7 +98,7 @@ class Aluno(models.Model):
     nis = models.CharField(max_length=30, blank=True, null=True)
     data_nascimento = models.DateField()
     profissao = models.CharField(max_length=50, default='Estudante')
-    foto = models.ImageField(upload_to='fotos_alunos/', blank=True, null=True)
+    foto = foto = CloudinaryField('image', blank=True, null=True)
 
     endereco = models.CharField(max_length=200)
     bairro = models.CharField(max_length=100)
@@ -227,8 +229,8 @@ class Escola(models.Model):
     bairro = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100)
     uf = models.CharField(max_length=2)  # UF do Brasil (exemplo: 'MG', 'SP', etc.)
-    logo = models.ImageField(upload_to='escolas/logos/', blank=True, null=True)
-    imagem_fundo = models.ImageField(upload_to='escolas/fundos/', blank=True, null=True)  # Novo campo para imagem de fundo
+    logo = CloudinaryField('Logo', blank=True, null=True)
+    imagem_fundo = CloudinaryField('Imagem de fundo', blank=True, null=True)
     telefone = models.CharField(max_length=15, blank=True, null=True)  # Telefone da escola
     email = models.EmailField(max_length=254, blank=True, null=True)  # E-mail da escola
 

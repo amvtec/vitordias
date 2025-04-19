@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 class Setor(models.Model):
     nome = models.CharField(max_length=100)
@@ -16,16 +17,13 @@ class Funcionario(models.Model):
     setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
     
     # Campos adicionais
-    tem_planejamento = models.BooleanField(default=False)  # Se o funcionário tem planejamento
-    horario_planejamento = models.CharField(max_length=50, blank=True, null=True)  # Horário do planejamento
-    sabado_letivo = models.BooleanField(default=False)  # Se o sábado é letivo para esse funcionário
-    data_nascimento = models.DateField(null=True, blank=True)  # Data de nascimento, podendo ser nula
+    tem_planejamento = models.BooleanField(default=False)
+    horario_planejamento = models.CharField(max_length=50, blank=True, null=True)
+    sabado_letivo = models.BooleanField(default=False)
+    data_nascimento = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.nome
-
-
-
 
 class HorarioTrabalho(models.Model):
     TURNOS = [
@@ -40,16 +38,13 @@ class HorarioTrabalho(models.Model):
     def __str__(self):
         return f"{self.funcionario.nome} - {self.turno}: {self.horario_inicio} às {self.horario_fim}"
 
-
 class Feriado(models.Model):
     data = models.DateField(unique=True)
     descricao = models.CharField(max_length=100)
-    sabado_letivo = models.BooleanField(default=False)  # Marca o sábado como letivo
+    sabado_letivo = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.data.strftime('%d/%m/%Y')} - {self.descricao}"
-
-
 
 class FolhaFrequencia(models.Model):
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE)
@@ -61,31 +56,26 @@ class FolhaFrequencia(models.Model):
     class Meta:
         unique_together = ('funcionario', 'mes', 'ano')
 
-from django.db import models
-
 class SabadoLetivo(models.Model):
-    data = models.DateField(unique=True)  # Data do sábado letivo
-    descricao = models.CharField(max_length=100, blank=True, null=True)  # Descrição opcional
+    data = models.DateField(unique=True)
+    descricao = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"Sábado Letivo - {self.data.strftime('%d/%m/%Y')}"
 
-# controle/models.py
-
-from django.db import models
 
 class Escola(models.Model):
     nome_secretaria = models.CharField(max_length=255)
     nome_escola = models.CharField(max_length=255)
-    cnpj = models.CharField(max_length=18, unique=True)  # Formato: 00.000.000/0000-00
+    cnpj = models.CharField(max_length=18, unique=True)
     endereco = models.CharField(max_length=255)
     numero = models.CharField(max_length=20)
     bairro = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100)
-    uf = models.CharField(max_length=2)  # UF do Brasil (exemplo: 'MG', 'SP', etc.)
-    logo = models.ImageField(upload_to='escolas/logos/', blank=True, null=True)
-    telefone = models.CharField(max_length=15, blank=True, null=True)  # Telefone da escola
-    email = models.EmailField(max_length=254, blank=True, null=True)  # E-mail da escola
+    uf = models.CharField(max_length=2)
+    logo = CloudinaryField('Imagem de fundo', blank=True, null=True)
+    telefone = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField(max_length=254, blank=True, null=True)
 
     def __str__(self):
         return f"{self.nome_escola} - {self.nome_secretaria}"
