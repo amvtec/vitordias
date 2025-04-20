@@ -8,12 +8,14 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-str=d@-**sv13#x&ztx@h^y#mvj_g&(^&m(e)q!$*hbj)g!dr%'
+
 DEBUG = True
 ALLOWED_HOSTS = ['*']  # Ajuste com seu domínio do Render na produção
 
 LOGIN_URL = '/login/'
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',  # ✅ Para ajudar no dev com WhiteNoise
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ WhiteNoise aqui
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,7 +91,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # ✅ Render / Produção: garante que admin funcione
 if not DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ✅ Cloudinary para arquivos de mídia
 CLOUDINARY_STORAGE = {
