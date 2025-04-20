@@ -27,22 +27,22 @@
         }
 
         h2 {
-            color: #003366;
-            font-size: 24px;
+            color: #000000;
+            font-size: 18px;
             margin-bottom: 40px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0px;
             justify-items: center;
             margin-bottom: 50px;
         }
 
         .botao {
             background-color: #e0e0e0;
-            color: #003366;
+            color: #000000;
             text-decoration: none;
             border-radius: 10px;
             width: 120px;
@@ -51,11 +51,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 20px;
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 5px 12px rgba(0,0,0,0.15);
             border: 1px solid #bbb;
+            margin-bottom: 8px; /* Espaçamento menor entre os botões */
         }
 
         .botao:hover {
@@ -67,15 +68,16 @@
         .botao span {
             margin-top: 8px;
             font-size: 13px;
+            display: block;
         }
 
-        .botao.cadastrar { background-color: #f6ad55; }
-        .botao.listar { background-color: #38b2ac; }
-        .botao.horario { background-color: #48bb78; }
-        .botao.feriado { background-color: #ed8936; }
-        .botao.folhas { background-color: #9f7aea; }
-        .botao.geradas { background-color: #e53e3e; }
-        .botao:hover { color: #000; }
+        .botao.cadastrar { background-color: #ff8c00; }
+        .botao.listar { background-color: #007b91; }
+        .botao.horario { background-color: #00ad48; }
+        .botao.feriado { background-color: #e67dc6; }
+        .botao.folhas { background-color: #895edf; }
+        .botao.geradas { background-color: #f01111; }
+        .botao:hover { color: #000000; }
 
         .aniversariantes {
             margin-bottom: 40px;
@@ -165,11 +167,11 @@
     <h2>📊 Painel de Controle</h2>
 
     <div class="grid">
-        <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar">➕<span>Novo Funcionário</span></a>
+        <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar">➕<span>Cadastrar Funcionário</span></a>
         <a href="{% url 'listar_funcionarios' %}" class="botao listar">👥<span>Listar Funcionários</span></a>
-        <a href="{% url 'cadastrar_horario' %}" class="botao horario">🕓<span>Cadastrar Horário</span></a>
-        <a href="{% url 'cadastrar_feriado' %}" class="botao feriado">📅<span>cadastrar Feriado</span></a>
-        <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas">📊<span>Gerar Folha de Frequência</span></a>
+        <a href="{% url 'cadastrar_horario' %}" class="botao horario">🕓<span>Cadastrar novo Horário</span></a>
+        <a href="{% url 'cadastrar_feriado' %}" class="botao feriado">📅<span>Cadastrar novo Feriado</span></a>
+        <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas">📊<span>Gerar Folhas de Frequência</span></a>
         <a href="{% url 'listar_folhas' %}" class="botao geradas">📄<span>Frequências Geradas</span></a>
     </div>
 
