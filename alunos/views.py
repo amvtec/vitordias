@@ -54,6 +54,8 @@ from .models import DocumentoAluno
 from reportlab.lib.enums import TA_JUSTIFY
 from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.http import require_POST
+from urllib.request import urlopen
+
 
 
 
@@ -537,12 +539,17 @@ def gerar_declaracao_matricula(request, aluno_id):
     escola = Escola.objects.first()
     if escola:
         try:
-            logo_path = os.path.join(settings.MEDIA_ROOT, escola.logo.name)
-            logo = Image(logo_path, width=60, height=60)
-            logo.hAlign = 'CENTER'
-            elements.append(logo)
-        except:
-            elements.append(Paragraph("Logo não disponível", normal))
+            if escola.logo:
+                logo_url = escola.logo.url
+                image_data = urlopen(logo_url).read()
+                image_buffer = BytesIO(image_data)
+                logo = Image(image_buffer, width=60, height=60)
+                logo.hAlign = 'CENTER'
+                elements.append(logo)
+            else:
+                elements.append(Paragraph("Logo não disponível", normal))
+        except Exception as e:
+            elements.append(Paragraph(f"Erro ao carregar logo: {str(e)}", normal))
 
         elements.append(Spacer(1, 5))
         elements.append(Paragraph(f"<b>{escola.nome_secretaria}</b>", title_style))
@@ -558,11 +565,15 @@ def gerar_declaracao_matricula(request, aluno_id):
         elements.append(Paragraph(f"Telefone: {escola.telefone} | E-mail: {escola.email}", center_style))
         elements.append(Spacer(1, 10))
 
+    # Título
     elements.append(Spacer(1, 40))
     elements.append(Paragraph("<b>DECLARAÇÃO DE MATRÍCULA</b>", title_style))
     elements.append(Spacer(1, 15))
 
-    elements.append(Paragraph("Declaramos para os devidos fins que o(a) aluno(a) abaixo identificado(a) está regularmente matriculado(a) nesta instituição de ensino:", normal))
+    # Dados do aluno
+    elements.append(Paragraph(
+        "Declaramos para os devidos fins que o(a) aluno(a) abaixo identificado(a) está regularmente matriculado(a) nesta instituição de ensino:",
+        normal))
     elements.append(Spacer(1, 10))
     elements.append(Paragraph(f"<b>Nome do(a) Aluno(a):</b> {aluno.nome}", normal))
     elements.append(Paragraph(f"<b>Data de Nascimento:</b> {aluno.data_nascimento.strftime('%d/%m/%Y') if aluno.data_nascimento else 'Não informado'}", normal))
@@ -613,16 +624,15 @@ def gerar_declaracao_matricula(request, aluno_id):
     ]
 
     tabela_assinaturas = Table(assinaturas, colWidths=[260, 260])
+    tabela_assinaturas.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ]))
     elements.append(tabela_assinaturas)
 
-    tabela_assinaturas.setStyle(TableStyle([
-    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ('TOPPADDING', (0, 0), (-1, -1), 0),     # Espaçamento acima do conteúdo
-    ('BOTTOMPADDING', (0, 0), (-1, -1), 0),  # Espaçamento abaixo do conteúdo
-    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-]))
-
-
+    # Rodapé
     elements.append(Spacer(1, 30))
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
@@ -1248,8 +1258,6 @@ def gerar_pdf_matricula(request, aluno_id):
 
 @login_required
 def gerar_declaracao_matricula(request, aluno_id):
-    from reportlab.lib.enums import TA_JUSTIFY
-
     aluno = get_object_or_404(Aluno, id=aluno_id)
     data_atual = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
@@ -1257,22 +1265,29 @@ def gerar_declaracao_matricula(request, aluno_id):
     response['Content-Disposition'] = f'attachment; filename=declaracao_matricula_{aluno.nome}.pdf'
 
     doc = SimpleDocTemplate(response, pagesize=letter)
+
     styles = getSampleStyleSheet()
-    normal = ParagraphStyle(name="Normal", fontSize=10, leading=12, alignment=TA_JUSTIFY)
+    normal = ParagraphStyle(name="Normal", fontSize=10, leading=12, alignment=4)
     title_style = ParagraphStyle(name="Title", fontSize=14, alignment=1)
     center_style = ParagraphStyle(name="Center", fontSize=10, leading=12, alignment=1)
     small_style = ParagraphStyle(name="Small", fontSize=6, leading=8, alignment=0)
     elements = []
 
+    # Cabeçalho da escola
     escola = Escola.objects.first()
     if escola:
         try:
-            logo_path = os.path.join(settings.MEDIA_ROOT, escola.logo.name)
-            logo = RLImage(logo_path, width=60, height=60)
-            logo.hAlign = 'CENTER'
-            elements.append(logo)
-        except:
-            elements.append(Paragraph("Logo não disponível", normal))
+            if escola.logo:
+                logo_url = escola.logo.url
+                image_data = urlopen(logo_url).read()
+                image_buffer = BytesIO(image_data)
+                logo = Image(image_buffer, width=60, height=60)
+                logo.hAlign = 'CENTER'
+                elements.append(logo)
+            else:
+                elements.append(Paragraph("Logo não disponível", normal))
+        except Exception as e:
+            elements.append(Paragraph(f"Erro ao carregar logo: {str(e)}", normal))
 
         elements.append(Spacer(1, 5))
         elements.append(Paragraph(f"<b>{escola.nome_secretaria}</b>", title_style))
@@ -1288,11 +1303,15 @@ def gerar_declaracao_matricula(request, aluno_id):
         elements.append(Paragraph(f"Telefone: {escola.telefone} | E-mail: {escola.email}", center_style))
         elements.append(Spacer(1, 10))
 
+    # Título
     elements.append(Spacer(1, 40))
     elements.append(Paragraph("<b>DECLARAÇÃO DE MATRÍCULA</b>", title_style))
     elements.append(Spacer(1, 15))
 
-    elements.append(Paragraph("Declaramos para os devidos fins que o(a) aluno(a) abaixo identificado(a) está regularmente matriculado(a) nesta instituição de ensino:", normal))
+    # Dados do aluno
+    elements.append(Paragraph(
+        "Declaramos para os devidos fins que o(a) aluno(a) abaixo identificado(a) está regularmente matriculado(a) nesta instituição de ensino:",
+        normal))
     elements.append(Spacer(1, 10))
     elements.append(Paragraph(f"<b>Nome do(a) Aluno(a):</b> {aluno.nome}", normal))
     elements.append(Paragraph(f"<b>Data de Nascimento:</b> {aluno.data_nascimento.strftime('%d/%m/%Y') if aluno.data_nascimento else 'Não informado'}", normal))
@@ -1314,94 +1333,49 @@ def gerar_declaracao_matricula(request, aluno_id):
     elements.append(Paragraph(f"<b>Darcinópolis/TO, {data_atual.split(' ')[0]}</b>", normal))
     elements.append(Spacer(1, 30))
 
+    # Buscar o funcionário logado e o diretor
     funcionario = Funcionario.objects.filter(user=request.user).first()
     diretor = Funcionario.objects.filter(funcao='Diretor(a)').first()
-    doc_gerado = DocumentoAluno.objects.filter(aluno=aluno, tipo='declaracao').order_by('-data_geracao').first()
 
-    assinatura_img_func = ''
-    assinatura_img_dir = ''
+    # Assinaturas lado a lado
+    assinaturas = [
+        [
+            Paragraph("____________________________________", center_style),
+            Paragraph("____________________________________", center_style)
+        ],
+        [
+            Paragraph(f"{funcionario.nome if funcionario else 'Funcionário'}", center_style),
+            Paragraph(f"{diretor.nome if diretor else 'Diretor'}", center_style)
+        ],
+        [
+            Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
+            Paragraph(f"{diretor.funcao if diretor else ''}", center_style)
+        ],
+        [
+            Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
+            Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style)
+        ],
+        [
+            Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
+            Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style)
+        ],
+    ]
 
-    # Condições para exibir assinaturas
-    if doc_gerado and funcionario:
-        # Assinatura do funcionário logado
-        if funcionario.assinatura and os.path.exists(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name)):
-            if funcionario.funcao == 'Diretor(a)' and doc_gerado.assinada_diretor:
-                assinatura_img_func = RLImage(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name), width=250, height=95)
-            elif funcionario.funcao == 'Secretario(a)' and doc_gerado.assinada_secretario:
-                assinatura_img_func = RLImage(os.path.join(settings.MEDIA_ROOT, funcionario.assinatura.name), width=250, height=95)
-
-    if doc_gerado and diretor and diretor.assinatura and os.path.exists(os.path.join(settings.MEDIA_ROOT, diretor.assinatura.name)):
-        if doc_gerado.assinada_diretor:
-            assinatura_img_dir = RLImage(os.path.join(settings.MEDIA_ROOT, diretor.assinatura.name), width=250, height=95)
-
-    # Monta bloco com 2 colunas
-    assinatura_data = []
-
-    # Primeira linha: imagem da assinatura
-    linha_imagem = []
-    linha_imagem.append(assinatura_img_func if assinatura_img_func else Paragraph(" ", center_style))
-    linha_imagem.append(assinatura_img_dir if assinatura_img_dir else Paragraph(" ", center_style))
-    assinatura_data.append(linha_imagem)
-
-    # Linha da linha
-    assinatura_data.append([
-        Paragraph("____________________________________", center_style),
-        Paragraph("____________________________________", center_style),
-    ])
-
-    # Nome
-    assinatura_data.append([
-        Paragraph(f"{funcionario.nome if funcionario else ' '}", center_style),
-        Paragraph(f"{diretor.nome if diretor else ' '}", center_style),
-    ])
-
-    # Função
-    assinatura_data.append([
-        Paragraph(f"{funcionario.funcao if funcionario else ''}", center_style),
-        Paragraph(f"{diretor.funcao if diretor else ''}", center_style),
-    ])
-
-    # Matrícula
-    assinatura_data.append([
-        Paragraph(f"Matrícula: {funcionario.numero_matricula if funcionario else ''}", center_style),
-        Paragraph(f"Matrícula: {diretor.numero_matricula if diretor else ''}", center_style),
-    ])
-
-    # Decreto
-    assinatura_data.append([
-        Paragraph(f"Decreto: {funcionario.decreto_nomeacao if funcionario else ''}", center_style),
-        Paragraph(f"Decreto: {diretor.decreto_nomeacao if diretor else ''}", center_style),
-    ])
-
-    tabela_assinaturas = Table(assinatura_data, colWidths=[260, 260])
+    tabela_assinaturas = Table(assinaturas, colWidths=[260, 260])
     tabela_assinaturas.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-
-    # Ajuste individual por linha (linha 0: imagem | linha 1: linha)
-        ('BOTTOMPADDING', (0, 0), (-1, 0), -45),    # menos espaço embaixo da imagem
-        ('TOPPADDING',    (0, 1), (-1, 1), -4),   # menos espaço acima da linha
-
-        ('TOPPADDING', (0, 2), (-1, -1), 0),      # normal para os outros
-        ('BOTTOMPADDING', (0, 2), (-1, -1), 0),
     ]))
-
     elements.append(tabela_assinaturas)
 
+    # Rodapé
     elements.append(Spacer(1, 30))
     elements.append(Paragraph(f"Gerado por: {request.user.username}", small_style))
     elements.append(Paragraph(f"Data e Hora: {data_atual}", small_style))
 
     doc.build(elements)
-
-    # Registrar documento se ainda não existir
-    if not DocumentoAluno.objects.filter(aluno=aluno, tipo='declaracao').exists():
-        DocumentoAluno.objects.create(
-            aluno=aluno,
-            tipo='declaracao',
-            html_gerado="DECLARAÇÃO GERADA"
-        )
-
     return response
 
 
