@@ -15,9 +15,22 @@
             padding: 0;
         }
 
+        /* Banner Desenvolvido por */
+        .banner-desenvolvido {
+            background: linear-gradient(90deg, #003366, #0059b3);
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
         .container {
             max-width: 1000px;
-            margin: 60px auto;
+            margin: 0 auto;
             background-color: white;
             padding: 40px 30px;
             border-radius: 12px;
@@ -56,7 +69,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 12px rgba(0,0,0,0.15);
             border: 1px solid #bbb;
-            margin-bottom: 8px; /* Espaçamento menor entre os botões */
+            margin-bottom: 8px;
         }
 
         .botao:hover {
@@ -161,7 +174,13 @@
         }
     </style>
 </head>
+
 <body>
+
+<!-- Banner Desenvolvido por -->
+<div class="banner-desenvolvido">
+    Desenvolvido por Alexandre Martins Vieira © 2025
+</div>
 
 <div class="container">
     <h2>📊 Painel de Controle</h2>
@@ -206,10 +225,6 @@
     <a href="{% url 'importar_funcionarios' %}" class="importar-botao" title="Importar Funcionários">👥</a>
     <a href="{% url 'importar_horarios_trabalho' %}" class="importar-botao" title="Importar Horários">🕓</a>
 </div>
-
-<footer style="text-align: center; margin-top: 40px; font-size: 13px; color: #666;">
-    Sistema desenvolvido por Alexandre Martins Vieira © 2025.
-</footer>
 
 </body>
 </html>
