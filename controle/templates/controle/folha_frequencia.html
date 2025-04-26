@@ -1,3 +1,4 @@
+{% load controle_filters %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -81,13 +82,13 @@
             padding: 4px;
         }
         .col-small {
-            width: 7%;
+            width: 4%;
         }
         .col-medium {
-            width: 11%;
+            width: 8%;
         }
         .col-large {
-            width: 25%;
+            width: 30%;
         }
         .col-extended {
             width: 15%;
@@ -165,7 +166,7 @@
         {% for dia in dias %}
             <tr>
                 <td>{{ dia.data|date:"d/m/Y" }}</td>
-                <td>{{ dia.dia_semana }}</td>
+                <td>{{ dia.dia_semana|abreviar_dia_semana }}</td>
     
                 {% if dia.feriado %}
                     <!-- Aplica a classe .feriado somente quando é feriado -->
@@ -258,6 +259,7 @@
     </table>
 {% endif %}
 
+<!-- Observação abaixo do planejamento -->
 <p><strong>Observação:</strong> Encerrado em {{ ultimo_dia_mes|date:"d/m/Y" }} por 
     {% if funcionario.funcao == "DIRETOR(A)" %}
         {{ funcionario.nome }}
