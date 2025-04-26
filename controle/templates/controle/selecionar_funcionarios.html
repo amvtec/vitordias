@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -100,11 +101,40 @@
             border-radius: 5px;
             font-weight: bold;
         }
+
+        /* Estilo da tela de carregamento */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 20px;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .loading-overlay img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
     </style>
+
     <script>
         function selecionarTodos(checked) {
             const checkboxes = document.querySelectorAll('input[name="funcionarios"]');
             checkboxes.forEach(cb => cb.checked = checked);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
         }
     </script>
 </head>
@@ -128,7 +158,7 @@
 
     {% if funcionarios %}
     <!-- FORMULÁRIO 2: Geração das folhas (POST) -->
-    <form method="POST" action="{% url 'gerar_folhas_lote' %}">
+    <form method="POST" action="{% url 'gerar_folhas_lote' %}" onsubmit="showLoading()">
         {% csrf_token %}
 
         <label for="mes">Mês:</label>
@@ -166,6 +196,12 @@
     <div class="rodape">
         <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>
     </div>
+</div>
+
+<!-- Tela de carregamento -->
+<div id="loadingOverlay" class="loading-overlay">
+    <img src="{% static 'imagens/loading.gif' %}" alt="Carregando...">
+    <div>Gerando folhas, aguarde...</div>
 </div>
 
 </body>
