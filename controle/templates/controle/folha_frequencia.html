@@ -85,10 +85,10 @@
             width: 4%;
         }
         .col-medium {
-            width: 8%;
+            width: 12.5%;
         }
         .col-large {
-            width: 30%;
+            width: 33%;
         }
         .col-extended {
             width: 15%;
@@ -151,7 +151,7 @@
     <thead>
         <tr>
             <th class="col-small">Data</th>
-            <th class="col-small">Dia</th>
+            
             {% if dias.0.manha %}
                 <th class="col-medium">Horário Manhã</th>
                 <th class="col-large">Ass. Manhã</th>
@@ -166,7 +166,7 @@
         {% for dia in dias %}
             <tr>
                 <td>{{ dia.data|date:"d/m/Y" }}</td>
-                <td>{{ dia.dia_semana|abreviar_dia_semana }}</td>
+                
     
                 {% if dia.feriado %}
                     <!-- Aplica a classe .feriado somente quando é feriado -->
