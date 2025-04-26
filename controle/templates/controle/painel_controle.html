@@ -160,6 +160,31 @@
             transition: all 0.3s ease;
         }
 
+        .voltar-topo {
+            position: fixed;
+            top: 10px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        .voltar-topo a {
+            background-color: #d40b0b;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 0px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voltar-topo a:hover {
+            background-color: #001f4d;
+            transform: scale(1.05);
+        }
+
+
         .importar-botao:hover {
             background-color: #0056b3;
             transform: scale(1.05);
@@ -177,13 +202,18 @@
 
 <body>
 
+
 <!-- Banner Desenvolvido por -->
 <div class="banner-desenvolvido">
     Desenvolvido por Alexandre Martins Vieira © 2025
 </div>
+<div class="voltar-topo">
+    <a href="{% url 'painel_alunos' %}">Voltar</a>
+</div>
+
 
 <div class="container">
-    <h2>📊 Painel de Controle</h2>
+    <h2>Painel de Controle - Folha de Frequência</h2>
 
     <div class="grid">
         <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar">➕<span>Cadastrar Funcionário</span></a>

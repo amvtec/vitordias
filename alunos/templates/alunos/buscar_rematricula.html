@@ -94,6 +94,31 @@
             background-color: #357ae8;
         }
 
+        .voltar-topo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        .voltar-topo a {
+            background-color: #003366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voltar-topo a:hover {
+            background-color: #001f4d;
+            transform: scale(1.05);
+        }
+
+
         .mensagem {
             text-align: center;
             margin-top: 20px;
@@ -104,6 +129,9 @@
     </style>
 </head>
 <body>
+    <div class="voltar-topo">
+        <a href="{% url 'painel_alunos' %}">← Voltar</a>
+    </div>    
 <div class="container">
     <h1>🔍 Buscar Aluno para Rematrícula</h1>
     <form method="post">

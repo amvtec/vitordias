@@ -22,6 +22,32 @@
             border: 2px solid #999;
         }
 
+        .botao-voltar-fixo {
+            position: fixed;
+            top: 50%; /* metade da tela */
+            left: 20px; /* distância da esquerda */
+            transform: translateY(-50%); /* centraliza verticalmente */
+            z-index: 999; /* fica acima de tudo */
+        }
+
+        .botao-voltar-fixo a {
+            background-color: #a00000;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #900;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .botao-voltar-fixo a:hover {
+            background-color: #800000;
+            transform: scale(1.05);
+        }
+
         h2 {
             color: #003366;
             margin-bottom: 30px;
@@ -131,6 +157,9 @@
     </style>
 </head>
 <body>
+    <div class="botao-voltar-fixo">
+        <a href="{% url 'painel_alunos' %}">🔙 Voltar</a>
+    </div>    
 <div class="box">
     <h2>🔍 Pesquisar Aluno</h2>
 
@@ -180,9 +209,6 @@
     {% endif %}
 
     <br>
-    <div style="text-align: center;">
-        <a href="{% url 'painel_alunos' %}" class="btn btn-voltar">🔙 Voltar</a>
-    </div>
 </div>
 </body>
 </html>
