@@ -213,10 +213,9 @@ def gerar_folhas_em_lote(request):
         folhas_renderizadas = []
         escola = Escola.objects.first()
 
-        # Obter e ordenar os funcionários pelo nome
-        funcionarios = Funcionario.objects.filter(id__in=ids_funcionarios).order_by('nome')
+        for id_func in ids_funcionarios:
+            funcionario = get_object_or_404(Funcionario, id=id_func)
 
-        for funcionario in funcionarios:
             total_dias = monthrange(ano, mes)[1]
             datas_do_mes = [date(ano, mes, dia) for dia in range(1, total_dias + 1)]
             ultimo_dia_mes = date(ano, mes, total_dias)
@@ -297,7 +296,6 @@ def gerar_folhas_em_lote(request):
         return render(request, 'controle/folhas_em_lote.html', {'folhas': folhas_renderizadas})
 
     return render(request, 'controle/folhas_em_lote.html', {'folhas': []})
-
 
 
 
@@ -553,22 +551,3 @@ def importar_horarios_trabalho(request):
             messages.error(request, f'Erro ao importar horários: {e}')
 
     return render(request, 'controle/importar_horarios.html')
-
-def horarios_funcionario(request, funcionario_id):
-    try:
-        funcionario = Funcionario.objects.get(id=funcionario_id)
-        horarios = HorarioTrabalho.objects.filter(funcionario=funcionario)
-
-        lista_horarios = []
-        for horario in horarios:
-            lista_horarios.append({
-                'turno': horario.turno,
-                'horario_inicio': horario.horario_inicio.strftime('%H:%M'),
-                'horario_fim': horario.horario_fim.strftime('%H:%M'),
-            })
-
-        return JsonResponse({'status': 'ok', 'horarios': lista_horarios})
-    except Funcionario.DoesNotExist:
-        return JsonResponse({'status': 'erro', 'mensagem': 'Funcionário não encontrado'})
-    except Exception as e:
-        return JsonResponse({'status': 'erro', 'mensagem': str(e)})
