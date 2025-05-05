@@ -201,6 +201,25 @@
             margin-bottom: 4px;
         }
 
+        .admin-btn {
+            position: fixed;
+            top: 7px;
+            right: 7px;
+            background-color: #01701d;
+            color: white;
+            padding: 5px 7px;
+            font-size: 14px;
+            border-radius: 4px;
+            text-decoration: none;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .admin-btn:hover {
+            background-color: #ffae00;
+        }
+
+
         .btn-importar-alunos {
             position: fixed;
             bottom: 20px;
@@ -247,6 +266,8 @@
 </div>   
 
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<a href="/admin/" target="_blank" class="admin-btn">⚙️ Admin</a>
+
 
 <div id="sidebar" class="sidebar">
     <h2>🎓 Menu</h2>
@@ -298,28 +319,6 @@
             <h3>📈 Total de Alunos</h3>
             <img src="data:image/png;base64,{{ graphic_total }}" alt="Gráfico de Barras">
         </div>
-    </div>
-
-    <div style="margin-top: 50px;">
-        <h3>📋 Quantidade de Alunos por Idade (5 a 15 anos)</h3>
-        <table style="margin: 0 auto; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    {% for idade in 5|to:15 %}
-                        <th style="border: 1px solid #ccc; padding: 8px;">{{ idade }} anos</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    {% for idade in idades %}
-                        <td style="border: 1px solid #ccc; padding: 8px;">
-                            {{ contagem_idades|get_item:idade|default:"0" }}
-                        </td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
     </div>
 </div>
 
