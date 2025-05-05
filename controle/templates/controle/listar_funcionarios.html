@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários Cadastrados</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e8f0ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #d9e8fb;
+            color: #003366;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        a {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-editar-horario {
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .btn-editar-horario:hover {
+            text-decoration: underline;
+        }
+
+        .btn-voltar-flutuante {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #555;
+            color: white;
+            padding: 10px 12px;
+            font-size: 14px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-voltar-flutuante:hover {
+            background-color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .btn-voltar-flutuante {
+                padding: 8px 10px;
+                font-size: 13px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📋 Funcionários Cadastrados</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Matrícula</th>
+                <th>Função</th>
+                <th>Setor</th>
+                <th>Editar</th>
+                <th>Editar Horário</th>
+                <th>Excluir</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in funcionarios %}
+            <tr>
+                <td>{{ f.nome }}</td>
+                <td>{{ f.matricula }}</td>
+                <td>{{ f.funcao }}</td>
+                <td>{{ f.setor.nome }}</td>
+                <td><a href="{% url 'editar_funcionario' f.id %}">Editar</a></td>
+                <td><a href="{% url 'editar_horario' f.id %}" class="btn-editar-horario">Editar Horário</a></td>
+                <td><a href="{% url 'excluir_funcionario' f.id %}" style="color: red;">Excluir</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Botão flutuante de voltar -->
+<a href="{% url 'painel_controle' %}" class="btn-voltar-flutuante" title="Voltar">⬅</a>
+
+</body>
+</html>

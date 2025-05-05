@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesquisar Funcionário</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #dce4f7;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .box {
+            background-color: #f2f2f2;
+            padding: 30px 40px;
+            max-width: 800px;
+            margin: auto;
+            border-radius: 6px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            border: 2px solid #999;
+        }
+
+        h2 {
+            color: #003366;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-row input[type="text"] {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 2px;
+            border: 1px solid #999;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        .btn {
+            border: 1px solid #999;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            border-radius: 2px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #d0d0d0;
+            transform: scale(1.03);
+        }
+
+        .resultado {
+            margin-top: 20px;
+        }
+
+        .funcionario {
+            background: #fff;
+            border: 1px solid #bbb;
+            padding: 10px 16px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .acoes a {
+            text-decoration: none;
+            margin-left: 10px;
+            padding: 6px 12px;
+            border-radius: 2px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #999;
+            display: inline-block;
+        }
+
+        .acoes a.editar {
+            background: #aed581;
+            color: #2e7d32;
+        }
+
+        .acoes a.excluir {
+            background: #ef9a9a;
+            color: #b71c1c;
+        }
+
+        .acoes a:hover {
+            opacity: 0.9;
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            background-color: #4d90fe;
+            color: white;
+            text-decoration: none;
+            padding: 10px 26px;
+            border-radius: 4px;
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #357ae8;
+        }
+
+        .btn-voltar:hover {
+            background-color: #357ae8;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #b71c1c;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>🔍 Pesquisar Funcionário</h2>
+
+    <form method="get">
+        <div class="search-row">
+            <input type="text" name="busca" placeholder="Digite o nome do funcionário..." value="{{ request.GET.busca }}">
+            <button type="submit" class="btn">Pesquisar</button>
+        </div>
+    </form>
+
+    <div class="resultado">
+        {% if funcionarios %}
+            {% for funcionario in funcionarios %}
+                <div class="funcionario">
+                    {{ funcionario.nome }} - {{ funcionario.get_funcao_display }}
+                    <div class="acoes">
+                        <a href="{% url 'editar_funcionario' funcionario.id %}" class="editar">✏️ Editar</a>
+                        <a href="{% url 'excluir_funcionario' funcionario.id %}" class="excluir"
+                           onclick="return confirm('Tem certeza que deseja excluir este funcionário?')">🗑️ Excluir</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% elif busca %}
+            <p class="mensagem">🚫 Nenhum funcionário encontrado.</p>
+        {% endif %}
+    </div>
+
+    <div style="text-align:center;">
+        <a href="{% url 'painel_alunos' %}" class="btn-voltar">🔙 Voltar ao Painel</a>
+    </div>
+</div>
+</body>
+</html>

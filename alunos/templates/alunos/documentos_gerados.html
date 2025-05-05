@@ -1,0 +1,157 @@
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Documentos do Aluno</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background-color: #e9f0ff;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 25px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px 14px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #dbe8ff;
+      color: #003366;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 4px;
+      border: 1px solid #999;
+      background-color: #f5f5f5;
+      color: #333;
+      transition: all 0.3s ease;
+      margin: 2px;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #ddd;
+    }
+
+    .btn-pdf {
+      background-color: #ff5100;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-assinar {
+      background-color: #007e33;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-excluir {
+      background-color: #a00000;
+      color: white;
+      border: none;
+    }
+
+    .btn-voltar {
+      background-color: #003366;
+      color: white;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>📄 Documentos Gerados para {{ aluno.nome }}</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Ass. Diretor</th>
+        <th>Ass. Secretário</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doc in documentos %}
+      <tr>
+        <td>{{ doc.get_tipo_display }}</td>
+        <td>{{ doc.data_geracao|date:"d/m/Y H:i" }}</td>
+        <td>{{ doc.assinada_diretor|yesno:"✅,❌" }}</td>
+        <td>{{ doc.assinada_secretario|yesno:"✅,❌" }}</td>
+        <td>
+          <div class="actions">
+            {% if doc.tipo == "matricula" %}
+              <a href="{% url 'gerar_pdf_matricula' aluno.id %}" class="btn btn-pdf">📄 Reimprimir</a>
+            {% elif doc.tipo == "declaracao" %}
+              <a href="{% url 'gerar_declaracao_matricula' aluno.id %}" class="btn btn-pdf">📄 Reimprimir</a>
+            {% endif %}
+
+            {% if request.user.is_authenticated and request.user.funcionario %}
+              {% with funcao=request.user.funcionario.funcao %}
+                {% if funcao == "Diretor(a)" and not doc.assinada_diretor %}
+                  <a href="{% url 'assinar_documento' doc.id 'diretor' %}" class="btn btn-assinar">✅ Assinar como Diretor</a>
+                {% elif funcao == "Secretario(a)" and not doc.assinada_secretario %}
+                  <a href="{% url 'assinar_documento' doc.id 'secretario' %}" class="btn btn-assinar">✅ Assinar como Secretário</a>
+                {% endif %}
+
+                {% if funcao in "Diretor(a)Secretario(a)Coordenador(a)Administrador" and not doc.assinada_diretor and not doc.assinada_secretario %}
+                  <a href="{% url 'excluir_documento' doc.id %}" class="btn btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este documento?')">🗑️ Excluir</a>
+                {% endif %}
+              {% endwith %}
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">Nenhum documento gerado ainda.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="text-align: center;">
+    <a href="{% url 'painel_alunos' %}" class="btn btn-voltar">🔙 Voltar</a>
+  </div>
+</div>
+</body>
+</html>
+{% endblock %}

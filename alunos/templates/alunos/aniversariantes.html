@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>🎉 Aniversariantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f9;
+            padding: 30px;
+            color: #003366;
+        }
+
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid #003366;
+        }
+
+        .card strong {
+            display: block;
+            font-size: 16px;
+            color: #003366;
+            margin-bottom: 4px;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 30px;
+            background-color: #003366;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .voltar:hover {
+            background-color: #001f4d;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎉 Aniversariantes</h1>
+
+    <div class="section">
+        <h2>🎂 Aniversariantes do Dia ({{ hoje|date:"d/m/Y" }})</h2>
+        {% if aniversariantes_dia %}
+            <div class="card-grid">
+                {% for aluno in aniversariantes_dia %}
+                    <div class="card">
+                        <img src="{% if aluno.foto %}{{ aluno.foto.url }}{% else %}{% static 'img/sem_foto.jpg' %}{% endif %}" alt="Foto de {{ aluno.nome }}">
+                        <strong>{{ aluno.nome }}</strong>
+                        <p>🎈 {{ aluno.data_nascimento|date:"d \\d\\e F" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nenhum aniversariante hoje.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>📅 Aniversariantes do Mês ({{ hoje|date:"F/Y" }})</h2>
+        {% if aniversariantes_mes %}
+            <div class="card-grid">
+                {% for aluno in aniversariantes_mes %}
+                    <div class="card">
+                        <img src="{% if aluno.foto %}{{ aluno.foto.url }}{% else %}{% static 'img/sem_foto.jpg' %}{% endif %}" alt="Foto de {{ aluno.nome }}">
+                        <strong>{{ aluno.nome }}</strong>
+                        <p>🎂 {{ aluno.data_nascimento|date:"d \\d\\e F" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nenhum aniversariante neste mês.</p>
+        {% endif %}
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{% url 'painel_alunos' %}" class="voltar">⬅ Voltar ao Painel</a>
+    </div>
+</body>
+</html>

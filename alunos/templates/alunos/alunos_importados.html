@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Importar Alunos</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5dc;
+            margin: 0;
+            padding: 50px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            border: 3px double #000080;
+            padding: 30px;
+            border-radius: 6px;
+            box-shadow: 4px 4px 0px #999;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #000080;
+            border-bottom: 2px dotted #000;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            font-family: 'Courier New', Courier, monospace;
+            padding: 8px;
+            border: 2px inset #ccc;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #fdfdfd;
+        }
+
+        button {
+            background-color: #c0c0c0;
+            color: #000;
+            border: 2px outset #999;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #aaa;
+        }
+
+        button:hover {
+            background-color: #b0b0b0;
+        }
+
+        .mensagem {
+            font-size: 15px;
+            color: #006400;
+            margin-top: 20px;
+        }
+
+        .erro {
+            color: #8b0000;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #000080;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            border: 2px dashed #000080;
+            padding: 8px 20px;
+            background-color: #f0f8ff;
+        }
+
+        .voltar:hover {
+            background-color: #e6f0ff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📁 Importar Alunos via Excel</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="excel_file" accept=".xlsx,.xls" required><br>
+        <button type="submit">🚀 Enviar Arquivo</button>
+    </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mensagem {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <a href="{% url 'painel_alunos' %}" class="voltar">⬅ Voltar ao Painel</a>
+</div>
+
+</body>
+</html>

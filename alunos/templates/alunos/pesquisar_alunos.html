@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesquisar Alunos</title>
+    <style>
+        /* Seu estilo já existente ou ajuste o estilo aqui */
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f4f9ff;
+            padding: 30px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            border: 2px solid #999;
+        }
+        h1 {
+            text-align: center;
+            color: #003366;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #999;
+        }
+        button {
+            background-color: #003366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #002244;
+        }
+        .aluno-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Pesquisar Alunos</h1>
+
+        <form method="get">
+            <input type="text" name="pesquisa" placeholder="Digite o nome do aluno" value="{{ request.GET.pesquisa }}">
+            <button type="submit">Pesquisar</button>
+        </form>
+
+        {% if alunos %}
+            <h2>Resultados da Pesquisa</h2>
+            <div>
+                {% for aluno in alunos %}
+                    <div class="aluno-item">
+                        <span>{{ aluno.nome }} - {{ aluno.ano_serie }}</span>
+                        <a href="{% url 'alocar_alunos' %}?aluno_id={{ aluno.id }}" class="btn">Selecionar</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nenhum aluno encontrado.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

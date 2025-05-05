@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Alunos por Idade</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 40px;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 14px;
+        }
+
+        button, .botao-link {
+            background-color: #003366;
+            color: white;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .botao-link:hover, button:hover {
+            background-color: #002244;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 6px;
+        }
+
+        th {
+            background-color: #dfeeff;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+
+        .header-info {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .header-info p {
+            margin: 4px 0;
+        }
+
+        .print-btn {
+            margin-top: 25px;
+            background-color: #28a745;
+        }
+
+        @media print {
+            .form-section, .print-btn, .botao-voltar {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📊 Relatório de Alunos por Idade</h1>
+
+    <form method="get" class="form-section">
+        <label for="turma_id">Selecionar Turma:</label>
+        <select name="turma_id" id="turma_id">
+            <option value="">-- Todas as Turmas --</option>
+            {% for turma in turmas %}
+                <option value="{{ turma.id }}" {% if turma_id == turma.id|stringformat:"s" %}selected{% endif %}>
+                    {{ turma.serie }} - Turma {{ turma.nome }} ({{ turma.turno }})
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">🔍 Ver Relatório</button>
+        <a href="{% url 'relatorio_alunos_por_idade' %}" class="botao-link">📄 Relatório Geral</a>
+    </form>
+
+    {% if turma_selecionada %}
+        <div class="header-info">
+            <p><strong>Escola:</strong> {{ escola.nome_escola }}</p>
+            <p><strong>Turma:</strong> {{ turma_selecionada.serie }} - {{ turma_selecionada.nome }} ({{ turma_selecionada.turno }})</p>
+            <p><strong>Ano Letivo:</strong> {{ ano_letivo }}</p>
+            {% if turma_selecionada.professor %}
+                <p><strong>Professor:</strong> {{ turma_selecionada.professor }}</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="header-info">
+            <p><strong>Escola:</strong> {{ escola.nome_escola }}</p>
+            <p><strong>Relatório Geral de Todas as Turmas</strong></p>
+            <p><strong>Ano Letivo:</strong> {{ ano_letivo }}</p>
+        </div>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Idade</th>
+                <th>Masculino</th>
+                <th>Feminino</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for idade, dados in relatorio.items %}
+                <tr>
+                    <td>{{ idade }} anos</td>
+                    <td>{{ dados.masculino }}</td>
+                    <td>{{ dados.feminino }}</td>
+                    <td>{{ dados.total }}</td>
+                </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td>Total Geral</td>
+                <td>{{ totais.masculino }}</td>
+                <td>{{ totais.feminino }}</td>
+                <td>{{ totais.total }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimir</button>
+    <a href="{% url 'relatorios_personalizados' %}" class="botao-link botao-voltar" style="margin-top: 15px; display: inline-block;">🔙 Voltar</a>
+</div>
+</body>
+</html>

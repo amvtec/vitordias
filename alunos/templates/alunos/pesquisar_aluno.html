@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesquisar Aluno</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #dce4f7;
+            padding: 50px 20px;
+            margin: 0;
+        }
+
+        .box {
+            background-color: #f2f2f2;
+            padding: 30px 40px;
+            max-width: 850px;
+            margin: auto;
+            border-radius: 6px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            border: 2px solid #999;
+        }
+
+        .botao-voltar-fixo {
+            position: fixed;
+            top: 50%; /* metade da tela */
+            left: 20px; /* distância da esquerda */
+            transform: translateY(-50%); /* centraliza verticalmente */
+            z-index: 999; /* fica acima de tudo */
+        }
+
+        .botao-voltar-fixo a {
+            background-color: #a00000;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            border: 1px solid #900;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .botao-voltar-fixo a:hover {
+            background-color: #800000;
+            transform: scale(1.05);
+        }
+
+        h2 {
+            color: #003366;
+            margin-bottom: 30px;
+            font-size: 22px;
+            text-align: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-row input[type="text"] {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 2px;
+            border: 1px solid #999;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: 1px solid #aaa;
+            background-color: #e0e0e0;
+            color: #000;
+            box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background-color: #d0d0d0;
+            transform: scale(1.03);
+        }
+
+        .btn-pesquisar { background-color: #4d90fe; color: #fff; border-color: #357ae8; }
+        .btn-pdf       { background-color: #ff5100; color: #fff; }
+        .btn-declaracao{ background-color: #009e5c; color: #000000; }
+        .btn-ficha     { background-color: #006eff; color: #ffffff; }
+        .btn-editar    { background-color: #ffd900; color: #000000; }
+        .btn-voltar    { background-color: #a00000; color: white; }
+
+        .field {
+            margin-bottom: 14px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #bbb;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .value {
+            color: #333;
+            text-align: right;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .mensagem {
+            text-align: center;
+            color: #b71c1c;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px dashed #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .search-row {
+                flex-direction: column;
+            }
+
+            .field {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .value {
+                text-align: left;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="botao-voltar-fixo">
+        <a href="{% url 'painel_alunos' %}">🔙 Voltar</a>
+    </div>    
+<div class="box">
+    <h2>🔍 Pesquisar Aluno</h2>
+
+    <form method="get">
+        <div class="search-row">
+            <input type="text" name="busca" placeholder="Digite o nome do aluno..." value="{{ request.GET.busca }}">
+            <button type="submit" class="btn btn-pesquisar">🔍 Pesquisar</button>
+        </div>
+    </form>
+
+    {% if aluno == 'não_encontrado' %}
+        <p class="mensagem">🚫 Nenhum aluno encontrado.</p>
+    {% elif alunos %}
+        {% for aluno in alunos %}
+            <div class="field"><span class="label">👤 Nome:</span> <span class="value">{{ aluno.nome }}</span></div>
+            <div class="field">
+                <span class="label">🏫 Turma:</span>
+                <span class="value">
+                    {% for turma in aluno.turmas.all %}
+                        {{ turma.serie }} - {{ turma.nome }}
+                        {% if turma.turno == "Manhã" %}☀️{% elif turma.turno == "Tarde" %}🌤️{% elif turma.turno == "Noite" %}🌙{% endif %}
+                        <br>
+                    {% empty %}
+                        Não vinculado
+                    {% endfor %}
+                </span>
+            </div>
+
+            <div class="button-group">
+                {% if request.user.is_authenticated %}
+                    {% with funcionario=request.user.funcionario %}
+                        {% if funcionario.funcao in "Diretor(a),Secretario(a),Coordenador(a),Agente Administrativo" %}
+                            <a href="{% url 'editar_aluno' aluno.id %}" class="btn btn-editar">Editar Aluno</a>
+                            <a href="{% url 'gerar_pdf_matricula' aluno.id %}" class="btn btn-pdf">Reimprimir Matrícula</a>
+                            <a href="{% url 'gerar_declaracao_matricula' aluno.id %}" class="btn btn-declaracao">Imprimir Declaração</a>
+                            <a href="{% url 'documentos_gerados_aluno' aluno.id %}" class="btn btn-ficha" style="background-color: #8e24aa; color: white;">
+                                📄 Ver Documentos
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'visualizar_ficha_aluno' aluno.id %}" class="btn btn-ficha">Ver Ficha</a>
+                    {% endwith %}
+                {% endif %}
+            </div>
+            
+            <hr>
+        {% endfor %}
+    {% endif %}
+
+    <br>
+</div>
+</body>
+</html>

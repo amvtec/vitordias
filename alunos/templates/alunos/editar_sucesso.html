@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sucesso</title>
+    <style>
+        body {
+            background-color: #dce4f7;
+            font-family: Tahoma, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background-color: #f2f2f2;
+            padding: 40px;
+            border-radius: 6px;
+            border: 2px solid #999;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 460px;
+            width: 100%;
+        }
+
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            animation: pop 0.4s ease;
+        }
+
+        .check-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 4;
+            fill: none;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            color: #003366;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        p {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 22px;
+            background-color: #4d90fe;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 6px;
+            border: 1px solid #357ae8;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="check-icon">
+            <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        </div>
+        <h1>✅ Alterações Salvas</h1>
+        <p>O aluno <strong>{{ aluno.nome }}</strong> foi atualizado com sucesso.</p>
+        <a href="{% url 'ficha_aluno' aluno.id %}" class="btn">🔍 Ver Ficha</a>
+        <a href="{% url 'painel_alunos' %}" class="btn">🏠 Início</a>
+    </div>
+</body>
+</html>

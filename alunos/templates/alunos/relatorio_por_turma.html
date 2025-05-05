@@ -1,0 +1,238 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Personalizado por Turma</title>
+    <style>
+        @page {
+            size: landscape;
+        }
+
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 40px;
+            font-size: 12px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+
+        .school-header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #003366;
+            line-height: 1.5;
+        }
+        .school-logo {
+            width: 90px;
+            height: auto;
+            margin-bottom: -20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+            margin-right: 10px;
+        }
+
+        select, input[type="checkbox"] {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #999;
+            font-size: 13px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 6px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: #003366;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            text-align: left;
+            padding: 4px;
+        }
+
+        th {
+            background-color: #dfeeff;
+            text-align: center;
+        }
+
+        .header-info {
+            font-size: 13px;
+            margin-bottom: 20px;
+            color: #003366;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background-color: #777;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .print-btn {
+            margin-top: 20px;
+            background-color: #28a745;
+        }
+
+        @media print {
+            .form-section, .print-btn, .voltar {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="school-header">
+        {% if escola.logo %}
+            <img src="{{ escola.logo.url }}" alt="Logo da escola" class="school-logo"><br>
+        {% endif %}
+        <strong>{{ escola.nome_escola }}</strong><br>
+        Secretaria: {{ escola.nome_secretaria }}<br>
+        CNPJ: {{ escola.cnpj }}<br>
+        Endereço: {{ escola.endereco }}, Nº {{ escola.numero }} – {{ escola.bairro }} – {{ escola.cidade }}/{{ escola.uf }}<br>
+        {% if escola.telefone %}Telefone: {{ escola.telefone }}{% endif %}
+        {% if escola.telefone and escola.email %} – {% endif %}
+        {% if escola.email %}Email: {{ escola.email }}{% endif %}
+    </div>
+
+    <h1>Relatório Personalizado por Turma</h1>
+
+    <!-- FORMULÁRIO -->
+    <form method="get" class="form-section">
+        <label for="serie">Série:</label>
+        <select name="serie" id="serie">
+            <option value="">-- Todas --</option>
+            {% for s in series %}
+                <option value="{{ s }}" {% if s == serie %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="turma">Turma:</label>
+        <select name="turma" id="turma">
+            <option value="">-- Todas --</option>
+            {% for t in turmas %}
+                <option value="{{ t.nome }}" {% if t.nome == turma %}selected{% endif %}>{{ t.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="checkbox-grid">
+            {% for campo in opcoes_campos %}
+                <label>
+                    <input type="checkbox" name="campos" value="{{ campo }}" {% if campo in campos %}checked{% endif %}>
+                    {{ campo|regex_sub:"_ , " }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit">🔍 Gerar Relatório</button>
+    </form>
+
+    <!-- INFO DO USUÁRIO -->
+    <div class="header-info">
+        <p><strong>Gerado por:</strong> {{ request.user.get_full_name|default:request.user.username }}</p>
+        <p><strong>Data e Hora:</strong> {{ now|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <!-- TABELA DE RESULTADO -->
+    {% if alunos and campos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    {% for campo in campos %}
+                        <th>{{ campo|regex_sub:"_ , "|capfirst }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                    <tr>
+                        <td>{{ aluno.id }}</td>
+                        {% for campo in campos %}
+                            <td>
+                                {% with valor=aluno|attr:campo %}
+                                    {% if valor %}
+                                        {% if campo == 'data_nascimento' or campo == 'nascimento_pai' or campo == 'nascimento_mae' %}
+                                            {{ valor|date:"d/m/Y" }}
+                                        {% elif valor is boolean %}
+                                            {% if valor %}Sim{% else %}Não{% endif %}
+                                        {% else %}
+                                            {{ valor }}
+                                        {% endif %}
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Imprimir</button>
+    {% else %}
+        <p style="text-align: center; color: #555;">Nenhum aluno encontrado.</p>
+    {% endif %}
+
+    <a href="{% url 'relatorios_personalizados' %}" class="voltar">🔙 Voltar</a>
+</div>
+</body>
+</html>
