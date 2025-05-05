@@ -240,6 +240,35 @@
             transform: scale(1.05);
         }
 
+        .botao {
+            width: 110px;
+            height: 110px;
+            background-color: #e0e0e0;
+            color: #000;
+            text-decoration: none;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 13px;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid #aaa;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .botao:hover {
+            background-color: #d5d5d5;
+            transform: scale(1.03);
+        }
+
+        .botao span:first-child {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+
         .btn-importar-alunos span {
             margin-right: 6px;
         }
@@ -273,7 +302,7 @@
     <h2>🎓 Menu</h2>
     <a href="{% url 'pesquisar_aluno_sidebar' %}">🔍 Pesquisar Aluno</a>
 
-    {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo" %}
+    {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Coordenador(a) Agente Administrativo Auxiliar Administrativo" %}
         <a href="javascript:void(0);" class="desabilitado">📋 Relatório por Turma</a>
         <a href="{% url 'relatorio_rematricula' %}">📑 Relatório de Rematrícula</a>
         <a href="{% url 'alocar_alunos' %}">👥 Alunos</a>
@@ -292,16 +321,61 @@
     <div class="btn-grid">
         <a href="{% url 'pagina_matricula' %}" class="btn"><span>📄</span>Matrícula</a>
         <a href="{% url 'buscar_aluno_rematricula' %}" class="btn"><span>🔄</span>Rematrícula</a>
-
-        {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a) Agente Administrativo" %}
-        <a href="{% url 'painel_controle' %}" class="btn"><span>📑</span>Folha de Frequência</a>
-        <a href="{% url 'pagina_inicial' %}" class="btn"><span>💼</span>Folha de Pagamento</a>
+    </div>
+    
+    {% if request.user.funcionario.funcao in "Administrador Agente Administrativo Diretor(a)" %}
+        <!-- TODOS OS BOTÕES -->
+        <div style="margin-top: 40px; text-align: center;">
+            <h2 style="font-size: 20px; color: #003366; margin-bottom: 20px; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
+                Funcionários e Folhas
+            </h2>
+            <div class="btn-grid" style="gap: 20px; margin-top: 30px;">
+                <a href="{% url 'selecionar_funcionario' %}" class="btn"><span>📝</span>Lançar</a>
+                <a href="{% url 'imprimir_folha' %}" class="btn"><span>🖨️</span>Imprimir</a>
+                <a href="{% url 'ver_folhas' %}" class="btn"><span>📂</span>Folhas</a>
+                <a href="{% url 'cadastrar_novo_funcionario' %}" class="btn"><span>👤</span>Cadastro</a>
+                <a href="{% url 'ver_funcionarios' %}" class="btn"><span>📋</span>Funcionários</a>
+            </div>
+        </div>
+    
+        <div style="margin-top: 50px; text-align: center;">
+            <h2 style="font-size: 20px; color: #003366; margin-bottom: 20px; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
+                Frequência e Controle
+            </h2>
+            <div class="btn-grid" style="gap: 20px; margin-top: 30px;">
+                <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar"><span>➕</span><span>Cadastrar Funcionário</span></a>
+                <a href="{% url 'listar_funcionarios' %}" class="botao listar"><span>👥</span><span>Listar Funcionários</span></a>
+                <a href="{% url 'cadastrar_horario' %}" class="botao horario"><span>🕓</span><span>Cadastrar novo Horário</span></a>
+                <a href="{% url 'cadastrar_feriado' %}" class="botao feriado"><span>📅</span><span>Cadastrar novo Feriado</span></a>
+                <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas"><span>📊</span><span>Gerar Folhas de Frequência</span></a>
+                <a href="{% url 'listar_folhas' %}" class="botao geradas"><span>📄</span><span>Frequências Geradas</span></a>
+            </div>
+        </div>
+    
+        <!-- Assinar documentos -->
+        {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a)" %}
+        <div style="margin-top: 50px; text-align: center;">
+            <h2 style="font-size: 20px; color: #003366; margin-bottom: 20px; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
+                Documentos
+            </h2>
+            <div class="btn-grid" style="gap: 20px; margin-top: 30px;">
+                <a href="{% url 'documentos_pendentes_assinatura' %}" class="btn"><span>🖋️</span>Assinar Docs</a>
+            </div>
+        </div>
+        {% endif %}
+    
+    {% else %}
+        <!-- APENAS BOTÕES RESTRITOS -->
+        <div style="margin-top: 50px; text-align: center;">
+            <h2 style="font-size: 20px; color: #003366; margin-bottom: 20px; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
+                Frequência
+            </h2>
+            <div class="btn-grid" style="gap: 20px; margin-top: 30px;">
+                <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas"><span>📊</span><span>Gerar Folhas de Frequência</span></a>
+                <a href="{% url 'listar_folhas' %}" class="botao geradas"><span>📄</span><span>Frequências Geradas</span></a>
+            </div>
+        </div>
     {% endif %}
-
-    {% if request.user.funcionario.funcao in "Administrador Diretor(a) Secretario(a)" %}
-        <a href="{% url 'documentos_pendentes_assinatura' %}" class="btn"><span>🖋️</span>Assinar Docs</a>
-    {% endif %}
-
     </div>
 
     <div class="chart-section">
