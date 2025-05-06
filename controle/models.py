@@ -32,12 +32,14 @@ class HorarioTrabalho(models.Model):
     ]
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE)
     turno = models.CharField(max_length=10, choices=TURNOS)
-    horario_inicio = models.TimeField()
-    horario_fim = models.TimeField()
+    horario_inicio = models.TimeField(blank=True, null=True)
+    horario_fim = models.TimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.funcionario.nome} - {self.turno}: {self.horario_inicio} às {self.horario_fim}"
-
+        hi = self.horario_inicio.strftime('%H:%M') if self.horario_inicio else '__:__'
+        hf = self.horario_fim.strftime('%H:%M') if self.horario_fim else '__:__'
+        return f"{self.funcionario.nome} - {self.turno}: {hi} às {hf}"
+    
 class Feriado(models.Model):
     data = models.DateField(unique=True)
     descricao = models.CharField(max_length=100)
