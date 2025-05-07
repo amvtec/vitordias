@@ -15,8 +15,10 @@
         }
 
         .logo {
-            width: 180px;
-            margin-bottom: 20px;
+            max-width: 500px;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px auto;
         }
 
         .titulo {
@@ -79,9 +81,9 @@
 <!-- CAPA -->
 <div class="center page-break">
     {% if escola.logo %}
-        <img src="{{ escola.logo.url }}" class="logo">
+    <img src="{{ escola.logo.url }}" alt="Logo da escola" class="logo">
     {% endif %}
-    <h2>{{ escola.nome }}</h2>
+    <h2>{{ escola.nome_escola }}</h2>
     <p>{{ escola.endereco }}, {{ escola.numero }} - {{ cidade }}/{{ uf }}</p>
     <p>{{ escola.email }}</p>
 
@@ -94,7 +96,7 @@
     <h2 class="center">TERMO DE ABERTURA</h2>
 
     <div class="texto">
-        Contém o presente livro <strong>{{ paginas }}</strong> folhas e destina-se ao registro dos pontos diários de serviços prestados à <strong>{{ escola.nome }}</strong> no mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, no setor <strong>{{ setor }}</strong>.
+        Contém o presente livro <strong>{{ paginas }}</strong> folhas e destina-se ao registro dos pontos diários de serviços prestados à <strong>{{ escola.nome_escola }}</strong> no mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, no setor <strong>{{ setor }}</strong>.
 
         <br><br>
         Este livro deve permanecer no estabelecimento de ensino, à disposição dos funcionários durante o período letivo.
@@ -115,7 +117,7 @@
     <h2 class="center">TERMO DE ENCERRAMENTO</h2>
 
     <div class="texto">
-        Encerra-se o presente livro com <strong>{{ paginas }}</strong> folhas, referente ao mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, utilizado para o controle de ponto dos servidores vinculados ao setor <strong>{{ setor }}</strong> da <strong>{{ escola.nome }}</strong>.
+        Encerra-se o presente livro com <strong>{{ paginas }}</strong> folhas, referente ao mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, utilizado para o controle de ponto dos servidores vinculados ao setor <strong>{{ setor }}</strong> da <strong>{{ escola.nome_escola }}</strong>.
 
         <br><br>
         Nada mais havendo a declarar, firmamos o presente termo.
