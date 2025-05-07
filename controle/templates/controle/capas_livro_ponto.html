@@ -1,3 +1,4 @@
+{% load controle_filters %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -88,7 +89,7 @@
     <p>{{ escola.email }}</p>
 
     <div class="titulo">LIVRO DE PONTO {{ setor }}</div>
-    <div class="subtitulo">{{ nome_mes }} {{ ano }}</div>
+    <div class="subtitulo">{{ mes|mes_extenso }} {{ ano }}</div>
 </div>
 
 <!-- TERMO DE ABERTURA -->
@@ -96,7 +97,7 @@
     <h2 class="center">TERMO DE ABERTURA</h2>
 
     <div class="texto">
-        Contém o presente livro <strong>{{ paginas }}</strong> folhas e destina-se ao registro dos pontos diários de serviços prestados à <strong>{{ escola.nome_escola }}</strong> no mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, no setor <strong>{{ setor }}</strong>.
+        Contém o presente livro <strong>{{ paginas }}</strong> folhas e destina-se ao registro dos pontos diários de serviços prestados à <strong>{{ escola.nome_escola }}</strong> no mês de <strong>{{ mes|mes_extenso|lower }}</strong> de {{ ano }}, no setor <strong>{{ setor }}</strong>.
 
         <br><br>
         Este livro deve permanecer no estabelecimento de ensino, à disposição dos funcionários durante o período letivo.
@@ -117,7 +118,7 @@
     <h2 class="center">TERMO DE ENCERRAMENTO</h2>
 
     <div class="texto">
-        Encerra-se o presente livro com <strong>{{ paginas }}</strong> folhas, referente ao mês de <strong>{{ nome_mes|lower }}</strong> de {{ ano }}, utilizado para o controle de ponto dos servidores vinculados ao setor <strong>{{ setor }}</strong> da <strong>{{ escola.nome_escola }}</strong>.
+        Encerra-se o presente livro com <strong>{{ paginas }}</strong> folhas, referente ao mês de <strong>{{ mes|mes_extenso|lower }}</strong> de {{ ano }}, utilizado para o controle de ponto dos servidores vinculados ao setor <strong>{{ setor }}</strong> da <strong>{{ escola.nome_escola }}</strong>.
 
         <br><br>
         Nada mais havendo a declarar, firmamos o presente termo.
@@ -126,7 +127,6 @@
     <p class="center" style="margin-top: 60px;">
         {{ cidade }} - {{ uf }}, {{ data_encerramento }}
     </p>
-    
 
     <div class="assinatura">
         <div class="linha-assinatura"></div>
@@ -137,7 +137,12 @@
 <!-- Botão imprimir -->
 <div class="center no-print">
     <button class="btn-print" onclick="window.print()">🖨️ Imprimir Tudo</button>
+    <a href="{% url 'painel_alunos' %}" class="btn-print">Início</a>
+    <p style="font-size: 12px; color: #333; margin-top: 8px;">
+        <em>🔧 Dica: Desmarque "Cabeçalhos e rodapés" na impressão para ocultar o link da página.</em>
+    </p>
 </div>
+
 
 </body>
 </html>
