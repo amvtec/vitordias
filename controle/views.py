@@ -21,6 +21,7 @@ from .models import Funcionario, Setor
 from django.http import HttpResponseRedirect
 from .forms import ImportacaoFuncionarioForm
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 
 
@@ -551,3 +552,58 @@ def importar_horarios_trabalho(request):
             messages.error(request, f'Erro ao importar horários: {e}')
 
     return render(request, 'controle/importar_horarios.html')
+
+def capas_livro_ponto(request):
+    setor = request.GET.get('setor')
+    ano = int(request.GET.get('ano'))
+    mes = int(request.GET.get('mes'))
+
+    escola = Escola.objects.first()
+
+    try:
+        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+    except locale.Error:
+        try:
+            locale.setlocale(locale.LC_TIME, 'pt_BR')
+        except:
+            pass
+
+    nome_mes = date(ano, mes, 1).strftime('%B').capitalize()
+
+    # ⬇️ Calcula primeiro e último dia do mês
+    primeiro_dia = date(ano, mes, 1)
+    ultimo_dia = date(ano, mes, calendar.monthrange(ano, mes)[1])
+
+    data_abertura = primeiro_dia.strftime('%d de %B de %Y')
+    data_encerramento = ultimo_dia.strftime('%d de %B de %Y')
+
+    paginas = FolhaFrequencia.objects.filter(
+        funcionario__setor__nome=setor,
+        mes=mes,
+        ano=ano
+    ).count()
+
+    context = {
+        'escola': escola,
+        'setor': setor.upper(),
+        'ano': ano,
+        'mes': mes,
+        'nome_mes': nome_mes.upper(),
+        'paginas': paginas,
+        'data_abertura': data_abertura,
+        'data_encerramento': data_encerramento,
+        'cidade': escola.cidade,
+        'uf': escola.uf,
+    }
+    return render(request, 'controle/capas_livro_ponto.html', context)
+
+def selecionar_setor_capa(request):
+    setores = Setor.objects.all()
+    hoje = date.today()
+    context = {
+        'setores': setores,
+        'ano': hoje.year,
+        'mes': hoje.month
+    }
+    return render(request, 'controle/selecionar_capa.html', context)
+

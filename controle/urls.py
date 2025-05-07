@@ -22,6 +22,11 @@ urlpatterns = [
     path('listar-folhas/', views.listar_folhas, name='listar_folhas'),
     path('importar_funcionarios/', views.importar_funcionarios, name='importar_funcionarios'),
     path('importar-horarios/', importar_horarios_trabalho, name='importar_horarios_trabalho'),
+    path('livro-ponto/selecionar-capa/', views.selecionar_setor_capa, name='selecionar_capa'),
+    path('livro-ponto/capas/', views.capas_livro_ponto, name='capas_livro_ponto'),
+
+
+    
 
     
 

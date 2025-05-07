@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecionar Capa</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            padding: 60px;
+            background: #f0f4ff;
+        }
+
+        form {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #002244;
+        }
+    </style>
+</head>
+<body>
+    <form method="get" action="{% url 'capas_livro_ponto' %}">
+        <h2>📘 Gerar Capas do Livro de Frequência</h2>
+        <label for="setor">Setor:</label>
+        <select name="setor" id="setor" required>
+            {% for setor in setores %}
+                <option value="{{ setor.nome }}">{{ setor.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="ano">Ano:</label>
+        <input type="number" name="ano" value="{{ ano }}" required>
+
+        <label for="mes">Mês:</label>
+        <input type="number" name="mes" min="1" max="12" value="{{ mes }}" required>
+
+        <button type="submit">Gerar Capa</button>
+    </form>
+</body>
+</html>
