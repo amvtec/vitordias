@@ -62,14 +62,11 @@ WSGI_APPLICATION = 'gestao_escolar.wsgi.application'
 
 # ✅ Banco PostgreSQL (Neon)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vitordias',
-        'USER': 'root',
-        'PASSWORD': 'Amv@1302',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+    'default': dj_database_url.parse(
+        'postgresql://neondb_owner:npg_BNlRh4PT1oxM@ep-misty-waterfall-a5v8jcb4-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -104,13 +101,7 @@ CLOUDINARY_STORAGE = {
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-cloudinary.config( 
-    cloud_name = CLOUDINARY_STORAGE['CLOUD_NAME'], 
-    api_key = CLOUDINARY_STORAGE['API_KEY'], 
-    api_secret = CLOUDINARY_STORAGE['API_SECRET'],
-    secure = True
-)
-
+cloudinary.config(secure=True)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
