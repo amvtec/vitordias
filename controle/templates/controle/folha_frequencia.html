@@ -164,10 +164,11 @@
     </thead>
     <tbody>
         {% for dia in dias %}
-            {% if funcionario.funcao|lower == "vigia" %}
-                {% if not dia.feriado and dia.descricao|default:''|lower != "recesso" %}
-                    <tr>
-                        <td>{{ dia.data|date:"d/m/Y" }}</td>
+            <tr>
+                <td>{{ dia.data|date:"d/m/Y" }}</td>
+    
+                {% if funcionario.funcao|lower == "vigia" %}
+                    {% if dia.feriado or dia.descricao|default:""|lower == "recesso" %}
                         {% if dias.0.manha %}
                             <td>às</td>
                             <td class="assinatura"></td>
@@ -176,12 +177,17 @@
                             <td>às</td>
                             <td class="assinatura"></td>
                         {% endif %}
-                    </tr>
-                {% endif %}
-            {% else %}
-                <tr>
-                    <td>{{ dia.data|date:"d/m/Y" }}</td>
-    
+                    {% else %}
+                        {% if dias.0.manha %}
+                            <td>às</td>
+                            <td class="assinatura"></td>
+                        {% endif %}
+                        {% if dias.0.tarde %}
+                            <td>às</td>
+                            <td class="assinatura"></td>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
                     {% if dia.feriado %}
                         {% if dias.0.manha and dias.0.tarde %}
                             <td colspan="4" class="feriado">FERIADO - {{ dia.descricao }}</td>
@@ -221,10 +227,11 @@
                             <td class="assinatura"></td>
                         {% endif %}
                     {% endif %}
-                </tr>
-            {% endif %}
+                {% endif %}
+            </tr>
         {% endfor %}
     </tbody>
+    
     
 </table>
 
