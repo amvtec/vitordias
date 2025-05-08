@@ -18,3 +18,7 @@ MESES_PT_BR = {
 def mes_extenso(numero_mes):
     return MESES_PT_BR.get(numero_mes, "")
 
+@register.filter
+def eh_fim_de_semana(dia_semana):
+    dia = dia_semana.lower()
+    return dia in ['sábado', 'sabado', 'domingo']

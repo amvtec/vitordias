@@ -163,73 +163,69 @@
         </tr>
     </thead>
     <tbody>
-        {% for dia in dias %}
-            <tr>
-                <td>{{ dia.data|date:"d/m/Y" }}</td>
-                
-    
-                {% if dia.feriado %}
-                    <!-- Aplica a classe .feriado somente quando é feriado -->
-                    {% if dias.0.manha and dias.0.tarde %}
-                        <td colspan="4" class="feriado">FERIADO - {{ dia.descricao }}</td>
-                    {% elif dias.0.manha or dias.0.tarde %}
-                        <td colspan="2" class="feriado">FERIADO - {{ dia.descricao }}</td>
-                    {% endif %}
-                {% elif dia.sabado_letivo %}
-                    <!-- Sábado Letivo tratado como dia normal com horários de trabalho -->
-                    {% if dias.0.manha %}
-                        <td>
-                            {{ dia.manha.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|time:"H\\hi\\m\\i\\n" }}
-                        </td>
-                        <td class="assinatura"></td>
-                    {% endif %}
-                    {% if dias.0.tarde %}
-                        <td>
-                            {{ dia.tarde.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|time:"H\\hi\\m\\i\\n" }}
-                        </td>
-                        <td class="assinatura"></td>
-                    {% endif %}
-                {% elif dia.dia_semana|lower == 'sábado' or dia.dia_semana|lower == 'sabado' %}
-                    <!-- Para os sábados normais (não letivos) -->
-                    {% if dias.0.manha %}
-                        <td>--</td>
-                        <td>Sábado</td>
-                    {% endif %}
-                    {% if dias.0.tarde %}
-                        <td>--</td>
-                        <td>Sábado</td>
-                    {% endif %}
-                {% elif dia.dia_semana|lower == 'domingo' %}
-                    <!-- Para domingo -->
-                    {% if dias.0.manha %}
-                        <td>--</td>
-                        <td>Domingo</td>
-                    {% endif %}
-                    {% if dias.0.tarde %}
-                        <td>--</td>
-                        <td>Domingo</td>
-                    {% endif %}
-                {% else %}
-                    {% if dias.0.manha %}
-                        <td>
-                            {% if dia.manha %}
-                                {{ dia.manha.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|time:"H\\hi\\m\\i\\n" }}
-                            {% else %} -- {% endif %}
-                        </td>
-                        <td class="assinatura"></td>
-                    {% endif %}
-                    {% if dias.0.tarde %}
-                        <td>
-                            {% if dia.tarde %}
-                                {{ dia.tarde.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|time:"H\\hi\\m\\i\\n" }}
-                            {% else %} -- {% endif %}
-                        </td>
-                        <td class="assinatura"></td>
-                    {% endif %}
+    {% for dia in dias %}
+        <tr>
+            <td>{{ dia.data|date:"d/m/Y" }}</td>
+
+            {% if dia.feriado %}
+                {% if dias.0.manha and dias.0.tarde %}
+                    <td colspan="4" class="feriado">FERIADO - {{ dia.descricao }}</td>
+                {% elif dias.0.manha or dias.0.tarde %}
+                    <td colspan="2" class="feriado">FERIADO - {{ dia.descricao }}</td>
                 {% endif %}
-            </tr>
-        {% endfor %}
-    </tbody>
+            {% elif dia.sabado_letivo %}
+                {% if dias.0.manha %}
+                    <td>
+                        {{ dia.manha.horario_inicio|default:"--"|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|default:"--"|time:"H\\hi\\m\\i\\n" }}
+                    </td>
+                    <td class="assinatura"></td>
+                {% endif %}
+                {% if dias.0.tarde %}
+                    <td>
+                        {{ dia.tarde.horario_inicio|default:"--"|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|default:"--"|time:"H\\hi\\m\\i\\n" }}
+                    </td>
+                    <td class="assinatura"></td>
+                {% endif %}
+            {% elif dia.dia_semana|lower == 'sábado' or dia.dia_semana|lower == 'sabado' %}
+                {% if dias.0.manha %}
+                    <td>às</td>
+                    <td>{% if funcionario.funcao|lower != 'vigia' %}Sábado{% endif %}</td>
+                {% endif %}
+                {% if dias.0.tarde %}
+                    <td>às</td>
+                    <td>{% if funcionario.funcao|lower != 'vigia' %}Sábado{% endif %}</td>
+                {% endif %}
+            {% elif dia.dia_semana|lower == 'domingo' %}
+                {% if dias.0.manha %}
+                    <td>às</td>
+                    <td>{% if funcionario.funcao|lower != 'vigia' %}Domingo{% endif %}</td>
+                {% endif %}
+                {% if dias.0.tarde %}
+                    <td>às</td>
+                    <td>{% if funcionario.funcao|lower != 'vigia' %}Domingo{% endif %}</td>
+                {% endif %}
+            {% else %}
+                {% if dias.0.manha %}
+                    <td>
+                        {% if dia.manha %}
+                            {{ dia.manha.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.manha.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                        {% else %} às {% endif %}
+                    </td>
+                    <td class="assinatura"></td>
+                {% endif %}
+                {% if dias.0.tarde %}
+                    <td>
+                        {% if dia.tarde %}
+                            {{ dia.tarde.horario_inicio|time:"H\\hi\\m\\i\\n" }} às {{ dia.tarde.horario_fim|time:"H\\hi\\m\\i\\n" }}
+                        {% else %} às {% endif %}
+                    </td>
+                    <td class="assinatura"></td>
+                {% endif %}
+            {% endif %}
+        </tr>
+    {% endfor %}
+</tbody>
+
 </table>
 
 <!-- Planejamento (Segundas-feiras) -->
