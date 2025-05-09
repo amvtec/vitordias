@@ -23,8 +23,6 @@ def eh_fim_de_semana(dia_semana):
     dia = dia_semana.lower()
     return dia in ['sábado', 'sabado', 'domingo']
 
-register = template.Library()
-
 @register.filter
 def get_label(campos_disponiveis, campo_nome):
     for campo, label in campos_disponiveis:
@@ -35,5 +33,3 @@ def get_label(campos_disponiveis, campo_nome):
 @register.filter(name='get_attr')
 def get_attr(obj, attr_name):
     return getattr(obj, attr_name, '')
-
-
