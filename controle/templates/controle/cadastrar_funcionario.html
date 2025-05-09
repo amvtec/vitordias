@@ -157,62 +157,174 @@
     
     <h2>📋 Cadastrar Funcionário</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+    <!-- Substitua o conteúdo atual do <form> por este novo -->
 
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.nome.id_for_label }}">Nome:</label>
-                {{ form.nome }}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
-                {{ form.matricula }}
-            </div>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- Identificação -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.nome.id_for_label }}">Nome:</label>
+            {{ form.nome }}
         </div>
-
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.funcao.id_for_label }}">Função:</label>
-                {{ form.funcao }}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.cargo.id_for_label }}">Cargo:</label>
-                {{ form.cargo }}
-            </div>
+        <div class="form-field">
+            <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
+            {{ form.matricula }}
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.setor.id_for_label }}">Setor:</label>
-                {{ form.setor }}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.data_admissao.id_for_label }}">Data de Admissão:</label>
-                {{ form.data_admissao }}
-            </div>
+    <!-- Cargo/Função -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.funcao.id_for_label }}">Função:</label>
+            {{ form.funcao }}
         </div>
-
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
-                {{ form.data_nascimento }}
-            </div>
+        <div class="form-field">
+            <label for="{{ form.cargo.id_for_label }}">Cargo:</label>
+            {{ form.cargo }}
         </div>
+    </div>
 
-        <div class="checkbox">
-            {{ form.planejamento }}
-            <label for="{{ form.planejamento.id_for_label }}">Possui Planejamento?</label>
+    <!-- Setor, Turno e Turma -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.setor.id_for_label }}">Setor:</label>
+            {{ form.setor }}
         </div>
-
-        <div class="form-field campo-planejamento" id="campo_horario_planejamento">
-            <label for="{{ form.horario_planejamento.id_for_label }}">Horário de Planejamento:</label>
-            {{ form.horario_planejamento }}
+        <div class="form-field">
+            <label for="{{ form.turno.id_for_label }}">Turno:</label>
+            {{ form.turno }}
         </div>
+        <div class="form-field">
+            <label for="{{ form.turma.id_for_label }}">Turma:</label>
+            {{ form.turma }}
+        </div>
+    </div>
 
-        <button type="submit" class="btn">Salvar Funcionário</button>
-    </form>
+    <!-- Datas -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.data_admissao.id_for_label }}">Data de Admissão:</label>
+            {{ form.data_admissao }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
+            {{ form.data_nascimento }}
+        </div>
+    </div>
+
+    <!-- Documentos -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.cpf.id_for_label }}">CPF:</label>
+            {{ form.cpf }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.rg.id_for_label }}">RG:</label>
+            {{ form.rg }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.pis.id_for_label }}">PIS:</label>
+            {{ form.pis }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor:</label>
+            {{ form.titulo_eleitor }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.ctps_numero.id_for_label }}">CTPS - Número:</label>
+            {{ form.ctps_numero }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.ctps_serie.id_for_label }}">CTPS - Série:</label>
+            {{ form.ctps_serie }}
+        </div>
+    </div>
+
+    <!-- Contato -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
+            {{ form.telefone }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.email.id_for_label }}">E-mail:</label>
+            {{ form.email }}
+        </div>
+    </div>
+
+    <!-- Endereço -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.endereco.id_for_label }}">Endereço:</label>
+            {{ form.endereco }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.numero.id_for_label }}">Número:</label>
+            {{ form.numero }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
+            {{ form.bairro }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
+            {{ form.cidade }}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.uf.id_for_label }}">UF:</label>
+            {{ form.uf }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.cep.id_for_label }}">CEP:</label>
+            {{ form.cep }}
+        </div>
+    </div>
+
+    <!-- Outros dados -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.estado_civil.id_for_label }}">Estado Civil:</label>
+            {{ form.estado_civil }}
+        </div>
+        <div class="form-field">
+            <label for="{{ form.escolaridade.id_for_label }}">Escolaridade:</label>
+            {{ form.escolaridade }}
+        </div>
+    </div>
+
+    <!-- Planejamento -->
+    <div class="checkbox">
+        {{ form.tem_planejamento }}
+        <label for="{{ form.tem_planejamento.id_for_label }}">Possui Planejamento?</label>
+    </div>
+    <div class="form-field campo-planejamento" id="campo_horario_planejamento">
+        <label for="{{ form.horario_planejamento.id_for_label }}">Horário de Planejamento:</label>
+        {{ form.horario_planejamento }}
+    </div>
+
+    <!-- Foto -->
+    <div class="form-group">
+        <div class="form-field">
+            <label for="{{ form.foto.id_for_label }}">Foto (3x4):</label>
+            {{ form.foto }}
+        </div>
+    </div>
+
+    <!-- Botão -->
+    <button type="submit" class="btn">Salvar Funcionário</button>
+</form>
+
 
     <div class="voltar">
         <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>

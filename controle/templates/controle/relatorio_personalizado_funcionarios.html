@@ -1,0 +1,185 @@
+{% load extras %}
+{% load controle_filters %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Personalizado</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            margin: 40px;
+        }
+        h2 {
+            text-align: center;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cabecalho img {
+            max-height: 90px;
+            margin-bottom: 10px;
+        }
+
+        .cabecalho h1 {
+            margin: 5px 0;
+            font-size: 20px;
+        }
+
+        .cabecalho p {
+            margin: 2px 0;
+            font-size: 13px;
+        }
+
+        .formulario {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+
+        .checkboxes {
+            columns: 3;
+        }
+
+        .checkboxes label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #e0e0e0;
+        }
+
+        .print-button {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .voltar {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        .voltar a {
+            background-color: #003366;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .voltar a:hover {
+            background-color: #001f4d;
+        }
+
+        @media print {
+            .formulario,
+            .print-button,
+            .voltar {
+                display: none !important;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cabecalho">
+    {% if escola.logo %}
+        <img src="{{ escola.logo.url }}" alt="Logo da Escola">
+    {% endif %}
+    <h1>{{ escola.nome_escola }}</h1>
+    <p>Secretaria: {{ escola.nome_secretaria }}</p>
+    <p>CNPJ: {{ escola.cnpj }}</p>
+    <p>{{ escola.endereco }}, Nº {{ escola.numero }} – {{ escola.bairro }} – {{ escola.cidade }}/{{ escola.uf }}</p>
+    <p>Tel: {{ escola.telefone }} | E-mail: {{ escola.email }}</p>
+</div>
+
+<h2>Relatório Personalizado de Funcionários</h2>
+
+<div class="formulario">
+    <form method="post">
+        {% csrf_token %}
+        <h4>Selecione os campos que deseja exibir:</h4>
+        <div class="checkboxes">
+            {% for campo, label in campos_disponiveis %}
+                <label>
+                    <input type="checkbox" name="campos" value="{{ campo }}" {% if campo in campos_selecionados %}checked{% endif %}>
+                    {{ label }}
+                </label>
+            {% endfor %}
+        </div>
+        <button type="submit">Gerar Relatório</button>
+    </form>
+</div>
+
+{% if campos_selecionados %}
+    <div class="print-button">
+        <button onclick="window.print()">🖨️ Imprimir Relatório</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                {% for campo in campos_selecionados %}
+                    <th>{{ campos_disponiveis|get_label:campo }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for funcionario in funcionarios %}
+                <tr>
+                    {% for campo in campos_selecionados %}
+                        <td>
+                            {% if campo == 'setor' %}
+                                {{ funcionario.setor.nome }}
+                            {% elif campo == 'tem_planejamento' or campo == 'sabado_letivo' %}
+                                {{ funcionario|get_attr:campo|yesno:"Sim,Não" }}
+                            {% else %}
+                                {{ funcionario|get_attr:campo }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<!-- Botão Voltar -->
+<div class="voltar">
+    <a href="{% url 'painel_alunos' %}" class="btn-print">Início</a>
+</div>
+
+</body>
+</html>

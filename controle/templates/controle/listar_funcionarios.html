@@ -113,6 +113,7 @@
                 <th>Editar</th>
                 <th>Editar Horário</th>
                 <th>Excluir</th>
+                <th>Imprimir</th> <!-- NOVO -->
             </tr>
         </thead>
         <tbody>
@@ -125,10 +126,12 @@
                 <td><a href="{% url 'editar_funcionario' f.id %}">Editar</a></td>
                 <td><a href="{% url 'editar_horario' f.id %}" class="btn-editar-horario">Editar Horário</a></td>
                 <td><a href="{% url 'excluir_funcionario' f.id %}" style="color: red;">Excluir</a></td>
+                <td><a href="{% url 'imprimir_ficha_funcionario' f.id %}" target="_blank">📄 Ficha</a></td> <!-- NOVO -->
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    
 </div>
 
 <!-- Botão flutuante de voltar -->
