@@ -9,21 +9,59 @@ class Setor(models.Model):
 
 
 class Funcionario(models.Model):
+    TURNO_CHOICES = [
+        ('Matutino', 'Matutino'),
+        ('Vespertino', 'Vespertino'),
+        ('Noturno', 'Noturno'),
+        ('Integral', 'Integral'),
+    ]
+
+    # Dados principais
     nome = models.CharField(max_length=100)
-    matricula = models.CharField(max_length=20)
+    matricula = models.CharField(max_length=20, unique=True)
     cargo = models.CharField(max_length=50)
     funcao = models.CharField(max_length=50)
+    setor = models.ForeignKey('Setor', on_delete=models.CASCADE)
     data_admissao = models.DateField()
-    setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
-    
-    # Campos adicionais
+    data_nascimento = models.DateField(null=True, blank=True)
+
+    # Documentos
+    cpf = models.CharField(max_length=14, unique=True, blank=True, null=True)
+    rg = models.CharField(max_length=20, blank=True, null=True)
+    pis = models.CharField(max_length=20, blank=True, null=True)
+    titulo_eleitor = models.CharField(max_length=20, blank=True, null=True)
+    ctps_numero = models.CharField(max_length=20, blank=True, null=True)
+    ctps_serie = models.CharField(max_length=10, blank=True, null=True)
+
+    # Contato
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    # Endereço
+    endereco = models.CharField(max_length=255, blank=True, null=True)
+    numero = models.CharField(max_length=10, blank=True, null=True)
+    bairro = models.CharField(max_length=100, blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    uf = models.CharField(max_length=2, blank=True, null=True)
+    cep = models.CharField(max_length=10, blank=True, null=True)
+
+    # Outros
+    estado_civil = models.CharField(max_length=20, blank=True, null=True)
+    escolaridade = models.CharField(max_length=100, blank=True, null=True)
     tem_planejamento = models.BooleanField(default=False)
     horario_planejamento = models.CharField(max_length=50, blank=True, null=True)
     sabado_letivo = models.BooleanField(default=False)
-    data_nascimento = models.DateField(null=True, blank=True)
+
+    # Foto
+    foto = models.ImageField(upload_to='fotos_funcionarios/', blank=True, null=True)
+
+    # Novos campos:
+    turma = models.CharField(max_length=50, blank=True, null=True)
+    turno = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.nome
+
 
 class HorarioTrabalho(models.Model):
     TURNOS = [

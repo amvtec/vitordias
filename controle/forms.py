@@ -4,7 +4,38 @@ from .models import Funcionario
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
-        fields = ['nome', 'matricula', 'cargo', 'funcao', 'data_admissao', 'data_nascimento', 'setor', 'tem_planejamento', 'horario_planejamento']
+        fields = [
+            'nome',
+            'matricula',
+            'cargo',
+            'funcao',
+            'setor',
+            'turno',
+            'turma',
+            'data_admissao',
+            'data_nascimento',
+            'cpf',
+            'rg',
+            'pis',
+            'titulo_eleitor',
+            'ctps_numero',
+            'ctps_serie',
+            'telefone',
+            'email',
+            'endereco',
+            'numero',
+            'bairro',
+            'cidade',
+            'uf',
+            'cep',
+            'estado_civil',
+            'escolaridade',
+            'tem_planejamento',
+            'horario_planejamento',
+            'sabado_letivo',
+            'foto',
+        ]
+
         widgets = {
             'data_admissao': forms.TextInput(attrs={
                 'placeholder': '00/00/0000',

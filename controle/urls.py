@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from .views import importar_horarios_trabalho
+from .views import ficha_funcionario
+from .views import relatorio_personalizado_funcionarios
 
 urlpatterns = [
     path('folha-frequencia/<int:funcionario_id>/<int:mes>/<int:ano>/', views.gerar_folha_frequencia, name='folha_frequencia'),
@@ -24,6 +26,10 @@ urlpatterns = [
     path('importar-horarios/', importar_horarios_trabalho, name='importar_horarios_trabalho'),
     path('livro-ponto/selecionar-capa/', views.selecionar_setor_capa, name='selecionar_capa'),
     path('livro-ponto/capas/', views.capas_livro_ponto, name='capas_livro_ponto'),
+    path('funcionario/<int:funcionario_id>/ficha/', ficha_funcionario, name='imprimir_ficha_funcionario'),
+    path('relatorio-personalizado/', relatorio_personalizado_funcionarios, name='relatorio_personalizado_funcionarios'),
+
+
 
 
     

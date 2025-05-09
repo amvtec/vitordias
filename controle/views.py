@@ -318,19 +318,24 @@ def cadastrar_funcionario(request):
 def listar_funcionarios(request):
     funcionarios = Funcionario.objects.select_related('setor').order_by('nome')
     return render(request, 'controle/listar_funcionarios.html', {'funcionarios': funcionarios})
+
 @login_required
 def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
     if request.method == 'POST':
-        form = FuncionarioForm(request.POST, instance=funcionario)
+        form = FuncionarioForm(request.POST, request.FILES, instance=funcionario)  # <-- inclui request.FILES
         if form.is_valid():
             form.save()
             return redirect('listar_funcionarios')
     else:
         form = FuncionarioForm(instance=funcionario)
 
-    return render(request, 'controle/editar_funcionario.html', {'form': form, 'funcionario': funcionario})
+    return render(request, 'controle/editar_funcionario.html', {
+        'form': form,
+        'funcionario': funcionario
+    })
+
 @login_required
 def cadastrar_horario(request):
     if request.method == 'POST':
@@ -384,7 +389,7 @@ from django.contrib import messages
 @login_required
 def cadastrar_funcionario(request):
     if request.method == 'POST':
-        form = FuncionarioForm(request.POST)
+        form = FuncionarioForm(request.POST, request.FILES)  # ⬅️ inclui request.FILES
         if form.is_valid():
             form.save()
             messages.success(request, 'Funcionário cadastrado com sucesso!')
@@ -606,4 +611,59 @@ def selecionar_setor_capa(request):
         'mes': hoje.month
     }
     return render(request, 'controle/selecionar_capa.html', context)
+
+def ficha_funcionario(request, funcionario_id):
+    funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+    dias_semana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+    escola = Escola.objects.first()
+    return render(request, 'controle/ficha_funcionario.html', {
+        'funcionario': funcionario,
+        'dias_semana': dias_semana,
+        'escola': escola,
+    })
+
+@login_required
+def relatorio_personalizado_funcionarios(request):
+    funcionarios = Funcionario.objects.all()
+    campos_disponiveis = [
+        ('nome', 'Nome'),
+        ('matricula', 'Matrícula'),
+        ('cargo', 'Cargo'),
+        ('funcao', 'Função'),
+        ('setor', 'Setor'),
+        ('data_admissao', 'Data de Admissão'),
+        ('data_nascimento', 'Data de Nascimento'),
+        ('cpf', 'CPF'),
+        ('rg', 'RG'),
+        ('pis', 'PIS'),
+        ('titulo_eleitor', 'Título de Eleitor'),
+        ('ctps_numero', 'CTPS Nº'),
+        ('ctps_serie', 'CTPS Série'),
+        ('telefone', 'Telefone'),
+        ('email', 'Email'),
+        ('endereco', 'Endereço'),
+        ('numero', 'Número'),
+        ('bairro', 'Bairro'),
+        ('cidade', 'Cidade'),
+        ('uf', 'UF'),
+        ('cep', 'CEP'),
+        ('estado_civil', 'Estado Civil'),
+        ('escolaridade', 'Escolaridade'),
+        ('tem_planejamento', 'Planejamento'),
+        ('horario_planejamento', 'Horário Planejamento'),
+        ('sabado_letivo', 'Sábado Letivo'),
+        ('turma', 'Turma'),
+        ('turno', 'Turno'),
+    ]
+
+    campos_selecionados = request.POST.getlist('campos') if request.method == 'POST' else []
+    escola = Escola.objects.first()
+
+    return render(request, 'controle/relatorio_personalizado_funcionarios.html', {
+        'funcionarios': funcionarios,
+        'campos_disponiveis': campos_disponiveis,
+        'campos_selecionados': campos_selecionados,
+        'escola': escola,
+    })
+
 
