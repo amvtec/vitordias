@@ -120,7 +120,6 @@
     {% endif %}
     <strong></strong><br>
     <strong>{{ escola.nome_escola }}</strong><br>
-    CNPJ: {{ escola.cnpj }}<br>
     Endereço: {{ escola.endereco }}, {{ escola.numero }}, {{ escola.bairro }}, {{ escola.cidade }}/{{ escola.uf }}<br>
     Telefone: {{ escola.telefone }} | E-mail: {{ escola.email }}
 </div>
@@ -144,7 +143,26 @@
     </tr>
 </table>
 
-<p style="margin: 4px 0;"><strong>HORÁRIO DE FUNCIONAMENTO - Matutino 07h00min às 11h25min - 06h30min às 12h30min / Vespetino 13h00min às 17h25min - 12h30min às 18h30min</strong></p>
+<p style="margin: 4px 0; text-align: center;">
+    <strong>HORÁRIO DE FUNCIONAMENTO - Matutino 07h00min às 11h25min - 06h30min às 12h30min / Vespertino 13h00min às 17h25min - 12h30min às 18h30min</strong>
+</p>
+
+{% with dias|filter_sabados_letivos as sabados %}
+    {% if sabados %}
+        <p style="margin: 4px 0; text-align: center;">
+            <strong>OBS: Conforme o calendário escolar, dia{% if sabados|length > 1 %}s{% endif %} </strong>
+            {% for s in sabados %}
+                {{ s.data|date:"d/m" }}{% if not forloop.last %}, {% endif %}
+            {% endfor %} 
+            {% if sabados|length > 1 %}
+                serão sábados letivos.
+            {% else %}
+                será sábado letivo.
+            {% endif %}
+        </p>
+    {% endif %}
+{% endwith %}
+
 
 <!-- Tabela principal -->
 <table>
@@ -237,7 +255,7 @@
 
 <!-- Planejamento (Segundas-feiras) -->
 {% if planejamento %}
-    <h3>Planejamento - Segundas-feiras</h3>
+    <h3>Planejamento</h3>
     <table>
         <thead>
             <tr>

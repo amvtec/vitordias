@@ -33,3 +33,8 @@ def get_label(campos_disponiveis, campo_nome):
 @register.filter(name='get_attr')
 def get_attr(obj, attr_name):
     return getattr(obj, attr_name, '')
+
+@register.filter
+def filter_sabados_letivos(dias):
+    return [dia for dia in dias if isinstance(dia, dict) and dia.get('sabado_letivo')]
+
