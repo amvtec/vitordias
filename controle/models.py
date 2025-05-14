@@ -71,7 +71,7 @@ class Funcionario(models.Model):
 
     foto = models.ImageField(upload_to='fotos_funcionarios/', blank=True, null=True)
 
-    turma = models.CharField(max_length=10, choices=TURMA_CHOICES, blank=True, null=True)
+    turma = models.CharField(max_length=10, choices=TURMA_CHOICES, blank=True, null=True)  # ✅ CORRETO
     turno = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
     serie = models.CharField(max_length=20, choices=SERIE_CHOICES, blank=True, null=True)
 
