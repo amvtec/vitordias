@@ -38,7 +38,6 @@ class Funcionario(models.Model):
         ('G', 'Turma G'),
     ]
 
-    # Dados principais
     nome = models.CharField(max_length=100)
     matricula = models.CharField(max_length=20, unique=True)
     cargo = models.CharField(max_length=50)
@@ -47,7 +46,6 @@ class Funcionario(models.Model):
     data_admissao = models.DateField()
     data_nascimento = models.DateField(null=True, blank=True)
 
-    # Documentos
     cpf = models.CharField(max_length=14, unique=True, blank=True, null=True)
     rg = models.CharField(max_length=20, blank=True, null=True)
     pis = models.CharField(max_length=20, blank=True, null=True)
@@ -55,11 +53,9 @@ class Funcionario(models.Model):
     ctps_numero = models.CharField(max_length=20, blank=True, null=True)
     ctps_serie = models.CharField(max_length=10, blank=True, null=True)
 
-    # Contato
     telefone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
 
-    # Endereço
     endereco = models.CharField(max_length=255, blank=True, null=True)
     numero = models.CharField(max_length=10, blank=True, null=True)
     bairro = models.CharField(max_length=100, blank=True, null=True)
@@ -67,23 +63,21 @@ class Funcionario(models.Model):
     uf = models.CharField(max_length=2, blank=True, null=True)
     cep = models.CharField(max_length=10, blank=True, null=True)
 
-    # Outros
     estado_civil = models.CharField(max_length=20, blank=True, null=True)
     escolaridade = models.CharField(max_length=100, blank=True, null=True)
     tem_planejamento = models.BooleanField(default=False)
     horario_planejamento = models.CharField(max_length=50, blank=True, null=True)
     sabado_letivo = models.BooleanField(default=False)
 
-    # Foto
     foto = models.ImageField(upload_to='fotos_funcionarios/', blank=True, null=True)
 
-    # Novos campos com choices
-    turma = models.CharField(max_length=1, choices=TURMA_CHOICES, blank=True, null=True)
+    turma = models.CharField(max_length=10, choices=TURMA_CHOICES, blank=True, null=True)
     turno = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
     serie = models.CharField(max_length=20, choices=SERIE_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.nome
+
 
 
 
