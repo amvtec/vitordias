@@ -16,6 +16,28 @@ class Funcionario(models.Model):
         ('Integral', 'Integral'),
     ]
 
+    SERIE_CHOICES = [
+        ('1º ANO', '1º ANO'),
+        ('2º ANO', '2º ANO'),
+        ('3º ANO', '3º ANO'),
+        ('4º ANO', '4º ANO'),
+        ('5º ANO', '5º ANO'),
+        ('6º ANO', '6º ANO'),
+        ('7º ANO', '7º ANO'),
+        ('8º ANO', '8º ANO'),
+        ('9º ANO', '9º ANO'),
+    ]
+
+    TURMA_CHOICES = [
+        ('A', 'Turma A'),
+        ('B', 'Turma B'),
+        ('C', 'Turma C'),
+        ('D', 'Turma D'),
+        ('E', 'Turma E'),
+        ('F', 'Turma F'),
+        ('G', 'Turma G'),
+    ]
+
     # Dados principais
     nome = models.CharField(max_length=100)
     matricula = models.CharField(max_length=20, unique=True)
@@ -55,12 +77,14 @@ class Funcionario(models.Model):
     # Foto
     foto = models.ImageField(upload_to='fotos_funcionarios/', blank=True, null=True)
 
-    # Novos campos:
-    turma = models.CharField(max_length=50, blank=True, null=True)
+    # Novos campos com choices
+    turma = models.CharField(max_length=1, choices=TURMA_CHOICES, blank=True, null=True)
     turno = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
+    serie = models.CharField(max_length=20, choices=SERIE_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.nome
+
 
 
 class HorarioTrabalho(models.Model):

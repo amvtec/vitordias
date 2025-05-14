@@ -1,263 +1,249 @@
-    {% load static %}
-    {% load custom_filters %}
+{% load static %}
+{% load custom_filters %}
 
-    <!DOCTYPE html>
-    <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Painel de Controle</title>
-        <style>
-            body {
-                font-family: Tahoma, Arial, sans-serif;
-                background-color: #f0f4ff;
-                margin: 0;
-                padding: 0;
-            }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 0;
+        }
 
-            /* Banner Desenvolvido por */
-            .banner-desenvolvido {
-                background: linear-gradient(90deg, #003366, #0059b3);
-                color: white;
-                padding: 14px 20px;
-                text-align: center;
-                font-size: 10px;
-                font-weight: bold;
-                letter-spacing: 1px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-                margin-bottom: 20px;
-            }
+        .banner-desenvolvido {
+            background: linear-gradient(90deg, #003366, #0059b3);
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
 
-            .container {
-                max-width: 1000px;
-                margin: 0 auto;
-                background-color: white;
-                padding: 40px 30px;
-                border-radius: 12px;
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-                border: 1px solid #ccc;
-                text-align: center;
-            }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #ccc;
+            text-align: center;
+        }
 
-            h2 {
-                color: #000000;
-                font-size: 18px;
-                margin-bottom: 40px;
-            }
+        h2 {
+            color: #000000;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
 
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 0px;
-                justify-items: center;
-                margin-bottom: 50px;
-            }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
 
+        .botao {
+            width: 100px;
+            height: 100px;
+            background-color: #e0e0e0;
+            color: #000;
+            text-decoration: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 13px;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid #aaa;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .botao:hover {
+            background-color: #d5d5d5;
+            transform: scale(1.03);
+        }
+
+        .botao span:first-child {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .aniversariantes {
+            margin-bottom: 40px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .aniversariantes h3 {
+            color: #003366;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .aniversariantes ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .aniversariantes li {
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: #222;
+        }
+
+        .rodape {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .rodape a {
+            text-decoration: none;
+            background-color: #a80a0a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .rodape a:hover {
+            background-color: #001f4d;
+        }
+
+        .importar-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .importar-botao {
+            width: 55px;
+            height: 55px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .voltar-topo {
+            position: fixed;
+            top: 10px;
+            left: 20px;
+            z-index: 999;
+        }
+
+        .voltar-topo a {
+            background-color: #d40b0b;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 0px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voltar-topo a:hover {
+            background-color: #001f4d;
+            transform: scale(1.05);
+        }
+
+        .importar-botao:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
             .botao {
-                background-color: #e0e0e0;
-                color: #000000;
-                text-decoration: none;
-                border-radius: 10px;
-                width: 120px;
-                height: 120px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
+                width: 90px;
+                height: 90px;
+                font-size: 12px;
+            }
+            .botao span:first-child {
                 font-size: 20px;
-                font-weight: bold;
-                transition: all 0.3s ease;
-                box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-                border: 1px solid #bbb;
-                margin-bottom: 8px;
             }
+        }
+    </style>
+</head>
 
-            .botao:hover {
-                background-color: #d0e4ff;
-                transform: translateY(-3px) scale(1.03);
-                box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-            }
+<body>
 
-            .botao span {
-                margin-top: 8px;
-                font-size: 13px;
-                display: block;
-            }
+<div class="banner-desenvolvido">
+    Desenvolvido por Alexandre Martins Vieira © 2025
+</div>
+<div class="voltar-topo">
+    <a href="{% url 'painel_alunos' %}">Voltar</a>
+</div>
 
-            .botao.cadastrar { background-color: #ff8c00; }
-            .botao.listar { background-color: #007b91; }
-            .botao.horario { background-color: #00ad48; }
-            .botao.feriado { background-color: #e67dc6; }
-            .botao.folhas { background-color: #895edf; }
-            .botao.geradas { background-color: #f01111; }
-            .botao:hover { color: #000000; }
+<div class="container">
+    <h2>Painel de Controle - Folha de Frequência</h2>
 
-            .aniversariantes {
-                margin-bottom: 40px;
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 10px;
-                border: 1px solid #ccc;
-                text-align: left;
-            }
-
-            .aniversariantes h3 {
-                color: #003366;
-                font-size: 18px;
-                margin-bottom: 15px;
-            }
-
-            .aniversariantes ul {
-                list-style-type: none;
-                padding: 0;
-            }
-
-            .aniversariantes li {
-                font-size: 15px;
-                margin-bottom: 6px;
-                color: #222;
-            }
-
-            .rodape {
-                text-align: center;
-                margin-top: 20px;
-            }
-
-            .rodape a {
-                text-decoration: none;
-                background-color: #003366;
-                color: white;
-                padding: 10px 24px;
-                border-radius: 6px;
-                font-weight: bold;
-                transition: background-color 0.3s ease;
-            }
-
-            .rodape a:hover {
-                background-color: #001f4d;
-            }
-
-            .importar-container {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                display: flex;
-                gap: 10px;
-            }
-
-            .importar-botao {
-                width: 55px;
-                height: 55px;
-                background-color: #007BFF;
-                color: white;
-                text-decoration: none;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-            }
-
-            .voltar-topo {
-                position: fixed;
-                top: 10px;
-                left: 20px;
-                z-index: 999;
-            }
-
-            .voltar-topo a {
-                background-color: #d40b0b;
-                color: white;
-                padding: 5px 8px;
-                border-radius: 0px;
-                text-decoration: none;
-                font-weight: bold;
-                font-size: 14px;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-                transition: all 0.3s ease;
-            }
-
-            .voltar-topo a:hover {
-                background-color: #001f4d;
-                transform: scale(1.05);
-            }
-
-
-            .importar-botao:hover {
-                background-color: #0056b3;
-                transform: scale(1.05);
-            }
-
-            @media (max-width: 600px) {
-                .botao {
-                    width: 100px;
-                    height: 100px;
-                    font-size: 12px;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-
-
-    <!-- Banner Desenvolvido por -->
-    <div class="banner-desenvolvido">
-        Desenvolvido por Alexandre Martins Vieira © 2025
-    </div>
-    <div class="voltar-topo">
-        <a href="{% url 'painel_alunos' %}">Voltar</a>
+    <div class="grid">
+        <a href="{% url 'cadastrar_funcionario' %}" class="botao"><span>➕</span>Cadastrar</a>
+        <a href="{% url 'listar_funcionarios' %}" class="botao"><span>👥</span>Funcionários</a>
+        <a href="{% url 'cadastrar_horario' %}" class="botao"><span>🕓</span>Horários</a>
+        <a href="{% url 'cadastrar_feriado' %}" class="botao"><span>📅</span>Feriados</a>
+        <a href="{% url 'selecionar_funcionarios' %}" class="botao"><span>📊</span>Gerar Folhas</a>
+        <a href="{% url 'listar_folhas' %}" class="botao"><span>📄</span>Frequências</a>
+        <a href="{% url 'relatorio_personalizado_funcionarios' %}" class="botao"><span>📋</span>Relatório</a>
+        <a href="{% url 'selecionar_capa' %}" class="botao"><span>📘</span>Capas</a>
     </div>
 
-
-    <div class="container">
-        <h2>Painel de Controle - Folha de Frequência</h2>
-
-        <div class="grid">
-            <a href="{% url 'cadastrar_funcionario' %}" class="botao cadastrar">➕<span>Cadastrar Funcionário</span></a>
-            <a href="{% url 'listar_funcionarios' %}" class="botao listar">👥<span>Listar Funcionários</span></a>
-            <a href="{% url 'cadastrar_horario' %}" class="botao horario">🕓<span>Cadastrar novo Horário</span></a>
-            <a href="{% url 'cadastrar_feriado' %}" class="botao feriado">📅<span>Cadastrar novo Feriado</span></a>
-            <a href="{% url 'selecionar_funcionarios' %}" class="botao folhas">📊<span>Gerar Folhas de Frequência</span></a>
-            <a href="{% url 'listar_folhas' %}" class="botao geradas">📄<span>Frequências Geradas</span></a>
-            <a href="{% url 'relatorio_personalizado_funcionarios' %}" class="botao folhas">📋<span>Relatório Personalizado</span></a>
-
-        </div>
-        
-
-        <div class="aniversariantes">
-            <h3>🎉 Aniversariantes do Mês</h3>
-            <ul>
-                {% for funcionario in aniversariantes_mes %}
-                    <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
-                {% empty %}
-                    <li>Nenhum aniversariante deste mês.</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="aniversariantes">
-            <h3>🎂 Aniversariantes de Hoje</h3>
-            <ul>
-                {% for funcionario in aniversariantes_dia %}
-                    <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
-                {% empty %}
-                    <li>Nenhum aniversariante de hoje.</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="rodape">
-            <a href="{% url 'painel_alunos' %}">← Voltar</a>
-        </div>
+    <div class="aniversariantes">
+        <h3>🎉 Aniversariantes do Mês</h3>
+        <ul>
+            {% for funcionario in aniversariantes_mes %}
+                <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
+            {% empty %}
+                <li>Nenhum aniversariante deste mês.</li>
+            {% endfor %}
+        </ul>
     </div>
 
-    <div class="importar-container">
-        <a href="{% url 'importar_funcionarios' %}" class="importar-botao" title="Importar Funcionários">👥</a>
-        <a href="{% url 'importar_horarios_trabalho' %}" class="importar-botao" title="Importar Horários">🕓</a>
+    <div class="aniversariantes">
+        <h3>🎂 Aniversariantes de Hoje</h3>
+        <ul>
+            {% for funcionario in aniversariantes_dia %}
+                <li>{{ funcionario.nome }} - {{ funcionario.data_nascimento|date:"d/m" }}</li>
+            {% empty %}
+                <li>Nenhum aniversariante de hoje.</li>
+            {% endfor %}
+        </ul>
     </div>
 
-    </body>
-    </html>
+    <div class="rodape">
+        <a href="{% url 'painel_alunos' %}">🔙 Voltar</a>
+    </div>
+</div>
+
+<div class="importar-container">
+    <a href="{% url 'importar_funcionarios' %}" class="importar-botao" title="Importar Funcionários">👥</a>
+    <a href="{% url 'importar_horarios_trabalho' %}" class="importar-botao" title="Importar Horários">🕓</a>
+</div>
+
+</body>
+</html>

@@ -13,27 +13,22 @@
         h2 {
             text-align: center;
         }
-
         .cabecalho {
             text-align: center;
             margin-bottom: 20px;
         }
-
         .cabecalho img {
             max-height: 90px;
             margin-bottom: 10px;
         }
-
         .cabecalho h1 {
             margin: 5px 0;
             font-size: 20px;
         }
-
         .cabecalho p {
             margin: 2px 0;
             font-size: 13px;
         }
-
         .formulario {
             margin-bottom: 20px;
             padding: 15px;
@@ -41,11 +36,28 @@
             background: #f9f9f9;
         }
 
+        .filtros-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+
+        .filtro-bloco {
+            min-width: 180px;
+        }
+
+        .filtro-bloco h4 {
+            margin-bottom: 5px;
+            color: #003366;
+        }
+
         .checkboxes {
             columns: 3;
         }
 
-        .checkboxes label {
+        .checkboxes label,
+        .filtro-bloco label {
             display: block;
             margin: 5px 0;
         }
@@ -56,29 +68,24 @@
             margin-top: 20px;
             font-size: 13px;
         }
-
         th, td {
             border: 1px solid #999;
             padding: 8px;
             text-align: left;
         }
-
         th {
             background: #e0e0e0;
         }
-
         .print-button {
             margin-top: 20px;
             text-align: right;
         }
-
         .voltar {
             position: fixed;
             bottom: 20px;
             left: 20px;
             z-index: 999;
         }
-
         .voltar a {
             background-color: #003366;
             color: white;
@@ -89,25 +96,14 @@
             box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
             transition: background-color 0.3s ease;
         }
-
         .voltar a:hover {
             background-color: #001f4d;
         }
-
         @media print {
             .formulario,
             .print-button,
             .voltar {
                 display: none !important;
-            }
-
-            table {
-                page-break-inside: auto;
-            }
-
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
             }
         }
     </style>
@@ -130,6 +126,50 @@
 <div class="formulario">
     <form method="post">
         {% csrf_token %}
+
+        <h4>Filtrar por:</h4>
+        <div class="filtros-box">
+            <div class="filtro-bloco">
+                <h4>Séries:</h4>
+                {% for serie in series %}
+                    <label>
+                        <input type="checkbox" name="filtro_serie" value="{{ serie }}" {% if serie in filtro_serie %}checked{% endif %}>
+                        {{ serie }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="filtro-bloco">
+                <h4>Turmas:</h4>
+                {% for turma in turmas %}
+                    <label>
+                        <input type="checkbox" name="filtro_turma" value="{{ turma }}" {% if turma in filtro_turma %}checked{% endif %}>
+                        {{ turma }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="filtro-bloco">
+                <h4>Turnos:</h4>
+                {% for turno in turnos %}
+                    <label>
+                        <input type="checkbox" name="filtro_turno" value="{{ turno }}" {% if turno in filtro_turno %}checked{% endif %}>
+                        {{ turno }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="filtro-bloco">
+                <h4>Setores:</h4>
+                {% for setor in setores %}
+                    <label>
+                        <input type="checkbox" name="filtro_setor" value="{{ setor.nome }}" {% if setor.nome in filtro_setor %}checked{% endif %}>
+                        {{ setor.nome }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
         <h4>Selecione os campos que deseja exibir:</h4>
         <div class="checkboxes">
             {% for campo, label in campos_disponiveis %}
@@ -139,6 +179,7 @@
                 </label>
             {% endfor %}
         </div>
+
         <button type="submit">Gerar Relatório</button>
     </form>
 </div>
@@ -176,9 +217,8 @@
     </table>
 {% endif %}
 
-<!-- Botão Voltar -->
 <div class="voltar">
-    <a href="{% url 'painel_alunos' %}" class="btn-print">Início</a>
+    <a href="{% url 'painel_alunos' %}">← Início</a>
 </div>
 
 </body>

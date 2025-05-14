@@ -17,18 +17,27 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #003366;
         }
 
         label {
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
+            text-align: left;
         }
 
         select, input {
             width: 100%;
             padding: 8px;
             margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
         }
 
         button {
@@ -38,16 +47,36 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-bottom: 20px;
         }
 
         button:hover {
             background-color: #002244;
+        }
+
+        .voltar-btn {
+            display: inline-block;
+            margin-top: 10px;
+            background-color: #d40b0b;
+            color: white;
+            padding: 8px 14px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .voltar-btn:hover {
+            background-color: #001f4d;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
     <form method="get" action="{% url 'capas_livro_ponto' %}">
         <h2>📘 Gerar Capas do Livro de Frequência</h2>
+        
         <label for="setor">Setor:</label>
         <select name="setor" id="setor" required>
             {% for setor in setores %}
@@ -61,8 +90,8 @@
         <label for="mes">Mês:</label>
         <input type="number" name="mes" min="1" max="12" value="{{ mes }}" required>
 
-        <button type="submit">Gerar Capa</button>
-        <a href="{% url 'painel_alunos' %}" class="button">🔙 Início</a>
+        <button type="submit">Gerar Capa</button><br>
+        <a href="{% url 'painel_controle' %}" class="voltar-btn">← Voltar ao Painel de Controle</a>
     </form>
 </body>
 </html>
