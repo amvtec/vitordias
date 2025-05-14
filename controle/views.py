@@ -306,14 +306,17 @@ from django.shortcuts import redirect
 @login_required
 def cadastrar_funcionario(request):
     if request.method == 'POST':
-        form = FuncionarioForm(request.POST)
+        form = FuncionarioForm(request.POST, request.FILES)  # <-- Adicionado request.FILES aqui
         if form.is_valid():
             form.save()
-            return redirect('listar_funcionarios')  # Redireciona para a lista de funcionários após salvar
+            return redirect('listar_funcionarios')
+        else:
+            print(form.errors)  # Opcional para depuração
     else:
         form = FuncionarioForm()
 
     return render(request, 'controle/cadastrar_funcionario.html', {'form': form})
+
 @login_required
 def listar_funcionarios(request):
     funcionarios = Funcionario.objects.select_related('setor').order_by('nome')
@@ -324,10 +327,12 @@ def editar_funcionario(request, funcionario_id):
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
     if request.method == 'POST':
-        form = FuncionarioForm(request.POST, request.FILES, instance=funcionario)  # <-- inclui request.FILES
+        form = FuncionarioForm(request.POST, request.FILES, instance=funcionario)
         if form.is_valid():
             form.save()
             return redirect('listar_funcionarios')
+        else:
+            print(form.errors)
     else:
         form = FuncionarioForm(instance=funcionario)
 
@@ -625,6 +630,22 @@ def ficha_funcionario(request, funcionario_id):
 @login_required
 def relatorio_personalizado_funcionarios(request):
     funcionarios = Funcionario.objects.all()
+
+    # Filtros múltiplos (checkboxes)
+    filtro_serie = request.POST.getlist('filtro_serie')
+    filtro_turma = request.POST.getlist('filtro_turma')
+    filtro_turno = request.POST.getlist('filtro_turno')
+    filtro_setor = request.POST.getlist('filtro_setor')
+
+    if filtro_serie:
+        funcionarios = funcionarios.filter(serie__in=filtro_serie)
+    if filtro_turma:
+        funcionarios = funcionarios.filter(turma__in=filtro_turma)
+    if filtro_turno:
+        funcionarios = funcionarios.filter(turno__in=filtro_turno)
+    if filtro_setor:
+        funcionarios = funcionarios.filter(setor__nome__in=filtro_setor)
+
     campos_disponiveis = [
         ('nome', 'Nome'),
         ('matricula', 'Matrícula'),
@@ -654,9 +675,17 @@ def relatorio_personalizado_funcionarios(request):
         ('sabado_letivo', 'Sábado Letivo'),
         ('turma', 'Turma'),
         ('turno', 'Turno'),
+        ('serie', 'Série'),
     ]
 
     campos_selecionados = request.POST.getlist('campos') if request.method == 'POST' else []
+
+    # Dados únicos para preencher os filtros (sem duplicados)
+    series = Funcionario.objects.exclude(serie__isnull=True).exclude(serie__exact='').values_list('serie', flat=True).distinct()
+    turmas = Funcionario.objects.exclude(turma__isnull=True).exclude(turma__exact='').values_list('turma', flat=True).distinct()
+    turnos = Funcionario.objects.exclude(turno__isnull=True).exclude(turno__exact='').values_list('turno', flat=True).distinct()
+    setores = Setor.objects.all()
+
     escola = Escola.objects.first()
 
     return render(request, 'controle/relatorio_personalizado_funcionarios.html', {
@@ -664,6 +693,14 @@ def relatorio_personalizado_funcionarios(request):
         'campos_disponiveis': campos_disponiveis,
         'campos_selecionados': campos_selecionados,
         'escola': escola,
+        'series': series,
+        'turmas': turmas,
+        'turnos': turnos,
+        'setores': setores,
+        'filtro_serie': filtro_serie,
+        'filtro_turma': filtro_turma,
+        'filtro_turno': filtro_turno,
+        'filtro_setor': filtro_setor,
     })
 
 
