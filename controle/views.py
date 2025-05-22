@@ -631,7 +631,7 @@ def ficha_funcionario(request, funcionario_id):
 def relatorio_personalizado_funcionarios(request):
     funcionarios = Funcionario.objects.all()
 
-    # Filtros múltiplos (checkboxes)
+    # Filtros aplicados via checkboxes
     filtro_serie = request.POST.getlist('filtro_serie')
     filtro_turma = request.POST.getlist('filtro_turma')
     filtro_turno = request.POST.getlist('filtro_turno')
@@ -646,6 +646,7 @@ def relatorio_personalizado_funcionarios(request):
     if filtro_setor:
         funcionarios = funcionarios.filter(setor__nome__in=filtro_setor)
 
+    # Campos disponíveis (incluir os campos novos aqui)
     campos_disponiveis = [
         ('nome', 'Nome'),
         ('matricula', 'Matrícula'),
@@ -676,11 +677,14 @@ def relatorio_personalizado_funcionarios(request):
         ('turma', 'Turma'),
         ('turno', 'Turno'),
         ('serie', 'Série'),
+        ('tipo_vinculo', 'Tipo de Vínculo'),
+        ('fonte_pagadora', 'Fonte Pagadora'),
     ]
 
+    # Campos selecionados pelo usuário
     campos_selecionados = request.POST.getlist('campos') if request.method == 'POST' else []
 
-    # Dados únicos para preencher os filtros (sem duplicados)
+    # Valores únicos para filtros
     series = Funcionario.objects.exclude(serie__isnull=True).exclude(serie__exact='').values_list('serie', flat=True).distinct()
     turmas = Funcionario.objects.exclude(turma__isnull=True).exclude(turma__exact='').values_list('turma', flat=True).distinct()
     turnos = Funcionario.objects.exclude(turno__isnull=True).exclude(turno__exact='').values_list('turno', flat=True).distinct()

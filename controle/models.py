@@ -8,6 +8,8 @@ class Setor(models.Model):
         return self.nome
 
 
+from django.db import models
+
 class Funcionario(models.Model):
     TURNO_CHOICES = [
         ('Matutino', 'Matutino'),
@@ -36,6 +38,11 @@ class Funcionario(models.Model):
         ('E', 'Turma E'),
         ('F', 'Turma F'),
         ('G', 'Turma G'),
+    ]
+
+    TIPO_VINCULO_CHOICES = [
+        ('Efetivo', 'Efetivo'),
+        ('Contratado', 'Contratado'),
     ]
 
     nome = models.CharField(max_length=100)
@@ -71,12 +78,29 @@ class Funcionario(models.Model):
 
     foto = models.ImageField(upload_to='fotos_funcionarios/', blank=True, null=True)
 
-    turma = models.CharField(max_length=10, choices=TURMA_CHOICES, blank=True, null=True)  # ✅ CORRETO
+    turma = models.CharField(max_length=10, choices=TURMA_CHOICES, blank=True, null=True)
     turno = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
     serie = models.CharField(max_length=20, choices=SERIE_CHOICES, blank=True, null=True)
 
+    tipo_vinculo = models.CharField(
+        max_length=20,
+        choices=TIPO_VINCULO_CHOICES,
+        blank=True,
+        null=True
+    )
+
+    fonte_pagadora = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    inicio_ferias = models.DateField(blank=True, null=True)
+    fim_ferias = models.DateField(blank=True, null=True)
+
     def __str__(self):
         return self.nome
+
 
 
 

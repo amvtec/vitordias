@@ -158,6 +158,19 @@
                 {{ form.data_nascimento }}
             </div>
         </div>
+
+        <!-- Tipo de Vínculo e Fonte Pagadora -->
+        <div class="form-group">
+            <div class="form-field">
+                <label for="{{ form.tipo_vinculo.id_for_label }}">Tipo de Vínculo:</label>
+                {{ form.tipo_vinculo }}
+                </div>
+                <div class="form-field">
+                <label for="{{ form.fonte_pagadora.id_for_label }}">Fonte Pagadora:</label>
+                {{ form.fonte_pagadora }}
+            </div>
+        </div>
+
     
         <!-- Documentos -->
         <div class="form-group">

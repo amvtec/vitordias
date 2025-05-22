@@ -1,5 +1,5 @@
 from django import forms
-from .models import Funcionario
+from .models import Funcionario, HorarioTrabalho, Feriado
 
 class FuncionarioForm(forms.ModelForm):
     class Meta:
@@ -34,6 +34,8 @@ class FuncionarioForm(forms.ModelForm):
             'horario_planejamento',
             'sabado_letivo',
             'foto',
+            'tipo_vinculo',         # ✅ Novo campo
+            'fonte_pagadora',       # ✅ Novo campo
         ]
 
         widgets = {
@@ -52,16 +54,15 @@ class FuncionarioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FuncionarioForm, self).__init__(*args, **kwargs)
 
-        # Permitir formato dd/mm/yyyy para os campos data_admissao e data_nascimento
+        # Permitir formato dd/mm/yyyy
         self.fields['data_admissao'].input_formats = ['%d/%m/%Y']
         self.fields['data_nascimento'].input_formats = ['%d/%m/%Y']
 
-        # Controlar se o campo de horário é obrigatório
+        # Campo de planejamento obrigatório apenas se marcado
         self.fields['horario_planejamento'].required = False
         if self.instance and self.instance.tem_planejamento:
             self.fields['horario_planejamento'].required = True
 
-from .models import HorarioTrabalho
 
 class HorarioTrabalhoForm(forms.ModelForm):
     class Meta:
@@ -72,15 +73,14 @@ class HorarioTrabalhoForm(forms.ModelForm):
             'horario_fim': forms.TimeInput(attrs={'type': 'time'}),
         }
 
-from .models import Feriado
 
 class FeriadoForm(forms.ModelForm):
     class Meta:
         model = Feriado
-        fields = ['data', 'descricao', 'sabado_letivo']  # Incluindo o campo sabado_letivo
+        fields = ['data', 'descricao', 'sabado_letivo']
         widgets = {
             'data': forms.DateInput(attrs={'type': 'date'}),
-            'sabado_letivo': forms.CheckboxInput(attrs={'class': 'checkbox-input'}),  # Checkbox para sábado letivo
+            'sabado_letivo': forms.CheckboxInput(attrs={'class': 'checkbox-input'}),
         }
 
 
