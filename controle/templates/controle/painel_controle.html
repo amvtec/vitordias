@@ -202,16 +202,18 @@
 <div class="container">
     <h2>Painel de Controle - Folha de Frequência</h2>
 
-    <div class="grid">
-        <a href="{% url 'cadastrar_funcionario' %}" class="botao"><span>➕</span>Cadastrar</a>
-        <a href="{% url 'listar_funcionarios' %}" class="botao"><span>👥</span>Funcionários</a>
-        <a href="{% url 'cadastrar_horario' %}" class="botao"><span>🕓</span>Horários</a>
-        <a href="{% url 'cadastrar_feriado' %}" class="botao"><span>📅</span>Feriados</a>
-        <a href="{% url 'selecionar_funcionarios' %}" class="botao"><span>📊</span>Gerar Folhas</a>
-        <a href="{% url 'listar_folhas' %}" class="botao"><span>📄</span>Frequências</a>
-        <a href="{% url 'relatorio_personalizado_funcionarios' %}" class="botao"><span>📋</span>Relatório</a>
-        <a href="{% url 'selecionar_capa' %}" class="botao"><span>📘</span>Capas</a>
-    </div>
+<div class="grid">
+    <a href="{% url 'cadastrar_funcionario' %}" class="botao"><span>➕</span>Cadastrar</a>
+    <a href="{% url 'listar_funcionarios' %}" class="botao"><span>👥</span>Funcionários</a>
+    <a href="{% url 'cadastrar_horario' %}" class="botao"><span>🕓</span>Horários</a>
+    <a href="{% url 'cadastrar_feriado' %}" class="botao"><span>📅</span>Feriados</a>
+    <a href="{% url 'selecionar_funcionarios' %}" class="botao"><span>📊</span>Gerar Folhas</a>
+    <a href="{% url 'listar_folhas' %}" class="botao"><span>📄</span>Frequências</a>
+    <a href="{% url 'relatorios_funcionarios' %}" class="botao"><span>📈</span>Relatórios</a> <!-- NOVO BOTÃO -->
+    <a href="{% url 'selecionar_capa' %}" class="botao"><span>📘</span>Capas</a>
+</div>
+
+
 
     <div class="aniversariantes">
         <h3>🎉 Aniversariantes do Mês</h3>

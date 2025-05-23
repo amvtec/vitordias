@@ -28,6 +28,9 @@ urlpatterns = [
     path('livro-ponto/capas/', views.capas_livro_ponto, name='capas_livro_ponto'),
     path('funcionario/<int:funcionario_id>/ficha/', ficha_funcionario, name='imprimir_ficha_funcionario'),
     path('relatorio-personalizado/', relatorio_personalizado_funcionarios, name='relatorio_personalizado_funcionarios'),
+    path('relatorio-professores/', views.relatorio_professores, name='relatorio_professores'),
+    path('relatorios-funcionarios/', views.relatorios_funcionarios, name='relatorios_funcionarios'),
+
 
 
 

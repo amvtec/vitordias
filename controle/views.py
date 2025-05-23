@@ -707,4 +707,64 @@ def relatorio_personalizado_funcionarios(request):
         'filtro_setor': filtro_setor,
     })
 
+def relatorio_professores(request):
+    series = sorted(set(Funcionario.objects.values_list('serie', flat=True)))
+    turmas = sorted(set(Funcionario.objects.values_list('turma', flat=True)))
+    turnos = sorted(set(Funcionario.objects.values_list('turno', flat=True)))
+    setores = Setor.objects.all()
+
+    filtro_serie = request.POST.getlist('filtro_serie')
+    filtro_turma = request.POST.getlist('filtro_turma')
+    filtro_turno = request.POST.getlist('filtro_turno')
+    filtro_setor = request.POST.getlist('filtro_setor')
+    campos_selecionados = request.POST.getlist('campos')
+
+    funcionarios = Funcionario.objects.filter(funcao__iexact="PROFESSOR(A)")
+
+    if filtro_serie:
+        funcionarios = funcionarios.filter(serie__in=filtro_serie)
+    if filtro_turma:
+        funcionarios = funcionarios.filter(turma__in=filtro_turma)
+    if filtro_turno:
+        funcionarios = funcionarios.filter(turno__in=filtro_turno)
+    if filtro_setor:
+        funcionarios = funcionarios.filter(setor__nome__in=filtro_setor)
+
+    # Ordena por série e turma
+    funcionarios = sorted(funcionarios, key=lambda f: (f.serie or "", f.turma or ""))
+
+    # Campos disponíveis (ajuste conforme seus atributos reais)
+    campos_disponiveis = [
+        ('nome', 'Nome'),
+        ('matricula', 'Matrícula'),
+        ('serie', 'Série'),
+        ('turma', 'Turma'),
+        ('turno', 'Turno'),
+        ('setor', 'Setor'),
+        ('telefone', 'Telefone'),
+        ('email', 'Email'),
+    ]
+
+    # Pega os dados da escola, se existir
+    escola = Escola.objects.first() if Escola.objects.exists() else None
+
+    contexto = {
+        'escola': escola,
+        'series': series,
+        'turmas': turmas,
+        'turnos': turnos,
+        'setores': setores,
+        'filtro_serie': filtro_serie,
+        'filtro_turma': filtro_turma,
+        'filtro_turno': filtro_turno,
+        'filtro_setor': filtro_setor,
+        'campos_disponiveis': campos_disponiveis,
+        'campos_selecionados': campos_selecionados,
+        'funcionarios': funcionarios,
+    }
+    return render(request, 'controle/relatorio_professores.html', contexto)
+
+def relatorios_funcionarios(request):
+    return render(request, 'controle/relatorios_funcionarios.html')
+
 
