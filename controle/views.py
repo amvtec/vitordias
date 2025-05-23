@@ -708,9 +708,10 @@ def relatorio_personalizado_funcionarios(request):
     })
 
 def relatorio_professores(request):
-    series = sorted(set(Funcionario.objects.values_list('serie', flat=True)))
-    turmas = sorted(set(Funcionario.objects.values_list('turma', flat=True)))
-    turnos = sorted(set(Funcionario.objects.values_list('turno', flat=True)))
+    series = sorted([s for s in set(Funcionario.objects.values_list('serie', flat=True)) if s is not None])
+    turmas = sorted([t for t in set(Funcionario.objects.values_list('turma', flat=True)) if t is not None])
+    turnos = sorted([t for t in set(Funcionario.objects.values_list('turno', flat=True)) if t is not None])
+
     setores = Setor.objects.all()
 
     filtro_serie = request.POST.getlist('filtro_serie')
