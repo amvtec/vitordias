@@ -649,6 +649,8 @@ def relatorio_personalizado_funcionarios(request):
     if filtro_vinculo:
         funcionarios = funcionarios.filter(tipo_vinculo__in=filtro_vinculo)
 
+    funcionarios = funcionarios.order_by('nome')
+
     # Campos disponíveis
     campos_disponiveis = [
         ('nome', 'Nome'),
