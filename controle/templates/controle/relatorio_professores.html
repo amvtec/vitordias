@@ -219,9 +219,12 @@
                                 {{ funcionario.setor.nome }}
                             {% elif campo == 'tem_planejamento' or campo == 'sabado_letivo' %}
                                 {{ funcionario|get_attr:campo|yesno:"Sim,Não" }}
+                            {% elif campo == 'vinculo' %}
+                                {{ funcionario.vinculo }}
                             {% else %}
                                 {{ funcionario|get_attr:campo }}
                             {% endif %}
+
                         </td>
                     {% endif %}
                 {% endfor %}
