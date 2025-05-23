@@ -730,10 +730,12 @@ def relatorio_professores(request):
     if filtro_setor:
         funcionarios = funcionarios.filter(setor__nome__in=filtro_setor)
 
-    # Ordena por série e turma
-    funcionarios = sorted(funcionarios, key=lambda f: (f.serie or "", f.turma or ""))
+    # Ordena com segurança, tratando None como string
+    funcionarios = sorted(
+        funcionarios, 
+        key=lambda f: (str(f.serie or ""), str(f.turma or ""))
+    )
 
-    # Campos disponíveis (ajuste conforme seus atributos reais)
     campos_disponiveis = [
         ('nome', 'Nome'),
         ('matricula', 'Matrícula'),
@@ -745,7 +747,6 @@ def relatorio_professores(request):
         ('email', 'Email'),
     ]
 
-    # Pega os dados da escola, se existir
     escola = Escola.objects.first() if Escola.objects.exists() else None
 
     contexto = {
@@ -763,6 +764,7 @@ def relatorio_professores(request):
         'funcionarios': funcionarios,
     }
     return render(request, 'controle/relatorio_professores.html', contexto)
+
 
 def relatorios_funcionarios(request):
     return render(request, 'controle/relatorios_funcionarios.html')
