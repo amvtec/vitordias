@@ -35,33 +35,27 @@
             border: 1px solid #ccc;
             background: #f9f9f9;
         }
-
         .filtros-box {
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
             margin-bottom: 20px;
         }
-
         .filtro-bloco {
             min-width: 180px;
         }
-
         .filtro-bloco h4 {
             margin-bottom: 5px;
             color: #003366;
         }
-
         .checkboxes {
             columns: 3;
         }
-
         .checkboxes label,
         .filtro-bloco label {
             display: block;
             margin: 5px 0;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -115,6 +109,8 @@
         <img src="{{ escola.logo.url }}" alt="Logo da Escola">
     {% endif %}
     <h1>{{ escola.nome_escola }}</h1>
+    <p>Secretaria: {{ escola.nome_secretaria }}</p>
+    <p>CNPJ: {{ escola.cnpj }}</p>
     <p>{{ escola.endereco }}, Nº {{ escola.numero }} – {{ escola.bairro }} – {{ escola.cidade }}/{{ escola.uf }}</p>
     <p>Tel: {{ escola.telefone }} | E-mail: {{ escola.email }}</p>
 </div>
@@ -163,6 +159,16 @@
                     <label>
                         <input type="checkbox" name="filtro_setor" value="{{ setor.nome }}" {% if setor.nome in filtro_setor %}checked{% endif %}>
                         {{ setor.nome }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="filtro-bloco">
+                <h4>Tipo de Vínculo:</h4>
+                {% for vinculo in vinculos %}
+                    <label>
+                        <input type="checkbox" name="filtro_vinculo" value="{{ vinculo }}" {% if vinculo in filtro_vinculo %}checked{% endif %}>
+                        {{ vinculo }}
                     </label>
                 {% endfor %}
             </div>

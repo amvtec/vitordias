@@ -636,6 +636,7 @@ def relatorio_personalizado_funcionarios(request):
     filtro_turma = request.POST.getlist('filtro_turma')
     filtro_turno = request.POST.getlist('filtro_turno')
     filtro_setor = request.POST.getlist('filtro_setor')
+    filtro_vinculo = request.POST.getlist('filtro_vinculo')  # NOVO filtro
 
     if filtro_serie:
         funcionarios = funcionarios.filter(serie__in=filtro_serie)
@@ -645,8 +646,10 @@ def relatorio_personalizado_funcionarios(request):
         funcionarios = funcionarios.filter(turno__in=filtro_turno)
     if filtro_setor:
         funcionarios = funcionarios.filter(setor__nome__in=filtro_setor)
+    if filtro_vinculo:
+        funcionarios = funcionarios.filter(tipo_vinculo__in=filtro_vinculo)
 
-    # Campos disponíveis (incluir os campos novos aqui)
+    # Campos disponíveis
     campos_disponiveis = [
         ('nome', 'Nome'),
         ('matricula', 'Matrícula'),
@@ -689,6 +692,7 @@ def relatorio_personalizado_funcionarios(request):
     turmas = Funcionario.objects.exclude(turma__isnull=True).exclude(turma__exact='').values_list('turma', flat=True).distinct()
     turnos = Funcionario.objects.exclude(turno__isnull=True).exclude(turno__exact='').values_list('turno', flat=True).distinct()
     setores = Setor.objects.all()
+    vinculos = Funcionario.objects.exclude(tipo_vinculo__isnull=True).exclude(tipo_vinculo__exact='').values_list('tipo_vinculo', flat=True).distinct()
 
     escola = Escola.objects.first()
 
@@ -701,10 +705,12 @@ def relatorio_personalizado_funcionarios(request):
         'turmas': turmas,
         'turnos': turnos,
         'setores': setores,
+        'vinculos': vinculos,
         'filtro_serie': filtro_serie,
         'filtro_turma': filtro_turma,
         'filtro_turno': filtro_turno,
         'filtro_setor': filtro_setor,
+        'filtro_vinculo': filtro_vinculo,  # Enviado para o template
     })
 
 def relatorio_professores(request):
