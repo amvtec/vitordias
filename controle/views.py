@@ -746,6 +746,7 @@ def relatorio_professores(request):
         ('setor', 'Setor'),
         ('telefone', 'Telefone'),
         ('email', 'Email'),
+        ('vinculo', 'Tipo de Vínculo'),
     ]
 
     escola = Escola.objects.first() if Escola.objects.exists() else None

@@ -65,10 +65,13 @@
         th, td {
             border: 1px solid #999;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
         th {
             background: #e0e0e0;
+        }
+        th.col-nome, td.col-nome {
+            text-align: left !important;
         }
         .print-button {
             margin-top: 20px;
@@ -117,7 +120,7 @@
     {% endif %}
 </div>
 
-<h2>Relatório de Professores por Série e Turma</h2>
+<h2>Relatório Personalizado</h2>
 
 <div class="formulario">
     <form method="post">
@@ -186,51 +189,54 @@
 
     <table>
         <thead>
-    <tr>
-        {% if 'matricula' in campos_selecionados %}
-            <th>{{ campos_disponiveis|get_label:'matricula' }}</th>
-        {% endif %}
-        {% if 'nome' in campos_selecionados %}
-            <th>{{ campos_disponiveis|get_label:'nome' }}</th>
-        {% endif %}
-        {% for campo in campos_selecionados %}
-            {% if campo != 'matricula' and campo != 'nome' %}
-                <th>{{ campos_disponiveis|get_label:campo }}</th>
-            {% endif %}
-        {% endfor %}
-    </tr>
-</thead>
-<tbody>
-    {% for funcionario in funcionarios %}
         <tr>
             {% if 'matricula' in campos_selecionados %}
-                <td>{{ funcionario.matricula }}</td>
+                <th>{{ campos_disponiveis|get_label:'matricula' }}</th>
             {% endif %}
             {% if 'nome' in campos_selecionados %}
-                <td>{{ funcionario.nome }}</td>
+                <th class="col-nome">{{ campos_disponiveis|get_label:'nome' }}</th>
             {% endif %}
             {% for campo in campos_selecionados %}
                 {% if campo != 'matricula' and campo != 'nome' %}
-                    <td>
-                        {% if campo == 'setor' %}
-                            {{ funcionario.setor.nome }}
-                        {% elif campo == 'tem_planejamento' or campo == 'sabado_letivo' %}
-                            {{ funcionario|get_attr:campo|yesno:"Sim,Não" }}
-                        {% else %}
-                            {{ funcionario|get_attr:campo }}
-                        {% endif %}
-                    </td>
+                    <th>{{ campos_disponiveis|get_label:campo }}</th>
                 {% endif %}
             {% endfor %}
         </tr>
-    {% endfor %}
-</tbody>
-
+        </thead>
+        <tbody>
+        {% for funcionario in funcionarios %}
+            <tr>
+                {% if 'matricula' in campos_selecionados %}
+                    <td>{{ funcionario.matricula }}</td>
+                {% endif %}
+                {% if 'nome' in campos_selecionados %}
+                    <td class="col-nome">{{ funcionario.nome }}</td>
+                {% endif %}
+                {% for campo in campos_selecionados %}
+                    {% if campo != 'matricula' and campo != 'nome' %}
+                        <td>
+                            {% if campo == 'setor' %}
+                                {{ funcionario.setor.nome }}
+                            {% elif campo == 'tem_planejamento' or campo == 'sabado_letivo' %}
+                                {{ funcionario|get_attr:campo|yesno:"Sim,Não" }}
+                            {% else %}
+                                {{ funcionario|get_attr:campo }}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
 {% endif %}
 
 <div class="voltar">
     <a href="{% url 'painel_alunos' %}">← Início</a>
+</div>
+
+<div style="text-align: center; font-size: 10px; color: #777; margin-top: 40px;">
+    Sistema desenvolvido por Alexandre Martins Vieira – 2025
 </div>
 
 </body>
