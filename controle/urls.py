@@ -3,6 +3,8 @@ from . import views
 from .views import importar_horarios_trabalho
 from .views import ficha_funcionario
 from .views import relatorio_personalizado_funcionarios
+from .views import gerar_folhas_multimes_funcionario
+
 
 urlpatterns = [
     path('folha-frequencia/<int:funcionario_id>/<int:mes>/<int:ano>/', views.gerar_folha_frequencia, name='folha_frequencia'),
@@ -30,6 +32,8 @@ urlpatterns = [
     path('relatorio-personalizado/', relatorio_personalizado_funcionarios, name='relatorio_personalizado_funcionarios'),
     path('relatorio-professores/', views.relatorio_professores, name='relatorio_professores'),
     path('relatorios-funcionarios/', views.relatorios_funcionarios, name='relatorios_funcionarios'),
+    path('folhas/individuais/', gerar_folhas_multimes_funcionario, name='gerar_folhas_multimes_funcionario'),
+
 
 
 

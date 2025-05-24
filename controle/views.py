@@ -779,4 +779,29 @@ def relatorio_professores(request):
 def relatorios_funcionarios(request):
     return render(request, 'controle/relatorios_funcionarios.html')
 
+from .forms import GerarFolhasIndividuaisForm
+
+@login_required
+def gerar_folhas_multimes_funcionario(request):
+    folhas_geradas = []
+    anos = list(range(2025, 2031))  # ⬅️ de 2025 até 2030
+
+    if request.method == 'POST':
+        form = GerarFolhasIndividuaisForm(request.POST)
+        if form.is_valid():
+            funcionario = form.cleaned_data['funcionario']
+            ano = form.cleaned_data['ano']
+            meses = list(map(int, form.cleaned_data['meses']))
+
+            for mes in meses:
+                response = gerar_folha_frequencia(request, funcionario.id, mes, ano)
+                folhas_geradas.append(response.content.decode())
+    else:
+        form = GerarFolhasIndividuaisForm()
+
+    return render(request, 'controle/gerar_folhas_individuais.html', {
+        'form': form,
+        'folhas_geradas': folhas_geradas,
+        'anos': anos,
+    })
 
