@@ -1,31 +1,40 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar Funcionário</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         form {
@@ -48,16 +57,21 @@
         }
 
         label {
-            font-weight: bold;
-            color: #003366;
-            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
 
-        input, select, textarea {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #999;
-            font-size: 14px;
+        input,
+        select,
+        textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
 
         input[type="checkbox"] {
@@ -79,18 +93,19 @@
 
         .btn {
             align-self: center;
-            background-color: #003366;
+            background-color: #4338ca;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #002244;
+            background-color: #312e81;
         }
 
         .voltar {
@@ -100,17 +115,57 @@
 
         .voltar a {
             text-decoration: none;
-            background: #555;
+            background-color: #64748b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .voltar a:hover {
+            background-color: #4a5568;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .form-group {
+                flex-direction: column;
+            }
+
+            .form-field {
+                min-width: 100%;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
         }
     </style>
 
     <script>
         function togglePlanejamentoHorario() {
-            const planejamentoCheckbox = document.getElementById("id_planejamento");
+            const planejamentoCheckbox = document.getElementById("id_tem_planejamento");
             const horarioField = document.getElementById("campo_horario_planejamento");
             if (planejamentoCheckbox && horarioField) {
                 horarioField.style.display = planejamentoCheckbox.checked ? "block" : "none";
@@ -138,7 +193,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             togglePlanejamentoHorario();
 
-            const checkboxPlanejamento = document.getElementById("id_planejamento");
+            const checkboxPlanejamento = document.getElementById("id_tem_planejamento");
             if (checkboxPlanejamento) {
                 checkboxPlanejamento.addEventListener('change', togglePlanejamentoHorario);
             }
@@ -151,185 +206,196 @@
         });
     </script>
 </head>
+
 <body>
 
-<div class="container">
-    
-    <h2>📋 Cadastrar Funcionário</h2>
+    <div class="container">
 
-    <!-- Substitua o conteúdo atual do <form> por este novo -->
+        <h2><i class="fas fa-user-plus"></i> Cadastrar Funcionário</h2>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+        <!-- Substitua o conteúdo atual do <form> por este novo -->
 
-    <!-- Identificação -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.nome.id_for_label }}">Nome:</label>
-            {{ form.nome }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
-            {{ form.matricula }}
-        </div>
-    </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-    <!-- Cargo/Função -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.funcao.id_for_label }}">Função:</label>
-            {{ form.funcao }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.cargo.id_for_label }}">Cargo:</label>
-            {{ form.cargo }}
-        </div>
-    </div>
+            <!-- Identificação -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.nome.id_for_label }}"><i class="fas fa-id-card"></i> Nome:</label>
+                    {{ form.nome }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.matricula.id_for_label }}"><i class="fas fa-fingerprint"></i> Matrícula:</label>
+                    {{ form.matricula }}
+                </div>
+            </div>
 
-    <!-- Setor, Turno e Turma -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.setor.id_for_label }}">Setor:</label>
-            {{ form.setor }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.turno.id_for_label }}">Turno:</label>
-            {{ form.turno }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.turma.id_for_label }}">Turma:</label>
-            {{ form.turma }}
-        </div>
-    </div>
+            <!-- Cargo/Função -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.funcao.id_for_label }}"><i class="fas fa-briefcase"></i> Função:</label>
+                    {{ form.funcao }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cargo.id_for_label }}"><i class="fas fa-user-tie"></i> Cargo:</label>
+                    {{ form.cargo }}
+                </div>
+            </div>
 
-    <!-- Datas -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.data_admissao.id_for_label }}">Data de Admissão:</label>
-            {{ form.data_admissao }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
-            {{ form.data_nascimento }}
-        </div>
-    </div>
+            <!-- Setor, Turno e Turma -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.setor.id_for_label }}"><i class="fas fa-building"></i> Setor:</label>
+                    {{ form.setor }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.turno.id_for_label }}"><i class="fas fa-sun"></i> Turno:</label>
+                    {{ form.turno }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.turma.id_for_label }}"><i class="fas fa-users"></i> Turma:</label>
+                    {{ form.turma }}
+                </div>
+            </div>
 
-    <!-- Documentos -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.cpf.id_for_label }}">CPF:</label>
-            {{ form.cpf }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.rg.id_for_label }}">RG:</label>
-            {{ form.rg }}
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.pis.id_for_label }}">PIS:</label>
-            {{ form.pis }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor:</label>
-            {{ form.titulo_eleitor }}
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.ctps_numero.id_for_label }}">CTPS - Número:</label>
-            {{ form.ctps_numero }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.ctps_serie.id_for_label }}">CTPS - Série:</label>
-            {{ form.ctps_serie }}
-        </div>
-    </div>
+            <!-- Datas -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.data_admissao.id_for_label }}"><i class="fas fa-calendar-plus"></i> Data de
+                        Admissão:</label>
+                    {{ form.data_admissao }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.data_nascimento.id_for_label }}"><i class="fas fa-birthday-cake"></i> Data de
+                        Nascimento:</label>
+                    {{ form.data_nascimento }}
+                </div>
+            </div>
 
-    <!-- Contato -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
-            {{ form.telefone }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.email.id_for_label }}">E-mail:</label>
-            {{ form.email }}
-        </div>
-    </div>
+            <!-- Documentos -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.cpf.id_for_label }}"><i class="fas fa-id-card"></i> CPF:</label>
+                    {{ form.cpf }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.rg.id_for_label }}"><i class="fas fa-id-card"></i> RG:</label>
+                    {{ form.rg }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.pis.id_for_label }}"><i class="fas fa-id-card"></i> PIS:</label>
+                    {{ form.pis }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.titulo_eleitor.id_for_label }}"><i class="fas fa-id-card"></i> Título de
+                        Eleitor:</label>
+                    {{ form.titulo_eleitor }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.ctps_numero.id_for_label }}"><i class="fas fa-id-card"></i> CTPS -
+                        Número:</label>
+                    {{ form.ctps_numero }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.ctps_serie.id_for_label }}"><i class="fas fa-id-card"></i> CTPS - Série:</label>
+                    {{ form.ctps_serie }}
+                </div>
+            </div>
 
-    <!-- Endereço -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.endereco.id_for_label }}">Endereço:</label>
-            {{ form.endereco }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.numero.id_for_label }}">Número:</label>
-            {{ form.numero }}
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
-            {{ form.bairro }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
-            {{ form.cidade }}
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.uf.id_for_label }}">UF:</label>
-            {{ form.uf }}
-        </div>
-        <div class="form-field">
-            <label for="{{ form.cep.id_for_label }}">CEP:</label>
-            {{ form.cep }}
-        </div>
-    </div>
+            <!-- Contato -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.telefone.id_for_label }}"><i class="fas fa-phone"></i> Telefone:</label>
+                    {{ form.telefone }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.email.id_for_label }}"><i class="fas fa-envelope"></i> E-mail:</label>
+                    {{ form.email }}
+                </div>
+            </div>
 
-    <!-- Outros dados -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.estado_civil.id_for_label }}">Estado Civil:</label>
-            {{ form.estado_civil }}
+            <!-- Endereço -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.endereco.id_for_label }}"><i class="fas fa-map-marker-alt"></i>
+                        Endereço:</label>
+                    {{ form.endereco }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.numero.id_for_label }}"><i class="fas fa-sort-numeric-up"></i>
+                        Número:</label>
+                    {{ form.numero }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.bairro.id_for_label }}"><i class="fas fa-map-marker-alt"></i> Bairro:</label>
+                    {{ form.bairro }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cidade.id_for_label }}"><i class="fas fa-city"></i> Cidade:</label>
+                    {{ form.cidade }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.uf.id_for_label }}"><i class="fas fa-map-marker-alt"></i> UF:</label>
+                    {{ form.uf }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cep.id_for_label }}"><i class="fas fa-map-marker-alt"></i> CEP:</label>
+                    {{ form.cep }}
+                </div>
+            </div>
+
+            <!-- Outros dados -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.estado_civil.id_for_label }}"><i class="fas fa-heart"></i> Estado Civil:</label>
+                    {{ form.estado_civil }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.escolaridade.id_for_label }}"><i class="fas fa-graduation-cap"></i>
+                        Escolaridade:</label>
+                    {{ form.escolaridade }}
+                </div>
+            </div>
+
+            <!-- Planejamento -->
+            <div class="checkbox">
+                {{ form.tem_planejamento }}
+                <label for="{{ form.tem_planejamento.id_for_label }}"><i class="fas fa-calendar-check"></i> Possui
+                    Planejamento?</label>
+            </div>
+            <div class="form-field campo-planejamento" id="campo_horario_planejamento">
+                <label for="{{ form.horario_planejamento.id_for_label }}"><i class="fas fa-clock"></i> Horário de
+                    Planejamento:</label>
+                {{ form.horario_planejamento }}
+            </div>
+
+            <!-- Foto -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.foto.id_for_label }}"><i class="fas fa-camera"></i> Foto (3x4):</label>
+                    {{ form.foto }}
+                </div>
+            </div>
+
+            <!-- Botão -->
+            <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar Funcionário</button>
+        </form>
+
+
+        <div class="voltar">
+            <a href="{% url 'painel_controle' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel de Controle</a>
         </div>
-        <div class="form-field">
-            <label for="{{ form.escolaridade.id_for_label }}">Escolaridade:</label>
-            {{ form.escolaridade }}
-        </div>
     </div>
-
-    <!-- Planejamento -->
-    <div class="checkbox">
-        {{ form.tem_planejamento }}
-        <label for="{{ form.tem_planejamento.id_for_label }}">Possui Planejamento?</label>
-    </div>
-    <div class="form-field campo-planejamento" id="campo_horario_planejamento">
-        <label for="{{ form.horario_planejamento.id_for_label }}">Horário de Planejamento:</label>
-        {{ form.horario_planejamento }}
-    </div>
-
-    <!-- Foto -->
-    <div class="form-group">
-        <div class="form-field">
-            <label for="{{ form.foto.id_for_label }}">Foto (3x4):</label>
-            {{ form.foto }}
-        </div>
-    </div>
-
-    <!-- Botão -->
-    <button type="submit" class="btn">Salvar Funcionário</button>
-</form>
-
-
-    <div class="voltar">
-        <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>
-    </div>
-</div>
 
 </body>
+
 </html>

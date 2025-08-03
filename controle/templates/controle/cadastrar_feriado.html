@@ -1,31 +1,40 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar Feriado</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         form {
@@ -37,7 +46,7 @@
 
         .input-group {
             display: flex;
-            gap: 20px; /* Espaço entre os campos */
+            gap: 20px;
         }
 
         .input-group div {
@@ -45,64 +54,73 @@
         }
 
         label {
-            font-weight: bold;
-            color: #003366;
-            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
 
         input {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #999;
-            font-size: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
 
         button {
             align-self: center;
-            background-color: #2b6cb0;
+            background-color: #4338ca;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #204b80;
+            background-color: #312e81;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 15px;
+            margin-top: 20px;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+        th,
+        td {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
             text-align: left;
         }
 
         th {
-            background-color: #d9e8fb;
-            color: #003366;
+            background-color: #e2e8f0;
+            color: #334155;
+            font-weight: 600;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f9fafb;
         }
 
         .acoes a {
             margin-right: 10px;
             text-decoration: none;
-            color: #2b6cb0;
-            font-weight: bold;
+            color: #4338ca;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .acoes a:hover {
             text-decoration: underline;
+            color: #312e81;
         }
 
         .rodape {
@@ -112,64 +130,118 @@
 
         .rodape a {
             text-decoration: none;
-            background: #555;
+            background-color: #64748b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .rodape a:hover {
+            background-color: #4a5568;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group div {
+                flex: 1;
+            }
+
+            input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>📅 Cadastrar Novo Feriado</h2>
+    <div class="container">
+        <h2><i class="fas fa-calendar-plus"></i> Cadastrar Novo Feriado</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="input-group">
-            <div>
-                <label for="{{ form.descricao.id_for_label }}">Descrição:</label>
-                {{ form.descricao }}
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <div>
+                    <label for="{{ form.descricao.id_for_label }}"><i class="fas fa-file-alt"></i>
+                        Descrição:</label>
+                    {{ form.descricao }}
+                </div>
+                <div>
+                    <label for="{{ form.data.id_for_label }}"><i class="fas fa-calendar-day"></i> Data:</label>
+                    {{ form.data }}
+                </div>
             </div>
-            <div>
-                <label for="{{ form.data.id_for_label }}">Data:</label>
-                {{ form.data }}
-            </div>
+
+            <button type="submit"><i class="fas fa-save"></i> Salvar Feriado</button>
+        </form>
+
+        <h2><i class="fas fa-list-alt"></i> Feriados Cadastrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th><i class="fas fa-calendar"></i> Data</th>
+                    <th><i class="fas fa-file-alt"></i> Descrição</th>
+                    <th><i class="fas fa-cog"></i> Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feriado in feriados %}
+                <tr>
+                    <td>{{ feriado.data|date:"d/m/Y" }}</td>
+                    <td>{{ feriado.descricao }}</td>
+                    <td class="acoes">
+                        <a href="{% url 'editar_feriado' feriado.id %}"><i class="fas fa-edit"></i> Editar</a>
+                        <a href="{% url 'excluir_feriado' feriado.id %}"
+                            onclick="return confirm('Tem certeza que deseja excluir este feriado?')"><i
+                                class="fas fa-trash-alt"></i> Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Nenhum feriado cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="rodape">
+            <a href="{% url 'painel_controle' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel de Controle</a>
         </div>
-
-        <button type="submit">Salvar Feriado</button>
-    </form>
-
-    <h2>📋 Feriados Cadastrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for feriado in feriados %}
-            <tr>
-                <td>{{ feriado.data|date:"d/m/Y" }}</td>
-                <td>{{ feriado.descricao }}</td>
-                <td class="acoes">
-                    <a href="{% url 'editar_feriado' feriado.id %}">Editar</a>
-                    <a href="{% url 'excluir_feriado' feriado.id %}" onclick="return confirm('Tem certeza que deseja excluir este feriado?')">Excluir</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">Nenhum feriado cadastrado.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="rodape">
-        <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>
     </div>
-</div>
 
 </body>
+
 </html>

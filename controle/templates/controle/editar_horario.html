@@ -1,78 +1,160 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Horário</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         .form-container {
             margin-top: 20px;
         }
 
-        .form-container input, .form-container select {
+        .form-container label {
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 16px;
+            display: block;
+        }
+
+        .form-container input,
+        .form-container select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
 
         .botao {
-            background-color: #2b6cb0;
+            background-color: #4338ca;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-align: center;
+            padding: 14px 32px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
             display: inline-block;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .botao:hover {
-            background-color: #1a4b7c;
+            background-color: #312e81;
+        }
+
+        .rodape {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .rodape a {
+            background-color: #64748b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .rodape a:hover {
+            background-color: #4a5568;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .form-container input,
+            .form-container select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .botao {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>🕒 Editar Horário de {{ funcionario.nome }}</h2>
+    <div class="container">
+        <h2><i class="fas fa-clock"></i> Editar Horário de {{ funcionario.nome }}</h2>
 
-    <div class="form-container">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="botao">Salvar Horário</button>
-        </form>
-    </div>
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="erro">
+                    {% for error in field.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endfor %}
+                <button type="submit" class="botao"><i class="fas fa-save"></i> Salvar Horário</button>
+            </form>
+        </div>
 
-    <div class="rodape">
-        <a href="{% url 'listar_funcionarios' %}" class="botao">← Voltar para a Lista de Funcionários</a>
+        <div class="rodape">
+            <a href="{% url 'listar_funcionarios' %}" class="botao"><i class="fas fa-arrow-left"></i> Voltar para a
+                Lista de Funcionários</a>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>

@@ -1,97 +1,151 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Selecionar Capa</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            padding: 60px;
-            background: #f0f4ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background: #f4f6f9;
+            color: #334155;
         }
 
         form {
-            max-width: 500px;
+            max-width: 600px;
             margin: auto;
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             text-align: center;
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
-            margin-bottom: 20px;
-            color: #003366;
+            margin-bottom: 25px;
+            color: #334155;
+            font-size: 26px;
+            font-weight: 600;
         }
 
         label {
             display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 500;
             text-align: left;
+            font-size: 16px;
         }
 
-        select, input {
+        select,
+        input {
             width: 100%;
-            padding: 8px;
+            padding: 12px;
             margin-bottom: 20px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
 
         button {
-            padding: 10px 20px;
-            background-color: #003366;
+            padding: 14px 32px;
+            background-color: #4338ca;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #002244;
+            background-color: #312e81;
         }
 
         .voltar-btn {
             display: inline-block;
-            margin-top: 10px;
-            background-color: #d40b0b;
+            margin-top: 15px;
+            background-color: #e11d48;
             color: white;
-            padding: 8px 14px;
+            padding: 12px 24px;
             text-decoration: none;
-            font-weight: bold;
-            border-radius: 4px;
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+            font-weight: 500;
+            border-radius: 6px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
 
         .voltar-btn:hover {
-            background-color: #001f4d;
-            transform: scale(1.05);
+            background-color: #b91c1c;
+            transform: scale(1.03);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            select,
+            input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+
+            .voltar-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
+
 <body>
     <form method="get" action="{% url 'capas_livro_ponto' %}">
-        <h2>📘 Gerar Capas do Livro de Frequência</h2>
-        
-        <label for="setor">Setor:</label>
+        <h2><i class="fas fa-book"></i> Gerar Capas do Livro de Frequência</h2>
+
+        <label for="setor"><i class="fas fa-building"></i> Setor:</label>
         <select name="setor" id="setor" required>
             {% for setor in setores %}
-                <option value="{{ setor.nome }}">{{ setor.nome }}</option>
+            <option value="{{ setor.nome }}">{{ setor.nome }}</option>
             {% endfor %}
         </select>
 
-        <label for="ano">Ano:</label>
+        <label for="ano"><i class="fas fa-calendar-alt"></i> Ano:</label>
         <input type="number" name="ano" value="{{ ano }}" required>
 
-        <label for="mes">Mês:</label>
+        <label for="mes"><i class="fas fa-calendar-week"></i> Mês:</label>
         <input type="number" name="mes" min="1" max="12" value="{{ mes }}" required>
 
-        <button type="submit">Gerar Capa</button><br>
-        <a href="{% url 'painel_controle' %}" class="voltar-btn">← Voltar ao Painel de Controle</a>
+        <button type="submit"><i class="fas fa-magic"></i> Gerar Capa</button><br>
+        <a href="{% url 'painel_controle' %}" class="voltar-btn"><i class="fas fa-arrow-left"></i> Voltar ao Painel de
+            Controle</a>
     </form>
 </body>
+
 </html>

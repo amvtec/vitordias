@@ -1,380 +1,462 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Funcionário</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
+
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
+
         form {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
+
         .form-group {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
+
         .form-field {
             flex: 1;
             min-width: 250px;
             display: flex;
             flex-direction: column;
         }
+
         label {
-            font-weight: bold;
-            color: #003366;
-            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
-        input, select, textarea {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #999;
-            font-size: 14px;
+
+        input,
+        select,
+        textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
+
         .checkbox {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-top: 10px;
+            color: #4b5563;
+            font-size: 15px;
         }
+
         .btn {
             align-self: center;
-            background-color: #2b6cb0;
+            background-color: #4338ca;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
             margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
+
         .btn:hover {
-            background-color: #204b80;
+            background-color: #312e81;
         }
+
         .voltar {
             text-align: center;
             margin-top: 30px;
         }
+
         .voltar a {
             text-decoration: none;
-            background: #555;
+            background-color: #64748b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
         }
+
+        .voltar a:hover {
+            background-color: #4a5568;
+        }
+
         .erro {
-            color: red;
-            font-size: 13px;
+            color: #e11d48;
+            font-size: 14px;
             margin-top: 5px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .form-group {
+                flex-direction: column;
+            }
+
+            .form-field {
+                min-width: auto;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>✏️ Editar Funcionário: {{ funcionario.nome }}</h2>
+    <div class="container">
+        <h2><i class="fas fa-user-edit"></i> Editar Funcionário: {{ funcionario.nome }}</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
             <div class="erro">
                 {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
-        {% endif %}
-
-        <!-- Identificação -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.nome.id_for_label }}">Nome:</label>
-                {{ form.nome }}
-                {% if form.nome.errors %}
-                    <span class="erro">{{ form.nome.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
-                {{ form.matricula }}
-                {% if form.matricula.errors %}
-                    <span class="erro">{{ form.matricula.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Cargo/Função -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.funcao.id_for_label }}">Função:</label>
-                {{ form.funcao }}
-                {% if form.funcao.errors %}
-                    <span class="erro">{{ form.funcao.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.cargo.id_for_label }}">Cargo:</label>
-                {{ form.cargo }}
-                {% if form.cargo.errors %}
-                    <span class="erro">{{ form.cargo.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Setor, Turno e Turma -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.setor.id_for_label }}">Setor:</label>
-                {{ form.setor }}
-                {% if form.setor.errors %}
-                    <span class="erro">{{ form.setor.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.turno.id_for_label }}">Turno:</label>
-                {{ form.turno }}
-                {% if form.turno.errors %}
-                    <span class="erro">{{ form.turno.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.turma.id_for_label }}">Turma:</label>
-                {{ form.turma }}
-                {% if form.turma.errors %}
-                    <span class="erro">{{ form.turma.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Datas -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.data_admissao.id_for_label }}">Data de Admissão:</label>
-                {{ form.data_admissao }}
-                {% if form.data_admissao.errors %}
-                    <span class="erro">{{ form.data_admissao.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
-                {{ form.data_nascimento }}
-                {% if form.data_nascimento.errors %}
-                    <span class="erro">{{ form.data_nascimento.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Documentos -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.cpf.id_for_label }}">CPF:</label>
-                {{ form.cpf }}
-                {% if form.cpf.errors %}
-                    <span class="erro">{{ form.cpf.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.rg.id_for_label }}">RG:</label>
-                {{ form.rg }}
-                {% if form.rg.errors %}
-                    <span class="erro">{{ form.rg.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.pis.id_for_label }}">PIS:</label>
-                {{ form.pis }}
-                {% if form.pis.errors %}
-                    <span class="erro">{{ form.pis.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.titulo_eleitor.id_for_label }}">Título de Eleitor:</label>
-                {{ form.titulo_eleitor }}
-                {% if form.titulo_eleitor.errors %}
-                    <span class="erro">{{ form.titulo_eleitor.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.ctps_numero.id_for_label }}">CTPS - Número:</label>
-                {{ form.ctps_numero }}
-                {% if form.ctps_numero.errors %}
-                    <span class="erro">{{ form.ctps_numero.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.ctps_serie.id_for_label }}">CTPS - Série:</label>
-                {{ form.ctps_serie }}
-                {% if form.ctps_serie.errors %}
-                    <span class="erro">{{ form.ctps_serie.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Contato -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
-                {{ form.telefone }}
-                {% if form.telefone.errors %}
-                    <span class="erro">{{ form.telefone.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.email.id_for_label }}">E-mail:</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <span class="erro">{{ form.email.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Endereço -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.endereco.id_for_label }}">Endereço:</label>
-                {{ form.endereco }}
-                {% if form.endereco.errors %}
-                    <span class="erro">{{ form.endereco.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.numero.id_for_label }}">Número:</label>
-                {{ form.numero }}
-                {% if form.numero.errors %}
-                    <span class="erro">{{ form.numero.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
-                {{ form.bairro }}
-                {% if form.bairro.errors %}
-                    <span class="erro">{{ form.bairro.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
-                {{ form.cidade }}
-                {% if form.cidade.errors %}
-                    <span class="erro">{{ form.cidade.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.uf.id_for_label }}">UF:</label>
-                {{ form.uf }}
-                {% if form.uf.errors %}
-                    <span class="erro">{{ form.uf.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.cep.id_for_label }}">CEP:</label>
-                {{ form.cep }}
-                {% if form.cep.errors %}
-                    <span class="erro">{{ form.cep.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-        <!-- Outros dados -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.estado_civil.id_for_label }}">Estado Civil:</label>
-                {{ form.estado_civil }}
-                {% if form.estado_civil.errors %}
-                    <span class="erro">{{ form.estado_civil.errors.0 }}</span>
-                {% endif %}
-            </div>
-            <div class="form-field">
-                <label for="{{ form.escolaridade.id_for_label }}">Escolaridade:</label>
-                {{ form.escolaridade }}
-                {% if form.escolaridade.errors %}
-                    <span class="erro">{{ form.escolaridade.errors.0 }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Planejamento -->
-        <div class="checkbox">
-            {{ form.tem_planejamento }}
-            <label for="{{ form.tem_planejamento.id_for_label }}">Possui Planejamento?</label>
-        </div>
-        <div class="form-field" id="campo_horario_planejamento">
-            <label for="{{ form.horario_planejamento.id_for_label }}">Horário de Planejamento:</label>
-            {{ form.horario_planejamento }}
-            {% if form.horario_planejamento.errors %}
-                <span class="erro">{{ form.horario_planejamento.errors.0 }}</span>
             {% endif %}
-        </div>
 
-        <!-- Sábado letivo -->
-        <div class="checkbox">
-            {{ form.sabado_letivo }}
-            <label for="{{ form.sabado_letivo.id_for_label }}">Atua em sábado letivo?</label>
-        </div>
+            <!-- Identificação -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.nome.id_for_label }}"><i class="fas fa-user"></i> Nome:</label>
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                    <span class="erro">{{ form.nome.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.matricula.id_for_label }}"><i class="fas fa-id-card"></i> Matrícula:</label>
+                    {{ form.matricula }}
+                    {% if form.matricula.errors %}
+                    <span class="erro">{{ form.matricula.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Cargo/Função -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.funcao.id_for_label }}"><i class="fas fa-briefcase"></i> Função:</label>
+                    {{ form.funcao }}
+                    {% if form.funcao.errors %}
+                    <span class="erro">{{ form.funcao.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cargo.id_for_label }}"><i class="fas fa-tag"></i> Cargo:</label>
+                    {{ form.cargo }}
+                    {% if form.cargo.errors %}
+                    <span class="erro">{{ form.cargo.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
 
-        <!-- Foto -->
-        <div class="form-group">
-            <div class="form-field">
-                <label for="{{ form.foto.id_for_label }}">Foto (3x4):</label>
-                {{ form.foto }}
-                {% if form.foto.errors %}
-                    <span class="erro">{{ form.foto.errors.0 }}</span>
+            <!-- Setor, Turno e Turma -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.setor.id_for_label }}"><i class="fas fa-building"></i> Setor:</label>
+                    {{ form.setor }}
+                    {% if form.setor.errors %}
+                    <span class="erro">{{ form.setor.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.turno.id_for_label }}"><i class="fas fa-sun"></i> Turno:</label>
+                    {{ form.turno }}
+                    {% if form.turno.errors %}
+                    <span class="erro">{{ form.turno.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.turma.id_for_label }}"><i class="fas fa-graduation-cap"></i> Turma:</label>
+                    {{ form.turma }}
+                    {% if form.turma.errors %}
+                    <span class="erro">{{ form.turma.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Datas -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.data_admissao.id_for_label }}"><i class="fas fa-calendar-plus"></i> Data de
+                        Admissão:</label>
+                    {{ form.data_admissao }}
+                    {% if form.data_admissao.errors %}
+                    <span class="erro">{{ form.data_admissao.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.data_nascimento.id_for_label }}"><i class="fas fa-birthday-cake"></i> Data de
+                        Nascimento:</label>
+                    {{ form.data_nascimento }}
+                    {% if form.data_nascimento.errors %}
+                    <span class="erro">{{ form.data_nascimento.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Documentos -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.cpf.id_for_label }}"><i class="fas fa-id-card-alt"></i> CPF:</label>
+                    {{ form.cpf }}
+                    {% if form.cpf.errors %}
+                    <span class="erro">{{ form.cpf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.rg.id_for_label }}"><i class="fas fa-passport"></i> RG:</label>
+                    {{ form.rg }}
+                    {% if form.rg.errors %}
+                    <span class="erro">{{ form.rg.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.pis.id_for_label }}"><i class="fas fa-file-invoice"></i> PIS:</label>
+                    {{ form.pis }}
+                    {% if form.pis.errors %}
+                    <span class="erro">{{ form.pis.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.titulo_eleitor.id_for_label }}"><i class="fas fa-vote-yea"></i> Título de
+                        Eleitor:</label>
+                    {{ form.titulo_eleitor }}
+                    {% if form.titulo_eleitor.errors %}
+                    <span class="erro">{{ form.titulo_eleitor.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.ctps_numero.id_for_label }}"><i class="fas fa-address-card"></i> CTPS -
+                        Número:</label>
+                    {{ form.ctps_numero }}
+                    {% if form.ctps_numero.errors %}
+                    <span class="erro">{{ form.ctps_numero.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.ctps_serie.id_for_label }}"><i class="fas fa-list-ol"></i> CTPS - Série:</label>
+                    {{ form.ctps_serie }}
+                    {% if form.ctps_serie.errors %}
+                    <span class="erro">{{ form.ctps_serie.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Contato -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.telefone.id_for_label }}"><i class="fas fa-phone"></i> Telefone:</label>
+                    {{ form.telefone }}
+                    {% if form.telefone.errors %}
+                    <span class="erro">{{ form.telefone.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.email.id_for_label }}"><i class="fas fa-envelope"></i> E-mail:</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <span class="erro">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Endereço -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.endereco.id_for_label }}"><i class="fas fa-map-marker-alt"></i>
+                        Endereço:</label>
+                    {{ form.endereco }}
+                    {% if form.endereco.errors %}
+                    <span class="erro">{{ form.endereco.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.numero.id_for_label }}"><i class="fas fa-sort-numeric-up"></i>
+                        Número:</label>
+                    {{ form.numero }}
+                    {% if form.numero.errors %}
+                    <span class="erro">{{ form.numero.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.bairro.id_for_label }}"><i class="fas fa-city"></i> Bairro:</label>
+                    {{ form.bairro }}
+                    {% if form.bairro.errors %}
+                    <span class="erro">{{ form.bairro.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cidade.id_for_label }}"><i class="fas fa-map"></i> Cidade:</label>
+                    {{ form.cidade }}
+                    {% if form.cidade.errors %}
+                    <span class="erro">{{ form.cidade.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.uf.id_for_label }}"><i class="fas fa-flag"></i> UF:</label>
+                    {{ form.uf }}
+                    {% if form.uf.errors %}
+                    <span class="erro">{{ form.uf.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.cep.id_for_label }}"><i class="fas fa-mail-bulk"></i> CEP:</label>
+                    {{ form.cep }}
+                    {% if form.cep.errors %}
+                    <span class="erro">{{ form.cep.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Outros dados -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.estado_civil.id_for_label }}"><i class="fas fa-heart"></i> Estado Civil:</label>
+                    {{ form.estado_civil }}
+                    {% if form.estado_civil.errors %}
+                    <span class="erro">{{ form.estado_civil.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.escolaridade.id_for_label }}"><i class="fas fa-book"></i> Escolaridade:</label>
+                    {{ form.escolaridade }}
+                    {% if form.escolaridade.errors %}
+                    <span class="erro">{{ form.escolaridade.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Planejamento -->
+            <div class="checkbox">
+                {{ form.tem_planejamento }}
+                <label for="{{ form.tem_planejamento.id_for_label }}"><i class="fas fa-calendar-check"></i> Possui
+                    Planejamento?</label>
+            </div>
+            <div class="form-field" id="campo_horario_planejamento">
+                <label for="{{ form.horario_planejamento.id_for_label }}"><i class="fas fa-clock"></i> Horário de
+                    Planejamento:</label>
+                {{ form.horario_planejamento }}
+                {% if form.horario_planejamento.errors %}
+                <span class="erro">{{ form.horario_planejamento.errors.0 }}</span>
                 {% endif %}
             </div>
+
+            <!-- Sábado letivo -->
+            <div class="checkbox">
+                {{ form.sabado_letivo }}
+                <label for="{{ form.sabado_letivo.id_for_label }}"><i class="fas fa-calendar-week"></i> Atua em sábado
+                    letivo?</label>
+            </div>
+
+            <!-- Foto -->
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="{{ form.foto.id_for_label }}"><i class="fas fa-camera"></i> Foto (3x4):</label>
+                    {{ form.foto }}
+                    {% if form.foto.errors %}
+                    <span class="erro">{{ form.foto.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Botão -->
+            <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar Alterações</button>
+        </form>
+
+        <div class="voltar">
+            <a href="{% url 'listar_funcionarios' %}"><i class="fas fa-arrow-left"></i> Voltar para Listagem</a>
         </div>
-
-        <!-- Botão -->
-        <button type="submit" class="btn">Salvar Alterações</button>
-    </form>
-
-    <div class="voltar">
-        <a href="{% url 'listar_funcionarios' %}">← Voltar para Listagem</a>
     </div>
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const inputs = document.querySelectorAll('input[data-mask="date"]');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('input[data-mask="date"]');
 
-  inputs.forEach(input => {
-    input.addEventListener('input', function () {
-      let value = input.value.replace(/\D/g, '').slice(0, 8);
-      let formatted = '';
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    let value = input.value.replace(/\D/g, '').slice(0, 8);
+                    let formatted = '';
 
-      if (value.length >= 1) formatted += value.substring(0, 2);
-      if (value.length >= 3) formatted += '/' + value.substring(2, 4);
-      if (value.length >= 5) formatted += '/' + value.substring(4, 8);
+                    if (value.length >= 1) formatted += value.substring(0, 2);
+                    if (value.length >= 3) formatted += '/' + value.substring(2, 4);
+                    if (value.length >= 5) formatted += '/' + value.substring(4, 8);
 
-      input.value = formatted;
-    });
-  });
-});
-</script>
+                    input.value = formatted;
+                });
+            });
+        });
+    </script>
 
 </body>
+
 </html>

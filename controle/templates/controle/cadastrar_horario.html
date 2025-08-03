@@ -1,31 +1,40 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar Horário de Trabalho</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 750px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         form {
@@ -36,7 +45,7 @@
 
         .input-group {
             display: flex;
-            gap: 20px; /* Espaço entre os campos */
+            gap: 20px;
         }
 
         .input-group div {
@@ -44,32 +53,37 @@
         }
 
         label {
-            font-weight: bold;
-            color: #003366;
-            margin-bottom: 5px;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 6px;
+            font-size: 16px;
         }
 
-        select, input {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #999;
-            font-size: 14px;
+        select,
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            color: #4b5563;
+            background-color: #f9fafb;
         }
 
         .btn {
             align-self: center;
-            background-color: #2b6cb0;
+            background-color: #4338ca;
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #204b80;
+            background-color: #312e81;
         }
 
         .voltar {
@@ -79,54 +93,97 @@
 
         .voltar a {
             text-decoration: none;
-            background: #555;
+            background-color: #64748b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .voltar a:hover {
+            background-color: #4a5568;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group div {
+                flex: 1;
+            }
+
+            select,
+            input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>🕒 Cadastrar Horário de Trabalho</h2>
+    <div class="container">
+        <h2><i class="fas fa-clock"></i> Cadastrar Horário de Trabalho</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
 
-        <div class="input-group">
-            <div>
-                <label for="{{ form.funcionario.id_for_label }}">Funcionário:</label>
-                {{ form.funcionario }}
+            <div class="input-group">
+                <div>
+                    <label for="{{ form.funcionario.id_for_label }}"><i class="fas fa-user"></i>
+                        Funcionário:</label>
+                    {{ form.funcionario }}
+                </div>
+
+                <div>
+                    <label for="{{ form.turno.id_for_label }}"><i class="fas fa-sun"></i> Turno:</label>
+                    {{ form.turno }}
+                </div>
             </div>
 
-            <div>
-                <label for="{{ form.turno.id_for_label }}">Turno:</label>
-                {{ form.turno }}
+            <div class="input-group">
+                <div>
+                    <label for="{{ form.horario_inicio.id_for_label }}"><i class="fas fa-clock"></i> Horário de
+                        Início:</label>
+                    {{ form.horario_inicio }}
+                </div>
+
+                <div>
+                    <label for="{{ form.horario_fim.id_for_label }}"><i class="fas fa-clock"></i> Horário de Fim:</label>
+                    {{ form.horario_fim }}
+                </div>
             </div>
+
+            <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar Horário</button>
+        </form>
+
+        <div class="voltar">
+            <a href="{% url 'painel_controle' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel de Controle</a>
         </div>
-
-        <div class="input-group">
-            <div>
-                <label for="{{ form.horario_inicio.id_for_label }}">Horário de Início:</label>
-                {{ form.horario_inicio }}
-            </div>
-
-            <div>
-                <label for="{{ form.horario_fim.id_for_label }}">Horário de Fim:</label>
-                {{ form.horario_fim }}
-            </div>
-        </div>
-
-        <button type="submit" class="btn">Salvar Horário</button>
-    </form>
-
-    <div class="voltar">
-        <a href="{% url 'painel_controle' %}">← Voltar ao Painel de Controle</a>
     </div>
-</div>
 
 </body>
+
 </html>

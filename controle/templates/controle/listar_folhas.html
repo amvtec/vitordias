@@ -1,62 +1,76 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Folhas de Frequência Geradas</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
         body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
+            padding: 30px;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: auto;
             background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h2 {
             text-align: center;
-            color: #003366;
-            font-size: 22px;
+            color: #334155;
+            font-size: 26px;
             margin-bottom: 30px;
+            font-weight: 600;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 15px;
+            margin-bottom: 20px;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+        th,
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
             text-align: left;
         }
 
         th {
-            background-color: #d9e8fb;
-            color: #003366;
+            background-color: #f0f4ff;
+            color: #334155;
+            font-weight: 500;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f9fafb;
         }
 
         a {
-            color: #2b6cb0;
+            color: #4338ca;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         a:hover {
             text-decoration: underline;
+            color: #312e81;
         }
 
         .rodape {
@@ -66,11 +80,16 @@
 
         .rodape a {
             text-decoration: none;
-            background: #555;
+            background-color: #64748b;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .rodape a:hover {
+            background-color: #4a5568;
         }
 
         /* Estilo da barra de pesquisa */
@@ -80,39 +99,99 @@
         }
 
         .pesquisa-container input {
-            padding: 8px;
-            font-size: 14px;
-            border-radius: 6px;
-            border: 1px solid #999;
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            width: 300px;
+        }
+
+        .pesquisa-container button {
+            background-color: #4338ca;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pesquisa-container button:hover {
+            background-color: #312e81;
+        }
+
+        /* Estilo para a mensagem de "Nenhuma folha gerada" */
+        .nenhuma-folha {
+            text-align: center;
+            color: #4b5563;
+            font-size: 16px;
+            padding: 20px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+
+            .pesquisa-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .pesquisa-container button {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>📄 Folhas de Frequência Geradas</h2>
+    <div class="container">
+        <h2><i class="fas fa-file-alt"></i> Folhas de Frequência Geradas</h2>
 
-    <!-- Barra de pesquisa -->
-    <div class="pesquisa-container">
-        <form method="GET" action="{% url 'listar_folhas' %}">
-            <input type="text" name="nome" placeholder="Pesquisar por nome do funcionário" value="{{ request.GET.nome }}">
-            <button type="submit">Pesquisar</button>
-        </form>
-    </div>
+        <!-- Barra de pesquisa -->
+        <div class="pesquisa-container">
+            <form method="GET" action="{% url 'listar_folhas' %}">
+                <input type="text" name="nome" placeholder="Pesquisar por nome do funcionário"
+                    value="{{ request.GET.nome }}">
+                <button type="submit"><i class="fas fa-search"></i> Pesquisar</button>
+            </form>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Funcionário</th>
-                <th>Função</th>
-                <th>Setor</th>
-                <th>Mês</th>
-                <th>Ano</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for folha in folhas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Funcionário</th>
+                    <th>Função</th>
+                    <th>Setor</th>
+                    <th>Mês</th>
+                    <th>Ano</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for folha in folhas %}
                 <tr>
                     <td>{{ folha.funcionario.nome }}</td>
                     <td>{{ folha.funcionario.funcao }}</td>
@@ -120,22 +199,26 @@
                     <td>{{ folha.mes }}</td>
                     <td>{{ folha.ano }}</td>
                     <td>
-                        <a href="{% url 'visualizar_folha_salva' folha.id %}" target="_blank">Visualizar</a>
-                        <a href="{% url 'excluir_folha' folha.id %}" style="color: red;" onclick="return confirm('Tem certeza que deseja excluir esta folha?')">Excluir</a>
+                        <a href="{% url 'visualizar_folha_salva' folha.id %}" target="_blank"><i
+                                class="fas fa-eye"></i> Visualizar</a>
+                        <a href="{% url 'excluir_folha' folha.id %}" style="color: red;"
+                            onclick="return confirm('Tem certeza que deseja excluir esta folha?')"><i
+                                class="fas fa-trash-alt"></i> Excluir</a>
                     </td>
                 </tr>
-            {% empty %}
+                {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align: center;">Nenhuma folha gerada.</td>
+                    <td colspan="6" class="nenhuma-folha">Nenhuma folha gerada.</td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    <div class="rodape">
-        <a href="{% url 'painel_alunos' %}">← Voltar</a>
+        <div class="rodape">
+            <a href="{% url 'painel_controle' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel de Controle</a>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>
