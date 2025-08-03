@@ -59,3 +59,15 @@ def somar_horas(valor1, valor2):
         return float(valor1) + float(valor2)
     except (TypeError, ValueError):
         return valor1 or 0
+
+from django import template
+
+register = template.Library()
+
+@register.filter
+def funcao_em_permitidas(funcao):
+    permitidas = [
+        "Administrador", "Diretor(a)", "Secretario(a)",
+        "Coordenador(a)", "Agente Administrativo", "Auxiliar Administrativo"
+    ]
+    return funcao in permitidas
