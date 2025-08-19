@@ -1,103 +1,99 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Escolha de Matrícula</title>
-    <style>
-        body {
-            font-family: Tahoma, Arial, sans-serif;
-            background-color: #dce4f7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+  <meta charset="utf-8" />
+  <title>Escolha de Matrícula</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        .box {
-            background: #f2f2f2;
-            padding: 40px 60px;
-            border-radius: 6px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            border: 2px solid #999;
-        }
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        h1 {
-            margin-bottom: 40px;
-            color: #003366;
-            font-size: 22px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
+  <style>
+    :root{ --ink:#0f172a; --muted:#64748b; --g1:#0b1020; --g2:#111a3a; --base-font:14px; }
+    html{ font-size: var(--base-font); }
+    body{ background:#f6f8fb; color:var(--ink); }
 
-        .btn-grid {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
+    /* Navbar gradiente */
+    .nav-pro{ background:linear-gradient(90deg,var(--g1),var(--g2)); }
+    .navbar-brand{ font-size:1rem; }
+    .navbar .btn{ font-size:.85rem; padding:.25rem .5rem; }
 
-        .button {
-            width: 100px;
-            height: 100px;
-            background-color: #e0e0e0;
-            color: #000;
-            text-decoration: none;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.2s;
-            border: 1px solid #999;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-        }
+    /* Card limpinho + botões tile */
+    .card-clean{ border:none; box-shadow:0 10px 24px rgba(17,24,39,.08); border-radius:.9rem; }
+    .kBtn{
+      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.35rem;
+      background:#fff; border:1px solid #e5e7eb; border-radius:.9rem; padding:1rem; height:110px;
+      text-decoration:none; color:var(--ink); transition:transform .08s ease, box-shadow .08s ease;
+    }
+    .kBtn:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(17,24,39,.08); }
+    .kBtn .ico{ font-size:1.6rem; opacity:.9; }
+    .text-muted-2{ color:var(--muted); }
 
-        .button:hover {
-            background-color: #d5d5d5;
-            transform: scale(1.05);
-        }
+    /* Banner desenvolvido */
+    .dev-banner{ background:linear-gradient(90deg,#4338ca,#6d28d9); color:#fff; font-size:.75rem; letter-spacing:.04em; }
 
-        .button span {
-            font-size: 28px;
-            margin-bottom: 6px;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 10px 24px;
-            background-color: #003366;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .back-button:hover {
-            background-color: #002244;
-            transform: scale(1.03);
-        }
-    </style>
+    @media print{
+      nav, .dev-banner { display:none !important; }
+      .card-clean{ box-shadow:none !important; border:1px solid #e5e7eb; }
+    }
+  </style>
 </head>
 <body>
-    <div class="box">
-        <h1>🎒 Escolha a Opção</h1>
-        <div class="btn-grid">
-            <a class="button" href="{% url 'cadastrar_aluno' %}">
-                <span>🆕</span>
-                Nova
-            </a>
-            <a class="button" href="{% url 'buscar_aluno_rematricula' %}">
-                <span>🔁</span>
-                Rematrícula
-            </a>
-        </div>
-        <a href="{% url 'painel_alunos' %}" class="back-button">🔙 Início</a>
+
+<!-- Navbar -->
+<nav class="navbar nav-pro navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'painel_alunos' %}">
+      <i class="fa-solid fa-graduation-cap me-2"></i>Matrícula
+    </a>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a class="btn btn-sm btn-outline-light" href="{% url 'painel_alunos' %}">
+        <i class="fa-solid fa-house me-1"></i>Início
+      </a>
+      <a class="btn btn-sm btn-outline-light" href="/admin/" target="_blank" rel="noopener">
+        <i class="fa-solid fa-gear me-1"></i>Admin
+      </a>
     </div>
+  </div>
+</nav>
+
+<!-- Banner Desenvolvido -->
+<div class="dev-banner text-center py-2">
+  Desenvolvido por Alexandre Martins Vieira © 2025
+</div>
+
+<main class="container d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 90px);">
+  <div class="card card-clean p-4 text-center" style="max-width:560px; width:100%;">
+    <h1 class="h5 mb-3">🎒 Escolha a Opção</h1>
+
+    <div class="row g-3 justify-content-center">
+      <div class="col-6 col-sm-5">
+        <a class="kBtn" href="{% url 'cadastrar_aluno' %}">
+          <span class="ico"><i class="fa-regular fa-file-lines"></i></span>
+          <span class="fw-semibold">Nova</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-5">
+        <a class="kBtn" href="{% url 'buscar_aluno_rematricula' %}">
+          <span class="ico"><i class="fa-solid fa-arrows-rotate"></i></span>
+          <span class="fw-semibold">Rematrícula</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="d-grid d-md-flex gap-2 mt-4 justify-content-center">
+      <a href="{% url 'painel_alunos' %}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-2"></i>Início
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

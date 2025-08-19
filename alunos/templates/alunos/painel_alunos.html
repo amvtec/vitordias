@@ -1,423 +1,232 @@
 {% load static %}
 {% load custom_filters %}
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Painel de Alunos</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  <meta charset="utf-8" />
+  <title>Painel de Alunos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        .menu-btn {
-            font-size: 12px;
-            background-color: #009255;
-            color: white;
-            border: none;
-            padding: 9px 18px;
-            cursor: pointer;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
-        }
+  <style>
+    :root{ --ink:#0f172a; --muted:#64748b; --g1:#0b1020; --g2:#111a3a; --base-font:14px; }
+    html{ font-size: var(--base-font); }
+    body{ background:#f6f8fb; color:var(--ink); }
 
-        .menu-btn:hover {
-            background-color: #312e81;
-        }
+    /* Navbar gradiente */
+    .nav-pro{ background:linear-gradient(90deg,var(--g1),var(--g2)); }
+    .navbar-brand{ font-size:1rem; }
+    .navbar .btn{ font-size:.85rem; padding:.25rem .5rem; }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 260px;
-            height: 100%;
-            background-color: #fff;
-            color: #334155;
-            padding: 30px 20px;
-            transition: left 0.3s ease;
-            z-index: 999;
-            border-right: 1px solid #e0e0e0;
-            box-shadow: 4px 0px 12px rgba(0, 0, 0, 0.1);
-        }
+    /* Cards / botões tile */
+    .card-clean{ border:none; box-shadow:0 10px 24px rgba(17,24,39,.08); border-radius:.9rem; }
+    .kBtn{
+      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.4rem;
+      background:#fff; border:1px solid #e5e7eb; border-radius:.9rem; padding:1rem; height:120px;
+      text-decoration:none; color:var(--ink); transition:transform .08s ease, box-shadow .08s ease;
+    }
+    .kBtn:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(17,24,39,.08); }
+    .kBtn .ico{ font-size:1.6rem; opacity:.9; }
+    .text-muted-2{ color:var(--muted); }
 
-        .sidebar.active {
-            left: 0;
-        }
+    /* Estado desabilitado (mantendo href, mas sem clique) */
+    .is-disabled{
+      pointer-events:none !important;
+      opacity:.55 !important;
+      cursor:not-allowed !important;
+      filter:grayscale(12%);
+    }
+    .kBtn.is-disabled:hover{ transform:none; box-shadow:none; }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 20px;
-            color: #4338ca;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 12px;
-            font-weight: 600;
-        }
+    /* FAB importar */
+    .fab-import{
+      position:fixed; bottom:20px; left:15px; z-index:1050;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#4338ca; color:#fff; padding:.6rem .9rem; border-radius:.8rem;
+      text-decoration:none; box-shadow:0 8px 18px rgba(17,24,39,.18);
+    }
+    .fab-import:hover{ color:#fff; background:#312e81; }
 
-        .sidebar a {
-            display: block;
-            color: #4b5563;
-            text-decoration: none;
-            background-color: #f9fafb;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin: 10px 0;
-            transition: background-color 0.3s, color 0.3s;
-            font-weight: 500;
-            font-size: 15px;
-            border: 1px solid #cbd5e0;
-        }
+    /* Banner desenvolvido */
+    .dev-banner{ background:linear-gradient(90deg,#4338ca,#6d28d9); color:#fff; font-size:.75rem; letter-spacing:.04em; }
 
-        .sidebar a:hover {
-            background-color: #e5e7eb;
-            color: #334155;
-        }
-
-        .sidebar a.logout {
-            background-color: #ef4444;
-            color: white;
-            border-color: #dc2626;
-        }
-
-        .sidebar a.logout:hover {
-            background-color: #dc2626;
-        }
-
-        .sidebar a.desabilitado {
-            pointer-events: none;
-            background-color: #e5e7eb;
-            color: #9ca3af;
-            opacity: 0.8;
-            border-color: #cbd5e0;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 80px auto;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
-            text-align: center;
-        }
-
-        h1 {
-            color: #334155;
-            font-size: 28px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .btn-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-        }
-
-        .btn {
-            width: 120px;
-            height: 120px;
-            background-color: #f9fafb;
-            color: #4b5563;
-            text-decoration: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            font-size: 15px;
-            transition: background-color 0.3s, transform 0.2s;
-            border: 1px solid #cbd5e0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn:hover {
-            background-color: #e5e7eb;
-            transform: scale(1.05);
-        }
-
-        .btn span {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .chart-section {
-            margin-top: 50px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-        }
-
-        .chart-box {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .chart-box h3 {
-            color: #334155;
-            font-size: 18px;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .chart-box img {
-            width: 100%;
-        }
-
-        .chart-box p {
-            margin: 8px 0;
-            font-size: 15px;
-            color: #4b5563;
-        }
-
-        .age-box {
-            margin-top: 40px;
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            text-align: left;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .banner-desenvolvido {
-            background: linear-gradient(90deg, #4338ca, #6d28d9);
-            color: white;
-            padding: 16px 20px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px;
-        }
-
-        .age-box h3 {
-            color: #334155;
-            font-size: 18px;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .age-box ul {
-            list-style: none;
-            padding-left: 0;
-            font-size: 15px;
-            color: #4b5563;
-        }
-
-        .age-box ul li {
-            margin-bottom: 6px;
-        }
-
-        .admin-btn {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #16a34a;
-            color: white;
-            padding: 8px 12px;
-            font-size: 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-        }
-
-        .admin-btn:hover {
-            background-color: #15803d;
-        }
-
-        .btn-importar-alunos {
-            position: fixed;
-            bottom: 20px;
-            left: 15px;
-            background-color: #4338ca;
-            color: white;
-            padding: 12px 16px;
-            font-size: 12px;
-            text-decoration: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .btn-importar-alunos:hover {
-            background-color: #312e81;
-            transform: scale(1.05);
-        }
-
-        .btn-importar-alunos span {
-            margin-right: 8px;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .menu-btn {
-                font-size: 20px;
-                padding: 10px 14px;
-            }
-
-            .sidebar {
-                width: 240px;
-            }
-
-            .sidebar h2 {
-                font-size: 18px;
-            }
-
-            .sidebar a {
-                font-size: 14px;
-                padding: 10px 14px;
-            }
-
-            .container {
-                margin: 60px auto;
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .btn {
-                width: 100px;
-                height: 100px;
-                font-size: 14px;
-            }
-
-            .btn span {
-                font-size: 28px;
-            }
-
-            .chart-section {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .chart-box {
-                width: 100%;
-                max-width: 400px;
-                padding: 15px;
-            }
-
-            .chart-box h3 {
-                font-size: 16px;
-            }
-
-            .chart-box p {
-                font-size: 14px;
-            }
-
-            .admin-btn {
-                font-size: 14px;
-                padding: 6px 10px;
-            }
-
-            .btn-importar-alunos {
-                font-size: 14px;
-                padding: 10px 14px;
-            }
-        }
-    </style>
+    @media print{
+      nav, .fab-import, .dev-banner { display:none !important; }
+      .card-clean{ box-shadow:none !important; border:1px solid #e5e7eb; }
+    }
+  </style>
 </head>
-
 <body>
 
-    <div class="banner-desenvolvido">
-        Desenvolvido por Alexandre Martins Vieira © 2025
-    </div>
-
-    <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-    <a href="/admin/" target="_blank" class="admin-btn"><i class="fas fa-cog"></i> Admin</a>
-
-    <div id="sidebar" class="sidebar">
-        <h2><i class="fas fa-graduation-cap"></i> Menu</h2>
-        <a href="{% url 'pesquisar_aluno_sidebar' %}"><i class="fas fa-search"></i> Pesquisar Aluno</a>
-
-        {% if request.user.funcionario.funcao|funcao_em_permitidas %}
-    <a href="javascript:void(0);" class="desabilitado"><i class="fas fa-file-alt"></i> Relatório por Turma</a>
-    <a href="{% url 'relatorio_rematricula' %}"><i class="fas fa-file-invoice"></i> Relatório de Rematrícula</a>
-    <a href="{% url 'alocar_alunos' %}"><i class="fas fa-users"></i> Alunos</a>
-    <a href="{% url 'aniversariantes_view' %}"><i class="fas fa-birthday-cake"></i> Aniversariantes</a>
-{% endif %}
-
-
-        <a href="{% url 'logout' %}" class="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
-    </div>
-
-    <div class="container">
-        <h1><i class="fas fa-tachometer-alt"></i> Painel Administrativo</h1>
-        <p style="font-size: 17px; color: #4b5563; margin-top: -15px; margin-bottom: 30px;">
-            Bem-vindo(a), <strong>{{ request.user.first_name|default:request.user.username }}</strong>!
-        </p>
-
-        <div class="btn-grid">
-            <a href="{% url 'pagina_matricula' %}" class="btn"><span><i class="fas fa-file-alt"></i></span>Nova
-                Matrícula</a>
-            <a href="{% url 'buscar_aluno_rematricula' %}" class="btn"><span><i class="fas fa-sync-alt"></i></span>Fazer
-                Rematrícula</a>
-            <a href="{% url 'painel_controle' %}" class="btn"><span><i class="fas fa-clock"></i></span>Painel
-                Frequência</a>
-            <a href="{% url 'pagina_inicial' %}" class="btn"><span><i class="fas fa-dollar-sign"></i></span>Painel
-                Folha de Pagamento</a>
-        </div>
-
-        <div class="chart-section">
-            <div class="chart-box">
-                <h3><i class="fas fa-chart-pie"></i> Alunos por Sexo</h3>
-                <img src="data:image/png;base64,{{ graphic_sexo }}" alt="Gráfico de Pizza">
-                <p><strong>Total:</strong> {{ total }}</p>
-                <p><i class="fas fa-male"></i> {{ total_m }} | <i class="fas fa-female"></i> {{ total_f }} | <i
-                        class="fas fa-genderless"></i> {{ total_o }}</p>
-            </div>
-            <div class="chart-box">
-                <h3><i class="fas fa-chart-bar"></i> Alunos por Idade (5 a 15)</h3>
-                <img src="data:image/png;base64,{{ graphic_idades }}" alt="Gráfico de Idade">
-            </div>
-            <div class="chart-box">
-                <h3><i class="fas fa-chart-line"></i> Total de Alunos</h3>
-                <img src="data:image/png;base64,{{ graphic_total }}" alt="Gráfico de Barras">
-            </div>
-        </div>
-    </div>
-
-    <a href="{% url 'importar_alunos' %}" class="btn-importar-alunos">
-        <i class="fas fa-file-import"></i>
+<!-- Navbar -->
+<nav class="navbar nav-pro navbar-dark">
+  <div class="container-fluid">
+    <!-- Mantém rota, mas desabilita clique -->
+    <a class="navbar-brand fw-bold is-disabled" href="{% url 'painel_alunos' %}" aria-disabled="true" tabindex="-1">
+      <i class="fa-solid fa-gauge-high me-2"></i>Painel de Alunos
     </a>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
-    </script>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <!-- Atalhos no topo (todos desabilitados) -->
+      <a class="btn btn-sm btn-outline-light is-disabled" href="{% url 'pesquisar_aluno_sidebar' %}" aria-disabled="true" tabindex="-1">
+        <i class="fa-solid fa-magnifying-glass me-1"></i>Pesquisar
+      </a>
 
+      {% if request.user.funcionario.funcao|funcao_em_permitidas %}
+        <!-- Se houver rota específica para "Relatório por Turma", substitua o href abaixo -->
+        <a class="btn btn-sm btn-outline-light is-disabled" href="javascript:void(0);" aria-disabled="true" tabindex="-1">
+          <i class="fa-regular fa-file-lines me-1"></i>Relat. por Turma
+        </a>
+        <a class="btn btn-sm btn-outline-light is-disabled" href="{% url 'relatorio_rematricula' %}" aria-disabled="true" tabindex="-1">
+          <i class="fa-solid fa-file-invoice me-1"></i>Rematrícula (rel.)
+        </a>
+        <a class="btn btn-sm btn-outline-light is-disabled" href="{% url 'alocar_alunos' %}" aria-disabled="true" tabindex="-1">
+          <i class="fa-solid fa-users me-1"></i>Alunos
+        </a>
+        <a class="btn btn-sm btn-outline-light is-disabled" href="{% url 'aniversariantes_view' %}" aria-disabled="true" tabindex="-1">
+          <i class="fa-solid fa-cake-candles me-1"></i>Aniversariantes
+        </a>
+      {% endif %}
+
+      <span class="vr text-white opacity-50 mx-1"></span>
+
+      <a class="btn btn-sm btn-outline-light is-disabled" href="/admin/" target="_blank" rel="noopener" aria-disabled="true" tabindex="-1">
+        <i class="fa-solid fa-gear me-1"></i>Admin
+      </a>
+      <a class="btn btn-sm btn-light" href="{% url 'logout' %}">
+        <i class="fa-solid fa-right-from-bracket me-1"></i>Sair
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+<main class="container py-3 py-lg-4">
+
+  <!-- Saudação -->
+  <div class="card card-clean p-3 mb-3">
+    <h1 class="h5 mb-1">Painel Administrativo</h1>
+    <p class="m-0 text-muted-2">Bem-vindo(a), <strong>{{ request.user.first_name|default:request.user.username }}</strong>!</p>
+  </div>
+
+  <!-- Ações principais -->
+  <div class="card card-clean p-3 mb-3">
+    <div class="row g-3 justify-content-center">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="{% url 'pagina_matricula' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+          <span class="ico"><i class="fa-regular fa-file-lines"></i></span>
+          <span class="fw-semibold">Nova Matrícula</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="{% url 'buscar_aluno_rematricula' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+          <span class="ico"><i class="fa-solid fa-arrows-rotate"></i></span>
+          <span class="fw-semibold">Rematrícula</span>
+        </a>
+      </div>
+      <!-- ÚNICO botão habilitado -->
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="{% url 'painel_controle' %}" class="kBtn">
+          <span class="ico"><i class="fa-regular fa-clock"></i></span>
+          <span class="fw-semibold">Painel Frequência</span>
+        </a>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="{% url 'pagina_inicial' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+          <span class="ico"><i class="fa-solid fa-dollar-sign"></i></span>
+          <span class="fw-semibold">Folha de Pagamento</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outros atalhos -->
+  <div class="card card-clean p-3 mb-3">
+    <div class="row g-3 justify-content-center">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="{% url 'pesquisar_aluno_sidebar' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+          <span class="ico"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <span class="fw-semibold">Pesquisar Aluno</span>
+        </a>
+      </div>
+
+      {% if request.user.funcionario.funcao|funcao_em_permitidas %}
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <!-- Substitua o href por uma rota real se existir -->
+          <a href="javascript:void(0);" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+            <span class="ico"><i class="fa-regular fa-file-lines"></i></span>
+            <span class="fw-semibold">Relatório por Turma</span>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <a href="{% url 'relatorio_rematricula' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+            <span class="ico"><i class="fa-solid fa-file-invoice"></i></span>
+            <span class="fw-semibold">Rel. Rematrícula</span>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <a href="{% url 'alocar_alunos' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+            <span class="ico"><i class="fa-solid fa-users"></i></span>
+            <span class="fw-semibold">Alunos</span>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+          <a href="{% url 'aniversariantes_view' %}" class="kBtn is-disabled" aria-disabled="true" tabindex="-1">
+            <span class="ico"><i class="fa-solid fa-cake-candles"></i></span>
+            <span class="fw-semibold">Aniversariantes</span>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card card-clean p-3 h-100">
+        <div class="d-flex align-items-center justify-content-between">
+          <h2 class="h6 m-0"><i class="fa-solid fa-chart-pie me-2"></i>Alunos por Sexo</h2>
+        </div>
+        <img class="mt-2" src="data:image/png;base64,{{ graphic_sexo }}" alt="Gráfico de Alunos por Sexo">
+        <div class="mt-2 small">
+          <strong>Total:</strong> {{ total }} —
+          <i class="fa-solid fa-person"></i> {{ total_m }}
+          &nbsp;|&nbsp;<i class="fa-solid fa-person-dress"></i> {{ total_f }}
+          &nbsp;|&nbsp;<i class="fa-solid fa-genderless"></i> {{ total_o }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card card-clean p-3 h-100">
+        <h2 class="h6 m-0"><i class="fa-solid fa-chart-column me-2"></i>Alunos por Idade (5 a 15)</h2>
+        <img class="mt-2" src="data:image/png;base64,{{ graphic_idades }}" alt="Gráfico de Alunos por Idade">
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card card-clean p-3 h-100">
+        <h2 class="h6 m-0"><i class="fa-solid fa-chart-line me-2"></i>Total de Alunos</h2>
+        <img class="mt-2" src="data:image/png;base64,{{ graphic_total }}" alt="Gráfico de Total de Alunos">
+      </div>
+    </div>
+  </div>
+</main>
+<div class="dev-banner text-center py-2">
+  Desenvolvido por Alexandre Martins Vieira © 2025
+</div>
+<!-- Botão flutuante: Importar Alunos (rota mantida, mas desabilitada) -->
+<a href="{% url 'importar_alunos' %}" class="fab-import is-disabled" title="Importar Alunos"
+   aria-disabled="true" tabindex="-1">
+  <i class="fa-solid fa-file-import"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

@@ -1,200 +1,184 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Gerar Folhas Individuais</title>
-    <style>
-        body {
-            font-family: Tahoma, sans-serif;
-            background-color: #e8f0ff;
-            margin: 0;
-            padding: 40px;
-            color: #000;
-        }
+  <meta charset="utf-8" />
+  <title>Folhas • Individuais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
-            margin-bottom: 40px;
-        }
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        h2 {
-            text-align: center;
-            color: #003366;
-            margin-bottom: 30px;
-        }
+  <style>
+    :root{ --ink:#0f172a; --muted:#64748b; --g1:#0b1020; --g2:#111a3a; --base-font:14px; }
+    html{ font-size: var(--base-font); }
+    body{ background:#f6f8fb; color:var(--ink); }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    /* Navbar gradiente */
+    .nav-pro{ background:linear-gradient(90deg,var(--g1),var(--g2)); }
+    .navbar-brand{ font-size:1rem; }
+    .navbar .btn{ font-size:.85rem; padding:.25rem .5rem; }
 
-        label {
-            font-weight: bold;
-            color: #003366;
-        }
+    /* Card base */
+    .card-clean{ border:none; box-shadow:0 10px 24px rgba(17,24,39,.08); border-radius:.9rem; }
+    .text-muted-2{ color:var(--muted); }
+    .hr-soft{ border:0; border-top:1px solid #e5e7eb; margin:1rem 0; }
 
-        select, input, .checkbox-group {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #999;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+    /* Grade de meses */
+    .meses-box .form-check{ background:#fff; border:1px solid #e5e7eb; border-radius:.6rem; padding:.35rem .6rem; }
+    .meses-box .form-check-input{ margin-right:.4rem; }
 
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px;
-            background: #f0f4ff;
-        }
+    /* Pré-visualização de folhas geradas */
+    .folha{
+      background:#fff; border:1px solid #e5e7eb; border-radius:.9rem; padding:1rem; margin-bottom:1.25rem;
+      box-shadow:0 6px 16px rgba(17,24,39,.08); page-break-inside: avoid; break-inside: avoid;
+    }
+    .folha + .folha{ page-break-before: always; }
 
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            background: #dce7f7;
-        }
-
-        .btn {
-            background-color: #2b6cb0;
-            color: white;
-            padding: 12px 30px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto 0;
-        }
-
-        .btn:hover {
-            background-color: #204b80;
-        }
-
-        .btn-container {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .btn-imprimir {
-            background-color: #28a745;
-            color: white;
-            padding: 12px 30px;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .btn-imprimir:hover {
-            background-color: #218838;
-        }
-
-        .folha {
-            background-color: white;
-            max-width: 1000px;
-            margin: 0 auto 40px;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 2px solid #999;
-            page-break-inside: avoid;
-        }
-
-        .folha + .folha {
-            page-break-before: always;
-        }
-
-        .mensagem-vazia {
-            color: red;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        @media print {
-            body {
-                background-color: white;
-                padding: 0;
-                margin: 0;
-            }
-
-            .container, .btn-container {
-                display: none;
-            }
-
-            .folha {
-                box-shadow: none;
-                border: none;
-                border-radius: 0;
-                padding: 0;
-                margin: 0;
-                width: 100%;
-            }
-
-            .folha + .folha {
-                page-break-before: always;
-            }
-        }
-    </style>
+    /* Impressão */
+    @media print{
+      body{ background:#fff; }
+      nav, .no-print{ display:none !important; }
+      .folha{
+        border:none; border-radius:0; box-shadow:none; margin:0; padding:0; page-break-inside: avoid;
+      }
+      .folha + .folha{ page-break-before: always; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>📄 Gerar Folhas por Funcionário e Mês</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_funcionario">Funcionário:</label>
-            {{ form.funcionario }}
-        </div>
+<!-- Navbar -->
+<nav class="navbar nav-pro navbar-dark mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'painel_controle' %}">Folha de Frequência</a>
 
-        <div class="form-group">
-            <label for="id_ano">Ano:</label>
-            <select name="ano" id="id_ano">
-                {% for y in anos %}
-                    <option value="{{ y }}" {% if form.ano.value == y|stringformat:"i" %}selected{% endif %}>{{ y }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a class="btn btn-sm btn-outline-light" href="{% url 'painel_controle' %}">← Voltar ao Painel</a>
+      <span class="vr text-white opacity-50 mx-1"></span>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'selecionar_funcionarios' %}">Gerar em Lote</a>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'listar_folhas' %}">Folhas Geradas</a>
+    </div>
+  </div>
+</nav>
 
-        <div class="form-group">
-            <label>Meses:</label>
-            <div class="checkbox-group">
-                {% for checkbox in form.meses %}
-                    <label>{{ checkbox.tag }} {{ checkbox.choice_label }}</label>
-                {% endfor %}
-            </div>
-        </div>
+<main class="container py-2 py-lg-3">
 
-        <button type="submit" class="btn">Gerar Folhas</button>
-    </form>
-</div>
-
-{% if folhas_geradas %}
-    <div class="btn-container">
-        <button onclick="window.print()" class="btn-imprimir">🖨️ Imprimir Todas</button>
+  <!-- Formulário -->
+  <div class="card card-clean p-3 no-print">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="h5 m-0"><i class="fa-solid fa-file-lines me-2"></i>Gerar Folhas por Funcionário e Mês</h1>
     </div>
 
-    {% for folha in folhas_geradas %}
-        <div class="folha">
-            {{ folha|safe }}
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label for="id_funcionario" class="form-label"><i class="fa-solid fa-user me-1"></i>Funcionário</label>
+          {{ form.funcionario }}
+          {% if form.funcionario.errors %}<div class="invalid-feedback d-block">{{ form.funcionario.errors|striptags }}</div>{% endif %}
         </div>
+
+        <div class="col-12 col-md-3">
+          <label for="id_ano" class="form-label"><i class="fa-solid fa-calendar me-1"></i>Ano</label>
+          <select name="ano" id="id_ano" class="form-select">
+            {% for y in anos %}
+              <option value="{{ y }}" {% if form.ano.value == y|stringformat:"i" %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label"><i class="fa-solid fa-calendar-days me-1"></i>Meses</label>
+
+          <!-- Atalhos -->
+          <div class="d-flex flex-wrap gap-2 mb-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleMeses(true)">
+              Selecionar todos
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleMeses(false)">
+              Limpar seleção
+            </button>
+          </div>
+
+          <!-- Grid de meses -->
+          <div id="mesesWrapper" class="meses-box row row-cols-2 row-cols-md-4 g-2">
+            {% for checkbox in form.meses %}
+              <div class="col">
+                <label class="form-check m-0">
+                  {{ checkbox.tag }}
+                  <span class="form-check-label">{{ checkbox.choice_label }}</span>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.meses.errors %}<div class="invalid-feedback d-block">{{ form.meses.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="d-grid d-md-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-file-circle-plus me-2"></i>Gerar Folhas
+        </button>
+        <a href="{% url 'listar_folhas' %}" class="btn btn-outline-primary">
+          <i class="fa-solid fa-list me-2"></i>Ver Folhas Geradas
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Botão imprimir -->
+  {% if folhas_geradas %}
+    <div class="text-center my-3 no-print">
+      <button onclick="window.print()" class="btn btn-success">
+        🖨️ Imprimir Todas
+      </button>
+    </div>
+  {% endif %}
+
+  <!-- Folhas geradas -->
+  {% if folhas_geradas %}
+    {% for folha in folhas_geradas %}
+      <div class="folha">
+        {{ folha|safe }}
+      </div>
     {% endfor %}
-{% else %}
-    <p class="mensagem-vazia">Nenhuma folha foi gerada ainda.</p>
-{% endif %}
+  {% else %}
+    <div class="alert alert-warning text-center card-clean" role="alert">
+      Nenhuma folha foi gerada ainda.
+    </div>
+  {% endif %}
+
+  <div class="text-center my-4 no-print">
+    <a class="btn btn-outline-secondary" href="{% url 'painel_controle' %}">
+      <i class="fa-solid fa-arrow-left me-1"></i> Voltar ao Painel de Controle
+    </a>
+  </div>
+</main>
+
+<!-- Scripts -->
+<script>
+  // Aplica classes Bootstrap nos widgets padrões do Django
+  (function applyBootstrapClasses(){
+    const map = { 'INPUT':'form-control', 'SELECT':'form-select', 'TEXTAREA':'form-control' };
+    document.querySelectorAll('input, select, textarea').forEach(el=>{
+      const type = (el.getAttribute('type')||'').toLowerCase();
+      if(type === 'checkbox'){ el.classList.add('form-check-input'); }
+      else if(type === 'file'){ el.classList.add('form-control'); }
+      else{ el.classList.add(map[el.tagName] || 'form-control'); }
+    });
+  })();
+
+  // Selecionar/Limpar meses
+  function toggleMeses(flag){
+    document.querySelectorAll('#mesesWrapper input[type="checkbox"]').forEach(cb => cb.checked = flag);
+  }
+</script>
 
 </body>
 </html>

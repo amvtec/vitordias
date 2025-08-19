@@ -1,401 +1,338 @@
 {% load static %}
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastrar Funcionário</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  <meta charset="utf-8" />
+  <title>Funcionários • Cadastrar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 30px;
-        }
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
-        }
-
-        h2 {
-            text-align: center;
-            color: #334155;
-            font-size: 26px;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .form-field {
-            flex: 1;
-            min-width: 250px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-weight: 500;
-            color: #334155;
-            margin-bottom: 6px;
-            font-size: 16px;
-        }
-
-        input,
-        select,
-        textarea {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e0;
-            font-size: 15px;
-            color: #4b5563;
-            background-color: #f9fafb;
-        }
-
-        input[type="checkbox"] {
-            width: auto;
-            margin-right: 8px;
-        }
-
-        .checkbox {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .campo-planejamento {
-            display: none;
-            margin-top: -10px;
-        }
-
-        .btn {
-            align-self: center;
-            background-color: #4338ca;
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: #312e81;
-        }
-
-        .voltar {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .voltar a {
-            text-decoration: none;
-            background-color: #64748b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-
-        .voltar a:hover {
-            background-color: #4a5568;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 24px;
-            }
-
-            .form-group {
-                flex-direction: column;
-            }
-
-            .form-field {
-                min-width: 100%;
-            }
-
-            input,
-            select,
-            textarea {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .btn {
-                padding: 12px 24px;
-                font-size: 15px;
-            }
-        }
-    </style>
-
-    <script>
-        function togglePlanejamentoHorario() {
-            const planejamentoCheckbox = document.getElementById("id_tem_planejamento");
-            const horarioField = document.getElementById("campo_horario_planejamento");
-            if (planejamentoCheckbox && horarioField) {
-                horarioField.style.display = planejamentoCheckbox.checked ? "block" : "none";
-            }
-        }
-
-        function aplicarMascaraData(input) {
-            input.addEventListener("input", function (e) {
-                let valor = e.target.value.replace(/\D/g, "");
-                if (valor.length > 8) valor = valor.slice(0, 8);
-
-                let resultado = "";
-                if (valor.length > 4) {
-                    resultado = valor.slice(0, 2) + "/" + valor.slice(2, 4) + "/" + valor.slice(4);
-                } else if (valor.length > 2) {
-                    resultado = valor.slice(0, 2) + "/" + valor.slice(2);
-                } else {
-                    resultado = valor;
-                }
-
-                e.target.value = resultado;
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            togglePlanejamentoHorario();
-
-            const checkboxPlanejamento = document.getElementById("id_tem_planejamento");
-            if (checkboxPlanejamento) {
-                checkboxPlanejamento.addEventListener('change', togglePlanejamentoHorario);
-            }
-
-            const campoData = document.getElementById("id_data_admissao");
-            if (campoData) {
-                campoData.setAttribute("placeholder", "00/00/0000");
-                aplicarMascaraData(campoData);
-            }
-        });
-    </script>
+  <style>
+    :root{ --ink:#0f172a; --muted:#64748b; --g1:#0b1020; --g2:#111a3a; --base-font:14px; }
+    html{ font-size: var(--base-font); }
+    body{ background:#f6f8fb; color:var(--ink); }
+    .nav-pro{ background:linear-gradient(90deg,var(--g1),var(--g2)); }
+    .navbar-brand{ font-size:1rem; }
+    .navbar .btn{ font-size:.85rem; padding:.25rem .5rem; }
+    .card-clean{ border:none; box-shadow:0 10px 24px rgba(17,24,39,.08); border-radius:.9rem; }
+    .text-muted-2{ color:var(--muted); }
+    .section-title{ font-size:.9rem; font-weight:700; color:#111827; margin:.25rem 0 .75rem; }
+    .hr-soft{ border:0; border-top:1px solid #e5e7eb; margin:1rem 0; }
+    .campo-planejamento{ display:none; }
+    .campo-planejamento.show{ display:block; }
+  </style>
 </head>
-
 <body>
 
-    <div class="container">
+<nav class="navbar nav-pro navbar-dark mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'painel_controle' %}">Folha de Frequência</a>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a class="btn btn-sm btn-outline-light" href="{% url 'painel_controle' %}">← Voltar ao Painel</a>
+      <span class="vr text-white opacity-50 mx-1"></span>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'listar_funcionarios' %}">Funcionários</a>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'listar_folhas' %}">Folhas Geradas</a>
+    </div>
+  </div>
+</nav>
 
-        <h2><i class="fas fa-user-plus"></i> Cadastrar Funcionário</h2>
-
-        <!-- Substitua o conteúdo atual do <form> por este novo -->
-
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-
-            <!-- Identificação -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.nome.id_for_label }}"><i class="fas fa-id-card"></i> Nome:</label>
-                    {{ form.nome }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.matricula.id_for_label }}"><i class="fas fa-fingerprint"></i> Matrícula:</label>
-                    {{ form.matricula }}
-                </div>
-            </div>
-
-            <!-- Cargo/Função -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.funcao.id_for_label }}"><i class="fas fa-briefcase"></i> Função:</label>
-                    {{ form.funcao }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.cargo.id_for_label }}"><i class="fas fa-user-tie"></i> Cargo:</label>
-                    {{ form.cargo }}
-                </div>
-            </div>
-
-            <!-- Setor, Turno e Turma -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.setor.id_for_label }}"><i class="fas fa-building"></i> Setor:</label>
-                    {{ form.setor }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.turno.id_for_label }}"><i class="fas fa-sun"></i> Turno:</label>
-                    {{ form.turno }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.turma.id_for_label }}"><i class="fas fa-users"></i> Turma:</label>
-                    {{ form.turma }}
-                </div>
-            </div>
-
-            <!-- Datas -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.data_admissao.id_for_label }}"><i class="fas fa-calendar-plus"></i> Data de
-                        Admissão:</label>
-                    {{ form.data_admissao }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.data_nascimento.id_for_label }}"><i class="fas fa-birthday-cake"></i> Data de
-                        Nascimento:</label>
-                    {{ form.data_nascimento }}
-                </div>
-            </div>
-
-            <!-- Documentos -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.cpf.id_for_label }}"><i class="fas fa-id-card"></i> CPF:</label>
-                    {{ form.cpf }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.rg.id_for_label }}"><i class="fas fa-id-card"></i> RG:</label>
-                    {{ form.rg }}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.pis.id_for_label }}"><i class="fas fa-id-card"></i> PIS:</label>
-                    {{ form.pis }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.titulo_eleitor.id_for_label }}"><i class="fas fa-id-card"></i> Título de
-                        Eleitor:</label>
-                    {{ form.titulo_eleitor }}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.ctps_numero.id_for_label }}"><i class="fas fa-id-card"></i> CTPS -
-                        Número:</label>
-                    {{ form.ctps_numero }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.ctps_serie.id_for_label }}"><i class="fas fa-id-card"></i> CTPS - Série:</label>
-                    {{ form.ctps_serie }}
-                </div>
-            </div>
-
-            <!-- Contato -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.telefone.id_for_label }}"><i class="fas fa-phone"></i> Telefone:</label>
-                    {{ form.telefone }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.email.id_for_label }}"><i class="fas fa-envelope"></i> E-mail:</label>
-                    {{ form.email }}
-                </div>
-            </div>
-
-            <!-- Endereço -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.endereco.id_for_label }}"><i class="fas fa-map-marker-alt"></i>
-                        Endereço:</label>
-                    {{ form.endereco }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.numero.id_for_label }}"><i class="fas fa-sort-numeric-up"></i>
-                        Número:</label>
-                    {{ form.numero }}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.bairro.id_for_label }}"><i class="fas fa-map-marker-alt"></i> Bairro:</label>
-                    {{ form.bairro }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.cidade.id_for_label }}"><i class="fas fa-city"></i> Cidade:</label>
-                    {{ form.cidade }}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.uf.id_for_label }}"><i class="fas fa-map-marker-alt"></i> UF:</label>
-                    {{ form.uf }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.cep.id_for_label }}"><i class="fas fa-map-marker-alt"></i> CEP:</label>
-                    {{ form.cep }}
-                </div>
-            </div>
-
-            <!-- Outros dados -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.estado_civil.id_for_label }}"><i class="fas fa-heart"></i> Estado Civil:</label>
-                    {{ form.estado_civil }}
-                </div>
-                <div class="form-field">
-                    <label for="{{ form.escolaridade.id_for_label }}"><i class="fas fa-graduation-cap"></i>
-                        Escolaridade:</label>
-                    {{ form.escolaridade }}
-                </div>
-            </div>
-
-            <!-- Planejamento -->
-            <div class="checkbox">
-                {{ form.tem_planejamento }}
-                <label for="{{ form.tem_planejamento.id_for_label }}"><i class="fas fa-calendar-check"></i> Possui
-                    Planejamento?</label>
-            </div>
-            <div class="form-field campo-planejamento" id="campo_horario_planejamento">
-                <label for="{{ form.horario_planejamento.id_for_label }}"><i class="fas fa-clock"></i> Horário de
-                    Planejamento:</label>
-                {{ form.horario_planejamento }}
-            </div>
-
-            <!-- Foto -->
-            <div class="form-group">
-                <div class="form-field">
-                    <label for="{{ form.foto.id_for_label }}"><i class="fas fa-camera"></i> Foto (3x4):</label>
-                    {{ form.foto }}
-                </div>
-            </div>
-
-            <!-- Botão -->
-            <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar Funcionário</button>
-        </form>
-
-
-        <div class="voltar">
-            <a href="{% url 'painel_controle' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel de Controle</a>
-        </div>
+<main class="container py-2 py-lg-3">
+  <div class="card card-clean p-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h1 class="h5 m-0"><i class="fa-solid fa-user-plus me-2"></i>Cadastrar Funcionário</h1>
     </div>
 
-</body>
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger py-2">{{ form.non_field_errors }}</div>
+    {% endif %}
 
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- Identificação -->
+      <div class="section-title">Identificação</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.nome.id_for_label }}" class="form-label"><i class="fa-solid fa-id-card me-1"></i>Nome</label>
+          {{ form.nome }}
+          {% if form.nome.errors %}<div class="invalid-feedback d-block">{{ form.nome.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.matricula.id_for_label }}" class="form-label"><i class="fa-solid fa-fingerprint me-1"></i>Matrícula</label>
+          {{ form.matricula }}
+          {% if form.matricula.errors %}<div class="invalid-feedback d-block">{{ form.matricula.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Cargo / Função -->
+      <div class="section-title">Cargo e Função</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.funcao.id_for_label }}" class="form-label"><i class="fa-solid fa-briefcase me-1"></i>Função</label>
+          {{ form.funcao }}
+          {% if form.funcao.errors %}<div class="invalid-feedback d-block">{{ form.funcao.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.cargo.id_for_label }}" class="form-label"><i class="fa-solid fa-user-tie me-1"></i>Cargo</label>
+          {{ form.cargo }}
+          {% if form.cargo.errors %}<div class="invalid-feedback d-block">{{ form.cargo.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Alocação -->
+      <div class="section-title">Alocação</div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="{{ form.setor.id_for_label }}" class="form-label"><i class="fa-solid fa-building me-1"></i>Setor</label>
+          {{ form.setor }}
+          {% if form.setor.errors %}<div class="invalid-feedback d-block">{{ form.setor.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label for="{{ form.turno.id_for_label }}" class="form-label"><i class="fa-solid fa-sun me-1"></i>Turno</label>
+          {{ form.turno }}
+          {% if form.turno.errors %}<div class="invalid-feedback d-block">{{ form.turno.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label for="{{ form.turma.id_for_label }}" class="form-label"><i class="fa-solid fa-users me-1"></i>Turma</label>
+          {{ form.turma }}
+          {% if form.turma.errors %}<div class="invalid-feedback d-block">{{ form.turma.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Datas -->
+      <div class="section-title">Datas</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.data_admissao.id_for_label }}" class="form-label"><i class="fa-solid fa-calendar-plus me-1"></i>Data de Admissão</label>
+          {{ form.data_admissao }}
+          <div class="form-text">Formato: dd/mm/aaaa</div>
+          {% if form.data_admissao.errors %}<div class="invalid-feedback d-block">{{ form.data_admissao.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.data_nascimento.id_for_label }}" class="form-label"><i class="fa-solid fa-cake-candles me-1"></i>Data de Nascimento</label>
+          {{ form.data_nascimento }}
+          <div class="form-text">Formato: dd/mm/aaaa</div>
+          {% if form.data_nascimento.errors %}<div class="invalid-feedback d-block">{{ form.data_nascimento.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Documentos -->
+      <div class="section-title">Documentos</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.cpf.id_for_label }}" class="form-label"><i class="fa-solid fa-id-card me-1"></i>CPF</label>
+          {{ form.cpf }}
+          {% if form.cpf.errors %}<div class="invalid-feedback d-block">{{ form.cpf.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.rg.id_for_label }}" class="form-label"><i class="fa-regular fa-id-card me-1"></i>RG</label>
+          {{ form.rg }}
+          {% if form.rg.errors %}<div class="invalid-feedback d-block">{{ form.rg.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.pis.id_for_label }}" class="form-label"><i class="fa-solid fa-id-badge me-1"></i>PIS</label>
+          {{ form.pis }}
+          {% if form.pis.errors %}<div class="invalid-feedback d-block">{{ form.pis.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.titulo_eleitor.id_for_label }}" class="form-label"><i class="fa-solid fa-id-badge me-1"></i>Título de Eleitor</label>
+          {{ form.titulo_eleitor }}
+          {% if form.titulo_eleitor.errors %}<div class="invalid-feedback d-block">{{ form.titulo_eleitor.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.ctps_numero.id_for_label }}" class="form-label"><i class="fa-solid fa-id-badge me-1"></i>CTPS — Número</label>
+          {{ form.ctps_numero }}
+          {% if form.ctps_numero.errors %}<div class="invalid-feedback d-block">{{ form.ctps_numero.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.ctps_serie.id_for_label }}" class="form-label"><i class="fa-solid fa-id-badge me-1"></i>CTPS — Série</label>
+          {{ form.ctps_serie }}
+          {% if form.ctps_serie.errors %}<div class="invalid-feedback d-block">{{ form.ctps_serie.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Contato -->
+      <div class="section-title">Contato</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.telefone.id_for_label }}" class="form-label"><i class="fa-solid fa-phone me-1"></i>Telefone</label>
+          {{ form.telefone }}
+          {% if form.telefone.errors %}<div class="invalid-feedback d-block">{{ form.telefone.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.email.id_for_label }}" class="form-label"><i class="fa-solid fa-envelope me-1"></i>E-mail</label>
+          {{ form.email }}
+          {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Endereço -->
+      <div class="section-title">Endereço</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.endereco.id_for_label }}" class="form-label"><i class="fa-solid fa-map-location-dot me-1"></i>Endereço</label>
+          {{ form.endereco }}
+          {% if form.endereco.errors %}<div class="invalid-feedback d-block">{{ form.endereco.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.numero.id_for_label }}" class="form-label"><i class="fa-solid fa-hashtag me-1"></i>Número</label>
+          {{ form.numero }}
+          {% if form.numero.errors %}<div class="invalid-feedback d-block">{{ form.numero.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.cep.id_for_label }}" class="form-label"><i class="fa-solid fa-location-dot me-1"></i>CEP</label>
+          {{ form.cep }}
+          {% if form.cep.errors %}<div class="invalid-feedback d-block">{{ form.cep.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label for="{{ form.bairro.id_for_label }}" class="form-label"><i class="fa-solid fa-location-crosshairs me-1"></i>Bairro</label>
+          {{ form.bairro }}
+          {% if form.bairro.errors %}<div class="invalid-feedback d-block">{{ form.bairro.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-5">
+          <label for="{{ form.cidade.id_for_label }}" class="form-label"><i class="fa-solid fa-city me-1"></i>Cidade</label>
+          {{ form.cidade }}
+          {% if form.cidade.errors %}<div class="invalid-feedback d-block">{{ form.cidade.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.uf.id_for_label }}" class="form-label"><i class="fa-solid fa-flag me-1"></i>UF</label>
+          {{ form.uf }}
+          {% if form.uf.errors %}<div class="invalid-feedback d-block">{{ form.uf.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Outros dados -->
+      <div class="section-title">Outros Dados</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.estado_civil.id_for_label }}" class="form-label"><i class="fa-solid fa-heart me-1"></i>Estado Civil</label>
+          {{ form.estado_civil }}
+          {% if form.estado_civil.errors %}<div class="invalid-feedback d-block">{{ form.estado_civil.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label for="{{ form.escolaridade.id_for_label }}" class="form-label"><i class="fa-solid fa-graduation-cap me-1"></i>Escolaridade</label>
+          {{ form.escolaridade }}
+          {% if form.escolaridade.errors %}<div class="invalid-feedback d-block">{{ form.escolaridade.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Planejamento -->
+      <div class="section-title">Planejamento</div>
+      <div class="row g-3">
+        <div class="col-md-6 d-flex align-items-center">
+          <div class="form-check">
+            {{ form.tem_planejamento }}
+            <label for="{{ form.tem_planejamento.id_for_label }}" class="form-check-label">
+              <i class="fa-solid fa-calendar-check me-1"></i>Possui Planejamento?
+            </label>
+            {% if form.tem_planejamento.errors %}<div class="invalid-feedback d-block">{{ form.tem_planejamento.errors|striptags }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6 campo-planejamento" id="campo_horario_planejamento">
+          <label for="{{ form.horario_planejamento.id_for_label }}" class="form-label"><i class="fa-solid fa-clock me-1"></i>Horário de Planejamento</label>
+          {{ form.horario_planejamento }}
+          {% if form.horario_planejamento.errors %}<div class="invalid-feedback d-block">{{ form.horario_planejamento.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <hr class="hr-soft">
+
+      <!-- Foto -->
+      <div class="section-title">Foto</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="{{ form.foto.id_for_label }}" class="form-label"><i class="fa-solid fa-camera me-1"></i>Foto (3x4)</label>
+          {{ form.foto }}
+          {% if form.foto.errors %}<div class="invalid-feedback d-block">{{ form.foto.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="d-grid d-md-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-save me-2"></i>Salvar Funcionário
+        </button>
+        <a href="{% url 'listar_funcionarios' %}" class="btn btn-outline-secondary">
+          <i class="fa-solid fa-users me-2"></i>Listar Funcionários
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-center my-4">
+    <a class="btn btn-outline-secondary" href="{% url 'painel_controle' %}">
+      <i class="fa-solid fa-arrow-left me-1"></i> Voltar ao Painel de Controle
+    </a>
+  </div>
+</main>
+
+<script>
+  // Aplica classes do Bootstrap nos campos
+  (function applyBootstrapClasses(){
+    const map = { 'INPUT':'form-control', 'SELECT':'form-select', 'TEXTAREA':'form-control' };
+    document.querySelectorAll('input, select, textarea').forEach(el=>{
+      const type = (el.getAttribute('type')||'').toLowerCase();
+      if(type === 'checkbox'){ el.classList.add('form-check-input'); }
+      else if(type === 'file'){ el.classList.add('form-control'); }
+      else{ el.classList.add(map[el.tagName]||'form-control'); }
+    });
+    document.querySelectorAll('label').forEach(l => l.classList.add('form-label'));
+  })();
+
+  // Mostrar/ocultar horário de planejamento
+  function togglePlanejamentoHorario(){
+    const cb = document.getElementById('{{ form.tem_planejamento.id_for_label }}') || document.getElementById('id_tem_planejamento');
+    const box = document.getElementById('campo_horario_planejamento');
+    if(!cb || !box) return;
+    box.classList.toggle('show', cb.checked);
+  }
+
+  // Máscara dd/mm/aaaa
+  function aplicarMascaraData(input){
+    if(!input) return;
+    input.setAttribute('placeholder', '00/00/0000');
+    input.addEventListener('input', function(e){
+      let v = e.target.value.replace(/\D/g,'').slice(0,8);
+      if(v.length >= 5) e.target.value = v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+      else if(v.length >= 3) e.target.value = v.slice(0,2)+'/'+v.slice(2);
+      else e.target.value = v;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const cbPlan = document.getElementById('{{ form.tem_planejamento.id_for_label }}') || document.getElementById('id_tem_planejamento');
+    if(cbPlan){ cbPlan.addEventListener('change', togglePlanejamentoHorario); togglePlanejamentoHorario(); }
+    aplicarMascaraData(document.getElementById('{{ form.data_admissao.id_for_label }}') || document.getElementById('id_data_admissao'));
+    aplicarMascaraData(document.getElementById('{{ form.data_nascimento.id_for_label }}') || document.getElementById('id_data_nascimento'));
+
+    // Marcar campos com erro como is-invalid (visual)
+    document.querySelectorAll('.invalid-feedback').forEach(err=>{
+      const field = err.previousElementSibling;
+      if(field && field.classList){ field.classList.add('is-invalid'); }
+    });
+  });
+</script>
+
+</body>
 </html>

@@ -129,17 +129,8 @@
     <tr>
         <td><strong>Nome:</strong> {{ funcionario.nome }}</td>
         <td><strong>Matrícula:</strong> {{ funcionario.matricula }}</td>
-
-        <td rowspan="3" style="text-align: center; vertical-align: middle; width: 90px;">
-            <div style="font-size: 9px;"><strong>Tipo de Vínculo:</strong></div>
-            <div style="font-size: 12px; font-weight: bold;">{{ funcionario.tipo_vinculo }}</div>
-            <div style="font-size: 9px; margin-top: 6px;"><strong>Fonte Pagadora:</strong></div>
-            <div style="font-size: 10px;">{{ funcionario.fonte_pagadora }}</div>
-        </td>
-
-
-        <td rowspan="3" style="text-align: center; font-size: 20px; vertical-align: top; width: 120px;">
-            <strong>{{ nome_mes }}<br>{{ ano }}</strong>
+        <td rowspan="3" class="col-medium" style="text-align: center; font-size: 10px;">
+            <strong>{{ nome_mes }}</strong><br><strong>{{ ano }}</strong>
         </td>
     </tr>
     <tr>
@@ -151,7 +142,6 @@
         <td><strong>Lotação:</strong> {{ escola.nome_escola }}</td>
     </tr>
 </table>
-
 
 <p style="margin: 4px 0; text-align: center;">
     <strong>HORÁRIO DE FUNCIONAMENTO - Matutino 07h00min às 11h25min - 06h30min às 12h30min / Vespertino 13h00min às 17h25min - 12h30min às 18h30min</strong>

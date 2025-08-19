@@ -1,151 +1,96 @@
 {% load static %}
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Selecionar Capa</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  <meta charset="utf-8" />
+  <title>Livro de Frequência • Selecionar Capa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Estilos CSS (movidos para um arquivo style.css para melhor organização) */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 40px;
-            background: #f4f6f9;
-            color: #334155;
-        }
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        form {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            border: 1px solid #e0e0e0;
-        }
+  <style>
+    :root{ --ink:#0f172a; --muted:#64748b; --g1:#0b1020; --g2:#111a3a; --base-font:14px; }
+    html{ font-size: var(--base-font); }
+    body{ background:#f6f8fb; color:var(--ink); }
 
-        h2 {
-            margin-bottom: 25px;
-            color: #334155;
-            font-size: 26px;
-            font-weight: 600;
-        }
+    /* Navbar gradiente */
+    .nav-pro{ background:linear-gradient(90deg,var(--g1),var(--g2)); }
+    .navbar-brand{ font-size:1rem; }
+    .navbar .btn{ font-size:.85rem; padding:.25rem .5rem; }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            text-align: left;
-            font-size: 16px;
-        }
-
-        select,
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e0;
-            font-size: 15px;
-            color: #4b5563;
-            background-color: #f9fafb;
-        }
-
-        button {
-            padding: 14px 32px;
-            background-color: #4338ca;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 25px;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #312e81;
-        }
-
-        .voltar-btn {
-            display: inline-block;
-            margin-top: 15px;
-            background-color: #e11d48;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: 6px;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .voltar-btn:hover {
-            background-color: #b91c1c;
-            transform: scale(1.03);
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            form {
-                padding: 20px;
-            }
-
-            h2 {
-                font-size: 24px;
-            }
-
-            select,
-            input {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            button {
-                padding: 12px 24px;
-                font-size: 15px;
-            }
-
-            .voltar-btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    /* Card */
+    .card-clean{ border:none; box-shadow:0 10px 24px rgba(17,24,39,.08); border-radius:.9rem; }
+    .text-muted-2{ color:var(--muted); }
+  </style>
 </head>
-
 <body>
-    <form method="get" action="{% url 'capas_livro_ponto' %}">
-        <h2><i class="fas fa-book"></i> Gerar Capas do Livro de Frequência</h2>
 
-        <label for="setor"><i class="fas fa-building"></i> Setor:</label>
-        <select name="setor" id="setor" required>
-            {% for setor in setores %}
+<!-- Navbar -->
+<nav class="navbar nav-pro navbar-dark mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'painel_controle' %}">Folha de Frequência</a>
+
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a class="btn btn-sm btn-outline-light" href="{% url 'painel_controle' %}">← Voltar ao Painel</a>
+      <span class="vr text-white opacity-50 mx-1"></span>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'selecionar_capa' %}">Selecionar Capa</a>
+      <a class="btn btn-sm btn-outline-light" href="{% url 'listar_folhas' %}">Folhas Geradas</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-2 py-lg-3">
+  <div class="card card-clean p-3 mx-auto" style="max-width:640px;">
+    <h1 class="h5 text-center mb-3">
+      <i class="fa-solid fa-book me-2"></i>Gerar Capas do Livro de Frequência
+    </h1>
+
+    <form method="get" action="{% url 'capas_livro_ponto' %}" class="row g-3" novalidate>
+      <!-- Setor -->
+      <div class="col-12">
+        <label for="setor" class="form-label">
+          <i class="fa-solid fa-building me-1"></i>Setor
+        </label>
+        <select name="setor" id="setor" class="form-select" required>
+          {% for setor in setores %}
             <option value="{{ setor.nome }}">{{ setor.nome }}</option>
-            {% endfor %}
+          {% endfor %}
         </select>
+      </div>
 
-        <label for="ano"><i class="fas fa-calendar-alt"></i> Ano:</label>
-        <input type="number" name="ano" value="{{ ano }}" required>
+      <!-- Ano -->
+      <div class="col-12 col-md-6">
+        <label for="ano" class="form-label">
+          <i class="fa-solid fa-calendar me-1"></i>Ano
+        </label>
+        <input type="number" name="ano" id="ano" class="form-control" value="{{ ano }}" required>
+      </div>
 
-        <label for="mes"><i class="fas fa-calendar-week"></i> Mês:</label>
-        <input type="number" name="mes" min="1" max="12" value="{{ mes }}" required>
+      <!-- Mês -->
+      <div class="col-12 col-md-6">
+        <label for="mes" class="form-label">
+          <i class="fa-regular fa-calendar-days me-1"></i>Mês
+        </label>
+        <input type="number" name="mes" id="mes" class="form-control" min="1" max="12" value="{{ mes }}" required>
+        <div class="form-text">Informe de 1 a 12.</div>
+      </div>
 
-        <button type="submit"><i class="fas fa-magic"></i> Gerar Capa</button><br>
-        <a href="{% url 'painel_controle' %}" class="voltar-btn"><i class="fas fa-arrow-left"></i> Voltar ao Painel de
-            Controle</a>
+      <div class="d-grid d-md-flex gap-2 mt-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-magic me-2"></i>Gerar Capa
+        </button>
+        <a href="{% url 'painel_controle' %}" class="btn btn-outline-secondary">
+          <i class="fa-solid fa-arrow-left me-2"></i>Voltar ao Painel
+        </a>
+      </div>
     </form>
-</body>
+  </div>
+</main>
 
+</body>
 </html>
