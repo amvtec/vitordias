@@ -1,0 +1,183 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Relatório de Horários • Gestão Escolar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f5f7fb; --surface:#ffffff; --ink:#0f172a; --muted:#6b7280;
+      --brand:#0b6bbf; --brand-strong:#08569a; --border:#e5e7eb;
+      --radius:14px; --shadow:0 8px 24px rgba(2,6,23,.06);
+    }
+    body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:900px){.row{grid-template-columns:280px 1fr}}
+    .filters .field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+    label{font-size:12px;color:var(--muted)}
+    select,.btn,.input{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff}
+    .btn{background:var(--brand);color:#fff;border-color:transparent;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border-bottom:1px solid var(--border);padding:10px 8px;text-align:left;font-size:14px}
+    th{font-weight:700;color:var(--muted)}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
+    .title{font-size:20px;font-weight:800;color:var(--ink)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:42px;width:42px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">
+        {% if escola and escola.logo %}<img src="{{ escola.logo.url }}" alt="Logo">{% endif %}
+        <div>
+          <div class="title">Relatório de Horários</div>
+          {% if escola %}<div style="color:var(--muted);font-size:13px">{{ escola.nome_escola }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="actions">
+        <!-- Botão Exportar preservando filtros -->
+        <a class="btn secondary" id="btn-exportar" href="#">Exportar Excel</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Filtros -->
+      <div class="card filters">
+        <form id="filtros" method="get">
+          <div class="field">
+            <label for="setor">Setor</label>
+            <select name="setor" id="setor">
+              <option value="">— Todos —</option>
+              {% for s in setores %}
+                <option value="{{ s.id }}" {% if filtros.setor|stringformat:"s" == s.id|stringformat:"s" %}selected{% endif %}>{{ s.nome }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="serie">Série</label>
+            <select name="serie" id="serie">
+              <option value="">— Todas —</option>
+              {% for v in series %}
+                <option value="{{ v }}" {% if filtros.serie == v %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="turma">Turma</label>
+            <select name="turma" id="turma">
+              <option value="">— Todas —</option>
+              {% for v in turmas %}
+                <option value="{{ v }}" {% if filtros.turma == v %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="turno">Turno (cadastro)</label>
+            <select name="turno" id="turno">
+              <option value="">— Todos —</option>
+              {% for v in turnos_func %}
+                <option value="{{ v }}" {% if filtros.turno == v %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="vinculo">Tipo de vínculo</label>
+            <select name="vinculo" id="vinculo">
+              <option value="">— Todos —</option>
+              {% for v in vinculos %}
+                <option value="{{ v }}" {% if filtros.vinculo == v %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn">Aplicar filtros</button>
+            <a href="{% url 'relatorio_horarios' %}" class="btn secondary">Limpar</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tabela -->
+      <div class="card">
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Matrícula</th>
+                <th>Setor</th>
+                <!-- NOVOS CAMPOS -->
+                <th>Cargo</th>
+                <th>Função</th>
+                <th>Data de Admissão</th>
+                <!-- FIM NOVOS -->
+                <th>Série</th>
+                <th>Turma</th>
+                <th>Turno (cadastro)</th>
+                <th>Vínculo</th>
+                <th>Manhã — Início</th>
+                <th>Manhã — Fim</th>
+                <th>Tarde — Início</th>
+                <th>Tarde — Fim</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for l in linhas %}
+              <tr>
+                <td>{{ l|get_item:"Nome" }}</td>
+                <td>{{ l|get_item:"Matrícula" }}</td>
+                <td>{{ l|get_item:"Setor" }}</td>
+                <!-- NOVOS CAMPOS -->
+                <td>{{ l|get_item:"Cargo" }}</td>
+                <td>{{ l|get_item:"Função" }}</td>
+                <td>{{ l|get_item:"Data de Admissão" }}</td>
+                <!-- FIM NOVOS -->
+                <td>{{ l|get_item:"Série" }}</td>
+                <td>{{ l|get_item:"Turma" }}</td>
+                <td>{{ l|get_item:"Turno (cadastro)" }}</td>
+                <td>{{ l|get_item:"Vínculo" }}</td>
+                <td>{{ l|get_item:"Manhã - Início" }}</td>
+                <td>{{ l|get_item:"Manhã - Fim" }}</td>
+                <td>{{ l|get_item:"Tarde - Início" }}</td>
+                <td>{{ l|get_item:"Tarde - Fim" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="14" style="color:var(--muted)">Nenhum registro encontrado.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Monta a URL de exportação preservando os filtros atuais
+    const btn = document.getElementById('btn-exportar');
+    const form = document.getElementById('filtros');
+    function buildExportUrl() {
+      const params = new URLSearchParams(new FormData(form));
+      params.set('export', '1');
+      return window.location.pathname + '?' + params.toString();
+    }
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.location.href = buildExportUrl();
+    });
+  </script>
+</body>
+</html>

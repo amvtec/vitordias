@@ -34,7 +34,7 @@ urlpatterns = [
     path('relatorios-funcionarios/', views.relatorios_funcionarios, name='relatorios_funcionarios'),
     path('folhas/individuais/', gerar_folhas_multimes_funcionario, name='gerar_folhas_multimes_funcionario'),
 
-
+    path("relatorios/horarios/", views.relatorio_horarios, name="relatorio_horarios"),
 
 
 

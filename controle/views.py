@@ -1,27 +1,41 @@
-from django.shortcuts import render, get_object_or_404
-from django.template.loader import render_to_string
-from django.http import HttpResponse
-from calendar import monthrange, day_name
-from datetime import date
+
 import calendar
-from .forms import HorarioTrabalhoForm
-from .forms import FeriadoForm
-from .models import Setor
-from .models import Funcionario, Feriado, HorarioTrabalho, FolhaFrequencia
-from .models import Funcionario, Setor, Feriado, HorarioTrabalho, SabadoLetivo, FolhaFrequencia
-from .models import Escola
-from django.shortcuts import render
-from .models import FolhaFrequencia
-from django.db.models import Q
 import locale
+from calendar import monthrange, day_name
+from datetime import date, datetime, timedelta
+
+
 import pandas as pd
-from django.shortcuts import render
-from django.contrib import messages
-from .models import Funcionario, Setor
-from django.http import HttpResponseRedirect
-from .forms import ImportacaoFuncionarioForm
-from django.contrib.auth.decorators import login_required
+
+
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.db.models.functions import Lower
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.safestring import mark_safe
+
+
+from .forms import (
+    HorarioTrabalhoForm,
+    FeriadoForm,
+    ImportacaoFuncionarioForm,
+    GerarFolhasIndividuaisForm,
+    FuncionarioForm,
+)
+from .models import (
+    Setor,
+    Funcionario,
+    Feriado,
+    HorarioTrabalho,
+    SabadoLetivo,
+    FolhaFrequencia,
+    Escola,
+)
 
 
 
@@ -166,25 +180,30 @@ def selecionar_funcionarios(request):
 
 @login_required
 def listar_folhas(request):
+    from django.db.models.functions import Lower  # import local p/ não mexer no topo
     # Obtendo o nome do funcionário da barra de pesquisa (se houver)
-    nome_funcionario = request.GET.get('nome', '')
+    nome_funcionario = request.GET.get('nome', '').strip()
+
+    # Base + join no funcionário e anotação para ordenar por nome (case-insensitive)
+    qs = (FolhaFrequencia.objects
+          .select_related('funcionario')
+          .annotate(nome_i=Lower('funcionario__nome')))
 
     # Filtrando as folhas de acordo com o nome do funcionário, se o nome for fornecido
     if nome_funcionario:
-        folhas = FolhaFrequencia.objects.filter(
-            Q(funcionario__nome__icontains=nome_funcionario)
-        )
-    else:
-        folhas = FolhaFrequencia.objects.all()
+        qs = qs.filter(funcionario__nome__icontains=nome_funcionario)
+
+    # ✅ Ordenação: nome (A→Z), depois ano e mês
+    folhas = qs.order_by('nome_i', 'ano', 'mes')
 
     return render(request, 'controle/listar_folhas.html', {'folhas': folhas})
+
 
 @login_required
 def visualizar_folha_salva(request, folha_id):
     folha = get_object_or_404(FolhaFrequencia, id=folha_id)
     return HttpResponse(folha.html_armazenado)
 
-from django.utils.safestring import mark_safe
 
 # Mapeamento dos dias da semana
 dias_da_semana_pt = {
@@ -214,7 +233,16 @@ def gerar_folhas_em_lote(request):
         folhas_renderizadas = []
         escola = Escola.objects.first()
 
-        for id_func in ids_funcionarios:
+        # 👉 Ordena os IDs alfabeticamente pelo nome (case-insensitive),
+        #    sem remover o get_object_or_404 do loop.
+        nomes_qs = Funcionario.objects.filter(id__in=ids_funcionarios).values('id', 'nome')
+        mapa_nomes = {str(f['id']): (f['nome'] or '') for f in nomes_qs}
+        ids_funcionarios_ordenados = sorted(
+            ids_funcionarios,
+            key=lambda pk: mapa_nomes.get(str(pk), '').casefold()
+        )
+
+        for id_func in ids_funcionarios_ordenados:
             funcionario = get_object_or_404(Funcionario, id=id_func)
 
             total_dias = monthrange(ano, mes)[1]
@@ -299,10 +327,6 @@ def gerar_folhas_em_lote(request):
     return render(request, 'controle/folhas_em_lote.html', {'folhas': []})
 
 
-
-
-from .forms import FuncionarioForm
-from django.shortcuts import redirect
 @login_required
 def cadastrar_funcionario(request):
     if request.method == 'POST':
@@ -438,31 +462,55 @@ def excluir_folha(request, folha_id):
     folha.delete()
     return redirect('listar_folhas')
 
-from django.shortcuts import render
-from datetime import datetime
-from .models import Funcionario
-
 @login_required
 def painel_controle(request):
-    hoje = datetime.today()
+    # Data “hoje” segura (timezone-aware)
+    hoje_date = timezone.localdate()
+    agora = timezone.now()
 
-    # Aniversariantes do mês (excluindo os de hoje)
-    aniversariantes_mes = Funcionario.objects.filter(
-        data_nascimento__month=hoje.month
-    ).exclude(data_nascimento__day=hoje.day)
+    # Contadores principais
+    funcionarios_count = Funcionario.objects.count()
+    horarios_count = HorarioTrabalho.objects.count()
+    feriados_count = Feriado.objects.count()
 
-    # Aniversariantes do dia (dia e mês)
-    aniversariantes_dia = Funcionario.objects.filter(
-        data_nascimento__month=hoje.month,
-        data_nascimento__day=hoje.day
-    )
+    # Folhas geradas nos últimos 30 dias (fallback para TOTAL se não houver campo de data)
+    cutoff = agora - timedelta(days=30)
+    folhas_qs = FolhaFrequencia.objects.all()
+
+    # Descobre dinamicamente um campo de data (se existir)
+    field_names = {f.name for f in FolhaFrequencia._meta.get_fields()}
+    if 'created_at' in field_names:
+        folhas_qs = folhas_qs.filter(created_at__gte=cutoff)
+    elif 'criado_em' in field_names:
+        folhas_qs = folhas_qs.filter(criado_em__gte=cutoff)
+    elif 'data_criacao' in field_names:
+        folhas_qs = folhas_qs.filter(data_criacao__gte=cutoff)
+    elif 'updated_at' in field_names:
+        folhas_qs = folhas_qs.filter(updated_at__gte=cutoff)
+    elif 'atualizado_em' in field_names:
+        folhas_qs = folhas_qs.filter(atualizado_em__gte=cutoff)
+    # se nenhum campo de data existir, mantém todas (conta total)
+    folhas_30d_q = folhas_qs.count()
+
+    # Aniversariantes (listas para o template usar |length)
+    aniversariantes_mes = (Funcionario.objects
+                           .filter(data_nascimento__month=hoje_date.month)
+                           .order_by(Lower('nome')))
+    aniversariantes_dia = (Funcionario.objects
+                           .filter(data_nascimento__month=hoje_date.month,
+                                   data_nascimento__day=hoje_date.day)
+                           .order_by(Lower('nome')))
 
     context = {
+        'funcionarios_count': funcionarios_count,
+        'horarios_count': horarios_count,
+        'feriados_count': feriados_count,
+        'folhas_30d_q': folhas_30d_q,
         'aniversariantes_mes': aniversariantes_mes,
         'aniversariantes_dia': aniversariantes_dia,
     }
-
     return render(request, 'controle/painel_controle.html', context)
+
 
 @login_required
 def importar_funcionarios(request):
@@ -779,7 +827,6 @@ def relatorio_professores(request):
 def relatorios_funcionarios(request):
     return render(request, 'controle/relatorios_funcionarios.html')
 
-from .forms import GerarFolhasIndividuaisForm
 
 @login_required
 def gerar_folhas_multimes_funcionario(request):
@@ -805,3 +852,131 @@ def gerar_folhas_multimes_funcionario(request):
         'anos': anos,
     })
 
+from django.db.models import Prefetch
+from django.utils import timezone
+import io
+import pandas as pd
+
+@login_required
+def relatorio_horarios(request):
+    """
+    Lista horários (Manhã/Tarde) por servidor, com filtros e exportação para Excel.
+    """
+    funcionarios_qs = (
+        Funcionario.objects
+        .select_related('setor')
+        .prefetch_related(
+            Prefetch(
+                'horariotrabalho_set',            # nome reverso padrão correto
+                queryset=HorarioTrabalho.objects.order_by('turno')
+            )
+        )
+        .order_by(Lower('nome'))
+    )
+
+    # ---- Filtros via GET ----
+    setor_id   = request.GET.get('setor') or ''
+    turno_func = request.GET.get('turno') or ''
+    serie      = request.GET.get('serie') or ''
+    turma      = request.GET.get('turma') or ''
+    vinculo    = request.GET.get('vinculo') or ''
+
+    if setor_id:
+        funcionarios_qs = funcionarios_qs.filter(setor_id=setor_id)
+    if turno_func:
+        funcionarios_qs = funcionarios_qs.filter(turno=turno_func)
+    if serie:
+        funcionarios_qs = funcionarios_qs.filter(serie=serie)
+    if turma:
+        funcionarios_qs = funcionarios_qs.filter(turma=turma)
+    if vinculo:
+        funcionarios_qs = funcionarios_qs.filter(tipo_vinculo=vinculo)
+
+    def fmt_hora(t):
+        return t.strftime('%H:%M') if t else ''
+
+    def fmt_data(d):
+        return d.strftime('%d/%m/%Y') if d else ''
+
+    linhas = []
+    for f in funcionarios_qs:
+        horarios = list(f.horariotrabalho_set.all())
+        manha = next((h for h in horarios if h.turno == 'Manhã'), None)
+        tarde = next((h for h in horarios if h.turno == 'Tarde'), None)
+
+        linhas.append({
+            'Nome': f.nome,
+            'Matrícula': f.matricula,
+            'Setor': f.setor.nome if f.setor else '',
+
+            # >>> NOVOS CAMPOS <<<
+            'Cargo': f.cargo or '',
+            'Função': f.funcao or '',
+            'Data de Admissão': fmt_data(f.data_admissao),
+
+            'Série': f.serie or '',
+            'Turma': f.turma or '',
+            'Turno (cadastro)': f.turno or '',
+            'Vínculo': f.tipo_vinculo or '',
+            'Manhã - Início': fmt_hora(manha.horario_inicio) if manha else '',
+            'Manhã - Fim': fmt_hora(manha.horario_fim) if manha else '',
+            'Tarde - Início': fmt_hora(tarde.horario_inicio) if tarde else '',
+            'Tarde - Fim': fmt_hora(tarde.horario_fim) if tarde else '',
+        })
+
+    # ---- Exportação Excel (ou CSV fallback) ----
+    if request.GET.get('export') == '1':
+        df = pd.DataFrame(linhas)
+        filename = f"relatorio_horarios_{timezone.now().strftime('%Y%m%d_%H%M')}.xlsx"
+
+        output = io.BytesIO()
+        try:
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False, sheet_name='Horários')
+            output.seek(0)
+            response = HttpResponse(
+                output.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        except Exception:
+            csv_bytes = df.to_csv(index=False, sep=';').encode('utf-8-sig')
+            response = HttpResponse(csv_bytes, content_type='text/csv; charset=utf-8')
+            # fix de aspas no replace
+            response['Content-Disposition'] = f'attachment; filename="{filename.replace(".xlsx", ".csv")}"'
+            return response
+
+    setores = Setor.objects.all().order_by('nome')
+    series = (Funcionario.objects
+              .exclude(serie__isnull=True).exclude(serie__exact='')
+              .values_list('serie', flat=True).distinct().order_by('serie'))
+    turmas = (Funcionario.objects
+              .exclude(turma__isnull=True).exclude(turma__exact='')
+              .values_list('turma', flat=True).distinct().order_by('turma'))
+    turnos_func = (Funcionario.objects
+                   .exclude(turno__isnull=True).exclude(turno__exact='')
+                   .values_list('turno', flat=True).distinct().order_by('turno'))
+    vinculos = (Funcionario.objects
+                .exclude(tipo_vinculo__isnull=True).exclude(tipo_vinculo__exact='')
+                .values_list('tipo_vinculo', flat=True).distinct().order_by('tipo_vinculo'))
+
+    escola = Escola.objects.first()
+
+    context = {
+        'escola': escola,
+        'linhas': linhas,
+        'setores': setores,
+        'series': series,
+        'turmas': turmas,
+        'turnos_func': turnos_func,
+        'vinculos': vinculos,
+        'filtros': {
+            'setor': setor_id,
+            'turno': turno_func,
+            'serie': serie,
+            'turma': turma,
+            'vinculo': vinculo
+        }
+    }
+    return render(request, 'controle/relatorio_horarios.html', context)

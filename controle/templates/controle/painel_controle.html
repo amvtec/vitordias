@@ -105,6 +105,9 @@
           <div class="fs-4 fw-bold">{{ feriados_count|default:0 }}</div>
         </div>
       </a>
+      <a class="btn btn-sm btn-success" href="{% url 'relatorio_horarios' %}">
+  <i class="fa-solid fa-table me-1"></i> Relatório de Horários
+</a>
     </div>
     <div class="col-6 col-md-3">
       <a class="text-decoration-none" href="{% url 'listar_folhas' %}">
